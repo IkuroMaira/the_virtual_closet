@@ -11,3 +11,7 @@ def read_root():
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
+
+@app.get("/all_clothes")
+def read_clothes():
+    return {'Ici on affichera les vêtements'}
