@@ -42,3 +42,5 @@ async def get_item(supabase: Client, item_id: int):
         return response.data
     except Exception as e:
         raise Exception(f"Erreur lors de la récupération du vêtement: {str(e)}")
+
+# async def create_item(supabase: Client, clothes: dict):

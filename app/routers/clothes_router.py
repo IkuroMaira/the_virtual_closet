@@ -34,3 +34,13 @@ async def get_item(item_id: int, supabase: Client = Depends(get_supabase)):
             raise HTTPException(status_code=404, detail="Vêtement non trouvé")
     except Exception as e:
         raise Exception(f"Erreur lors de la récupération du vêtement: {str(e)}")
+
+
+# @router.post("/{item_id}")
+# async def create_item(item_id: int, supabase: Client = Depends(get_supabase)):
+#     """
+#     Create a new clothe
+#     :param item_id:
+#     :param supabase:
+#     :return:
+#     """
