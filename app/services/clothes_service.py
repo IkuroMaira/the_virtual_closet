@@ -4,14 +4,6 @@ from supabase import Client
 # SERVICE FUNCTIONS
 # ============================================
 
-# async def get_clothes(supabase: Client = Depends(get_supabase)):
-#     """Récupère tous les vêtements de l'utilisateur"""
-#     try:
-#         response = supabase.table('clothes').select("*").execute()
-#         return {"clothes": response.data}
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
-
 async def get_all_clothes(supabase: Client):
     """
     Get all clothes from the database
