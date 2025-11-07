@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from supabase import Client
 from app.db.database import get_supabase
 from app.services import clothes_service
+from app.models import clothes
 
 router = APIRouter(
     prefix="/clothes",
@@ -36,11 +37,13 @@ async def get_item(item_id: int, supabase: Client = Depends(get_supabase)):
         raise Exception(f"Erreur lors de la récupération du vêtement: {str(e)}")
 
 
-# @router.post("/{item_id}")
-# async def create_item(item_id: int, supabase: Client = Depends(get_supabase)):
-#     """
-#     Create a new clothe
-#     :param item_id:
-#     :param supabase:
-#     :return:
-#     """
+@router.post("/{item_id}")
+async def create_item(item: clothes.ClotheCreate, supabase: Client = Depends(get_supabase)):
+    """
+    Create a new clothe
+    """
+    try:
+        item = await clothes_service.create_item(supabase)
+        return {"item": item}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Impossible d'insérer le vêtement")

@@ -1,4 +1,5 @@
 from supabase import Client
+from app.models import clothes
 
 # ============================================
 # SERVICE FUNCTIONS
@@ -35,4 +36,10 @@ async def get_item(supabase: Client, item_id: int):
     except Exception as e:
         raise Exception(f"Erreur lors de la récupération du vêtement: {str(e)}")
 
-# async def create_item(supabase: Client, clothes: dict):
+async def create_item(supabase: Client, clothes: clothes.ClotheCreate):
+
+    try:
+        response = supabase.table('clothes').insert(clothes).execute()
+        return response.data
+    except Exception as e:
+        raise Exception(f"Erreur lors de l'insertion du vêtement: {str(e)}") 
