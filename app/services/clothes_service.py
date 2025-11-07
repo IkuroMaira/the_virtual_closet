@@ -14,7 +14,7 @@ from supabase import Client
 
 async def get_all_clothes(supabase: Client):
     """
-    Récupère tous les vêtements de la base de données
+    Get all clothes from the database
     """
     try:
         response = supabase.table('clothes').select("*").execute()
