@@ -36,10 +36,24 @@ async def get_item(supabase: Client, item_id: int):
     except Exception as e:
         raise Exception(f"Erreur lors de la récupération du vêtement: {str(e)}")
 
-async def create_item(supabase: Client, clothes: clothes.ClotheCreate):
+async def create_item(supabase: Client, clothe_data: clothes.ClotheCreate):
+    """
+    Create a new clothing item in the database
 
+    Args:
+        supabase (Client): Connected Supabase client
+        clothe_data (ClotheCreate): Clothing item data to insert
+
+    Returns:
+        dict: Created clothing item data
+
+    Raises:
+        Exception: If error during insertion
+    """
     try:
-        response = supabase.table('clothes').insert(clothes).execute()
+        # Convert Pydantic model to dict for Supabase insertion
+        clothe_dict = clothe_data.model_dump()
+        response = supabase.table('clothes').insert(clothe_dict).execute()
         return response.data
     except Exception as e:
         raise Exception(f"Erreur lors de l'insertion du vêtement: {str(e)}") 
