@@ -1,3 +1,20 @@
+.envcat >> .gitignore << 'EOF'
+
 # local
 .idea
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+
+# Environment variables
 .env
+.env.local
+.env.*.local
+EOF
