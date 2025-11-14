@@ -37,13 +37,13 @@ async def get_item(item_id: int, supabase: Client = Depends(get_supabase)):
         raise Exception(f"Erreur lors de la récupération du vêtement: {str(e)}")
 
 
-@router.post("/{item_id}")
+@router.post("/")
 async def create_item(item: clothes.ClotheCreate, supabase: Client = Depends(get_supabase)):
     """
     Create a new clothe
     """
     try:
-        item = await clothes_service.create_item(supabase)
-        return {"item": item}
+        new_item = await clothes_service.create_item(supabase, item)
+        return {"item": new_item}
     except Exception as e:
         raise HTTPException(status_code=500, detail="Impossible d'insérer le vêtement")
