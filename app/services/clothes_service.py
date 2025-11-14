@@ -57,3 +57,24 @@ async def create_item(supabase: Client, clothe_data: clothes.ClotheCreate):
         return response.data
     except Exception as e:
         raise Exception(f"Erreur lors de l'insertion du vêtement: {str(e)}") 
+    
+
+async def delete_item(supabase: Client, item_id: int):
+    """ 
+    Deleting a piece of clothe
+
+    Args:
+        supabase (Client): Connected Supabase client
+        item_id (int): ID of the clothing item
+
+    Returns:
+        string: Message
+
+    Raises:
+        Exception: If error during deletion
+    """
+    try:
+        response = supabase.table('clothes').delete().eq('id', item_id).execute()
+        return {'Item deleted successfully'}
+    except Exception as e:
+        raise Exception(f"Erreur lors de la suppression du vêtement: {str(e)}")

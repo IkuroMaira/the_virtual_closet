@@ -47,3 +47,15 @@ async def create_item(item: clothes.ClotheCreate, supabase: Client = Depends(get
         return {"item": new_item}
     except Exception as e:
         raise HTTPException(status_code=500, detail="Impossible d'insérer le vêtement")
+    
+
+@router.delete("/{item_id}")
+async def delete_item(item_id: int, supabase: Client = Depends(get_supabase)):
+    """
+    Delete a piece of clothe
+    """
+    try:
+        deleted_item = await clothes_service.delete_item(supabase, item_id)
+        return  {"deleted_item": deleted_item}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Impossible de supprimer le vêtement")
