@@ -59,7 +59,7 @@ async def get_item(supabase: Client, item_id: int):
     """
     try:
         response = supabase.table('clothes').select("*").eq('id', item_id).execute()
-        return response.data
+        return response.data[0]
     except Exception as e:
         logger.error(f"Erreur Supabase lors de la récupération du vêtement: {str(e)}")
         raise Exception("Erreur lors de la récupération du vêtement")
@@ -82,7 +82,7 @@ async def update_item(clothe_data: clothes.Clothe, supabase: Client, item_id: in
     try:
         clothe_dict = clothe_data.model_dump()
         response = supabase.table('clothes').update(clothe_dict).eq('id', item_id).execute()
-        return response.data
+        return response.data[0]
     except Exception as e:
         logger.error(f"Erreur Supabase lors de la modification: {str(e)}")
         raise Exception("Erreur lors de la mise à jour du vêtement")
