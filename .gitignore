@@ -1,4 +1,4 @@
-.envcat >> .gitignore << 'EOF'
+cat >> .gitignore << 'EOF'
 
 # local
 .idea

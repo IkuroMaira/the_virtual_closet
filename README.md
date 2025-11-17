@@ -29,7 +29,7 @@ source .venv/bin/activate
 
 Pour Windows :
 ```bash
-.venv\Scripts\activate
+source .venv/Scripts/activate
 ```
 
 4. Mettre à jour pip
