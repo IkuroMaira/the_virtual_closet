@@ -1,5 +1,5 @@
 from supabase import Client
-from server.app.models import clothes
+from app.models import clothes
 import logging
 
 logger = logging.getLogger(__name__)
@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 # SERVICE FUNCTIONS
 # ============================================
 
-async def create_item(clothe_data: clothes.Clothe, supabase: Client):
+def create_item(clothe_data: clothes.Clothe, supabase: Client):
     """
     Create a new clothing item in the database
 
@@ -31,7 +31,7 @@ async def create_item(clothe_data: clothes.Clothe, supabase: Client):
         raise Exception("Erreur lors de la création du vêtement")
     
 
-async def get_all_clothes(supabase: Client):
+def get_all_clothes(supabase: Client):
     """
     Get all clothes from the database
     """
@@ -43,7 +43,7 @@ async def get_all_clothes(supabase: Client):
         raise Exception("Erreur lors de la récupération des vêtements")
 
 
-async def get_item(supabase: Client, item_id: int):
+def get_item(supabase: Client, item_id: int):
     """
     Retrieve a single clothing item by its ID
 
@@ -65,8 +65,8 @@ async def get_item(supabase: Client, item_id: int):
         raise Exception("Erreur lors de la récupération du vêtement")
     
 
-async def update_item(clothe_data: clothes.Clothe, supabase: Client, item_id: int):
-    """ 
+def update_item(clothe_data: clothes.Clothe, supabase: Client, item_id: int):
+    """
     Updating a piece of clothe
 
     Args:
@@ -74,7 +74,7 @@ async def update_item(clothe_data: clothes.Clothe, supabase: Client, item_id: in
         item_id (int): ID of the clothing item
 
     Returns:
-        
+
 
     Raises:
         Exception: If error during updating
@@ -88,8 +88,8 @@ async def update_item(clothe_data: clothes.Clothe, supabase: Client, item_id: in
         raise Exception("Erreur lors de la mise à jour du vêtement")
     
 
-async def delete_item(supabase: Client, item_id: int):
-    """ 
+def delete_item(supabase: Client, item_id: int):
+    """
     Deleting a piece of clothe
 
     Args:
