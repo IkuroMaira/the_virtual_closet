@@ -1,5 +1,8 @@
 from supabase import Client
 from app.models import clothes
+import logging
+
+logger = logging.getLogger(__name__)
 
 # ============================================
 # SERVICE FUNCTIONS
@@ -20,12 +23,12 @@ async def create_item(clothe_data: clothes.Clothe, supabase: Client):
         Exception: If error during insertion
     """
     try:
-        # Convert Pydantic model to dict for Supabase insertion
         clothe_dict = clothe_data.model_dump()
         response = supabase.table('clothes').insert(clothe_dict).execute()
         return response.data
     except Exception as e:
-        raise Exception(f"Erreur lors de l'insertion du vêtement: {str(e)}") 
+        logger.error(f"Erreur Supabase lors de l'insertion: {str(e)}")
+        raise Exception("Erreur lors de la création du vêtement")
     
 
 async def get_all_clothes(supabase: Client):
@@ -36,7 +39,8 @@ async def get_all_clothes(supabase: Client):
         response = supabase.table('clothes').select("*").execute()
         return response.data
     except Exception as e:
-        raise Exception(f"Erreur lors de la récupération des vêtements: {str(e)}")
+        logger.error(f"Erreur Supabase lors de la récupération du catalogue: {str(e)}")
+        raise Exception("Erreur lors de la récupération des vêtements")
 
 
 async def get_item(supabase: Client, item_id: int):
@@ -55,9 +59,10 @@ async def get_item(supabase: Client, item_id: int):
     """
     try:
         response = supabase.table('clothes').select("*").eq('id', item_id).execute()
-        return response.data
+        return response.data[0]
     except Exception as e:
-        raise Exception(f"Erreur lors de la récupération du vêtement: {str(e)}")
+        logger.error(f"Erreur Supabase lors de la récupération du vêtement: {str(e)}")
+        raise Exception("Erreur lors de la récupération du vêtement")
     
 
 async def update_item(clothe_data: clothes.Clothe, supabase: Client, item_id: int):
@@ -77,9 +82,10 @@ async def update_item(clothe_data: clothes.Clothe, supabase: Client, item_id: in
     try:
         clothe_dict = clothe_data.model_dump()
         response = supabase.table('clothes').update(clothe_dict).eq('id', item_id).execute()
-        return response.data
+        return response.data[0]
     except Exception as e:
-        raise Exception(f"Erreur lors de la mise à jour du vêtement: {str(e)}")
+        logger.error(f"Erreur Supabase lors de la modification: {str(e)}")
+        raise Exception("Erreur lors de la mise à jour du vêtement")
     
 
 async def delete_item(supabase: Client, item_id: int):
@@ -100,4 +106,5 @@ async def delete_item(supabase: Client, item_id: int):
         response = supabase.table('clothes').delete().eq('id', item_id).execute()
         return {'Item supprimé avec succès': response}
     except Exception as e:
-        raise Exception(f"Erreur lors de la suppression du vêtement: {str(e)}")    
+        logger.error(f"Erreur Supabase lors de la suppression du vêtement: {str(e)}")
+        raise Exception("Erreur lors de la suppression du vêtement")
