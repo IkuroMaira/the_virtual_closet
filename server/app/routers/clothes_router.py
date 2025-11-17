@@ -2,9 +2,9 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 from supabase import Client
-from app.db.database import get_supabase
-from app.services import clothes_service
-from app.models import clothes
+from server.app.db.database import get_supabase
+from server.app.services import clothes_service
+from server.app.models import clothes
 
 router = APIRouter(
     prefix="/clothes",

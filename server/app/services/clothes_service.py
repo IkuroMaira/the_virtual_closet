@@ -1,5 +1,5 @@
 from supabase import Client
-from app.models import clothes
+from server.app.models import clothes
 import logging
 
 logger = logging.getLogger(__name__)
@@ -13,7 +13,7 @@ async def create_item(clothe_data: clothes.Clothe, supabase: Client):
     Create a new clothing item in the database
 
     Args:
-        supabase (Client): Connected Supabase client
+        supabase (Client): Connected Supabase Client
         clothe_data (Clothe): Clothing item data to insert
 
     Returns:
@@ -48,7 +48,7 @@ async def get_item(supabase: Client, item_id: int):
     Retrieve a single clothing item by its ID
 
     Args:
-        supabase (Client): Connected Supabase client
+        supabase (Client): Connected Supabase Client
         item_id (int): ID of the clothing item
 
     Returns:
@@ -70,7 +70,7 @@ async def update_item(clothe_data: clothes.Clothe, supabase: Client, item_id: in
     Updating a piece of clothe
 
     Args:
-        supabase (Client): Connected Supabase client
+        supabase (Client): Connected Supabase Client
         item_id (int): ID of the clothing item
 
     Returns:
@@ -93,7 +93,7 @@ async def delete_item(supabase: Client, item_id: int):
     Deleting a piece of clothe
 
     Args:
-        supabase (Client): Connected Supabase client
+        supabase (Client): Connected Supabase Client
         item_id (int): ID of the clothing item
 
     Returns:
