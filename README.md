@@ -37,7 +37,7 @@ source .venv/bin/activate
 
 Pour Windows
 ```bash
-venv\Scripts\activate
+source .venv/Scripts/activate
 ```
 ## Installation de FastAPI
 6. Installer FastAPI
