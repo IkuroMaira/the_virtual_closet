@@ -17,8 +17,8 @@ async def create_item(item: clothes.Clothe, supabase: Client = Depends(get_supab
     try:
         new_item = await clothes_service.create_item(item, supabase)
         return {"item": new_item}
-    except Exception:
-        raise HTTPException(status_code=500, detail="Impossible d'insérer le vêtement")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Impossible d'insérer le vêtement")
     
 
 @router.get("/")
@@ -30,7 +30,7 @@ async def get_all_clothes(supabase: Client = Depends(get_supabase)):
         clothes = await clothes_service.get_all_clothes(supabase)
         return {"clothes": clothes}
     except Exception:
-        raise HTTPException(status_code=500, detail="Impossible de récupérer les vêtements du catalogue")
+        raise HTTPException(status_code=404, detail="Impossible de récupérer les vêtements du catalogue")
     
 
 @router.get("/{item_id}")
@@ -42,7 +42,7 @@ async def get_item(item_id: int, supabase: Client = Depends(get_supabase)):
         clothe =  await clothes_service.get_item(supabase, item_id)
         return {"clothe": clothe}
     except Exception:
-        raise HTTPException(status_code=500, detail="Impossible de récupérer le vêtement")
+        raise HTTPException(status_code=404, detail="Impossible de récupérer le vêtement")
 
     
 @router.put("/{item_id}/update")
