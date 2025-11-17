@@ -51,7 +51,7 @@ async def update_item(item_id: int, item: clothes.Clothe, supabase: Client = Dep
     Update a piece of clothe
     """
     try:
-        updated_item = await clothes_service.update_item(supabase, item_id, item)
+        updated_item = await clothes_service.update_item(item, supabase, item_id)
         return  {"updated_item": updated_item}
     except Exception:
         raise HTTPException(status_code=500, detail="Impossible de mettre à jour le vêtement")
