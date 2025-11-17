@@ -15,42 +15,46 @@
 
 ## Installation de l'environnement virtuel
 1. Installer la version 3.14 de Python
-2. Mise à jour de pip
-```bash
-python -m pip install --upgrade pip
-```
-3. Installer virtualenv
-```bash
-pip install virtualenv
-```
 
-4. Installer l'environnement virtuel
+2. Créer l'environnement virtuel
 ```bash
 python -m venv .venv
 ```
 
-5. Activer l'environnement virtuel
-Pour les Mac
+3. Activer l'environnement virtuel
+Pour Mac/Linux :
 ```bash
 source .venv/bin/activate
 ```
 
-Pour Windows
+Pour Windows :
 ```bash
 source .venv/Scripts/activate
 ```
-## Installation de FastAPI
-6. Installer FastAPI
+
+4. Mettre à jour pip
 ```bash
-pip install "fastapi[standar]"
+python -m pip install --upgrade pip
 ```
 
-7. Installer le serveur Uvicorn pour pouvoir faire fonctionner FastAPI
+## Installation des dépendances
+5. Installer toutes les dépendances requises
 ```bash
-pip install "uvicorn[standard]"
+pip install -r requirements.txt
 ```
 
-## Lancer FastAPI
+## Configuration
+6. Créer un fichier `.env` à la racine du projet avec vos identifiants Supabase :
+```env
+SUPABASE_URL=votre_url_supabase
+SUPABASE_KEY=votre_clé_supabase
+```
+
+## Lancer l'application
+7. Démarrer le serveur FastAPI
 ```bash
 fastapi dev main.py
 ```
+
+L'API sera accessible sur : http://localhost:8000
+Documentation automatique : http://localhost:8000/docs
