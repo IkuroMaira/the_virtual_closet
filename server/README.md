@@ -50,7 +50,7 @@ SUPABASE_URL=votre_url_supabase
 SUPABASE_KEY=votre_clé_supabase
 ```
 
-## Lancer l'application
+## Lancer l'application backend
 7. Démarrer le serveur FastAPI
 ```bash
 fastapi dev main.py

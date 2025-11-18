@@ -11,7 +11,7 @@ COPY package*.json ./
 RUN npm install
 
 # Copie le reste du code source
-COPY . .
+COPY .. .
 
 # Expose le port sur lequel ton app écoute (probablement 3000)
 EXPOSE 3000
