@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': { // Intercepte les requête vers /aî
+      '/api': { // Intercepte les requêtes vers /api
         target: 'http://localhost:8000', // redirige vers le backend
         changeOrigin: true, // Change l'origine pour éviter CORS
         rewrite: (path) => path.replace(/^\/api/, '') // Retire /api du chemin

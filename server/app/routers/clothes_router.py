@@ -1,5 +1,3 @@
-import logging
-
 from fastapi import APIRouter, Depends, HTTPException
 from supabase import Client
 from app.db.database import get_supabase
