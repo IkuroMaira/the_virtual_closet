@@ -8,12 +8,12 @@ logger = logging.getLogger(__name__)
 # SERVICE FUNCTIONS
 # ============================================
 
-async def create_item(clothe_data: clothes.Clothe, supabase: Client):
+def create_item(clothe_data: clothes.Clothe, supabase: Client):
     """
     Create a new clothing item in the database
 
     Args:
-        supabase (Client): Connected Supabase client
+        supabase (Client): Connected Supabase Client
         clothe_data (Clothe): Clothing item data to insert
 
     Returns:
@@ -31,7 +31,7 @@ async def create_item(clothe_data: clothes.Clothe, supabase: Client):
         raise Exception("Erreur lors de la création du vêtement")
     
 
-async def get_all_clothes(supabase: Client):
+def get_all_clothes(supabase: Client):
     """
     Get all clothes from the database
     """
@@ -43,12 +43,12 @@ async def get_all_clothes(supabase: Client):
         raise Exception("Erreur lors de la récupération des vêtements")
 
 
-async def get_item(supabase: Client, item_id: int):
+def get_item(supabase: Client, item_id: int):
     """
     Retrieve a single clothing item by its ID
 
     Args:
-        supabase (Client): Connected Supabase client
+        supabase (Client): Connected Supabase Client
         item_id (int): ID of the clothing item
 
     Returns:
@@ -65,16 +65,16 @@ async def get_item(supabase: Client, item_id: int):
         raise Exception("Erreur lors de la récupération du vêtement")
     
 
-async def update_item(clothe_data: clothes.Clothe, supabase: Client, item_id: int):
-    """ 
+def update_item(clothe_data: clothes.Clothe, supabase: Client, item_id: int):
+    """
     Updating a piece of clothe
 
     Args:
-        supabase (Client): Connected Supabase client
+        supabase (Client): Connected Supabase Client
         item_id (int): ID of the clothing item
 
     Returns:
-        
+        dict: Clothing item data or None if not found
 
     Raises:
         Exception: If error during updating
@@ -88,12 +88,12 @@ async def update_item(clothe_data: clothes.Clothe, supabase: Client, item_id: in
         raise Exception("Erreur lors de la mise à jour du vêtement")
     
 
-async def delete_item(supabase: Client, item_id: int):
-    """ 
+def delete_item(supabase: Client, item_id: int):
+    """
     Deleting a piece of clothe
 
     Args:
-        supabase (Client): Connected Supabase client
+        supabase (Client): Connected Supabase Client
         item_id (int): ID of the clothing item
 
     Returns:

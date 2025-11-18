@@ -10,7 +10,7 @@ SUPABASE_KEY= os.getenv('SUPABASE_KEY')
 def get_supabase() -> Client:
     """
     Fonction de dépendance pour FastAPI
-    Retourne un client Supabase pour chaque requête
+    Retourne un Client Supabase pour chaque requête
     """
     return create_client(SUPABASE_URL, SUPABASE_KEY)
 
