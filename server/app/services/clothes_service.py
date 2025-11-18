@@ -74,7 +74,7 @@ def update_item(clothe_data: clothes.Clothe, supabase: Client, item_id: int):
         item_id (int): ID of the clothing item
 
     Returns:
-
+        dict: Clothing item data or None if not found
 
     Raises:
         Exception: If error during updating
