@@ -12,24 +12,24 @@ router = APIRouter(
 )
 
 @router.post("/new_tag")
-async def create_tag(tag: tags.Tag, supabase: Client = Depends(get_supabase)):
+def create_tag(tag: tags.Tag, supabase: Client = Depends(get_supabase)):
     """ 
     Create a new tag
     """
     try:
-        new_tag = await tags_service.create_tag(tag, supabase)
+        new_tag = tags_service.create_tag(tag, supabase)
         return {"item": new_tag}
     except Exception as e:
         raise HTTPException(status_code=400, detail="Impossible d'insérer le tag")
     
 
 @router.get("/")
-async def get_all_tags(supabase: Client = Depends(get_supabase)):
+def get_all_tags(supabase: Client = Depends(get_supabase)):
     """
     Get all tags 
     """
     try:
-        tags = await tags_service.get_all_tags(supabase)
+        tags = tags_service.get_all_tags(supabase)
 
         if tags is None:
             logging.error("Les tags n'existent pas")
@@ -40,12 +40,12 @@ async def get_all_tags(supabase: Client = Depends(get_supabase)):
     
 
 @router.get("/{item_id}")
-async def get_tag(tag_id: int, supabase: Client = Depends(get_supabase)):
+def get_tag(tag_id: int, supabase: Client = Depends(get_supabase)):
     """
     Get a tag
     """
     try:
-        tag =  await tags_service.get_tag(supabase, tag_id)
+        tag = tags_service.get_tag(supabase, tag_id)
 
         if tag is None:
             logging.error("Le tag n'existe pas")
@@ -56,12 +56,12 @@ async def get_tag(tag_id: int, supabase: Client = Depends(get_supabase)):
     
 
 @router.put("/{item_id}/update")
-async def update_tag(tag_id: int, tag: tags.Tag, supabase: Client = Depends(get_supabase)):
+def update_tag(tag_id: int, tag: tags.Tag, supabase: Client = Depends(get_supabase)):
     """
     Update a tag
     """
     try:
-        updated_tag = await tags_service.update_tag(tag, supabase, tag_id)
+        updated_tag = tags_service.update_tag(tag, supabase, tag_id)
 
         if updated_tag is None:
             logging.error("Le tag n'existe pas")
@@ -72,12 +72,12 @@ async def update_tag(tag_id: int, tag: tags.Tag, supabase: Client = Depends(get_
     
 
 @router.delete("/{item_id}/delete")
-async def delete_tag(tag_id: int, supabase: Client = Depends(get_supabase)):
+def delete_tag(tag_id: int, supabase: Client = Depends(get_supabase)):
     """
     Delete a piece of clothe
     """
     try:
-        deleted_tag = await tags_service.delete_tag(supabase, tag_id)
+        deleted_tag = tags_service.delete_tag(supabase, tag_id)
 
         if deleted_tag is None:
             logging.error("Le tag n'existe pas")

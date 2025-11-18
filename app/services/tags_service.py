@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 # SERVICE FUNCTIONS
 # ============================================
 
-async def create_tag(tag: tags.Tag, supabase: Client):
+def create_tag(tag: tags.Tag, supabase: Client):
     """
     Create a new tag in the database
 
@@ -31,7 +31,7 @@ async def create_tag(tag: tags.Tag, supabase: Client):
         raise Exception("Erreur lors de la création du tag")
     
 
-async def get_all_tags(supabase: Client):
+def get_all_tags(supabase: Client):
     """
     Get all tags from the database
     """
@@ -43,7 +43,7 @@ async def get_all_tags(supabase: Client):
         raise Exception("Erreur lors de la récupération des tags")    
     
 
-async def get_tag(supabase: Client, tag_id: int):
+def get_tag(supabase: Client, tag_id: int):
     """
     Retrieve a tag by its ID
 
@@ -65,7 +65,7 @@ async def get_tag(supabase: Client, tag_id: int):
         raise Exception("Erreur lors de la récupération du tag")    
     
 
-async def update_tag(tag: tags.Tag, supabase: Client, tag_id: int):
+def update_tag(tag: tags.Tag, supabase: Client, tag_id: int):
     """ 
     Updating a tag
 
@@ -88,7 +88,7 @@ async def update_tag(tag: tags.Tag, supabase: Client, tag_id: int):
         raise Exception("Erreur lors de la mise à jour du tag")
     
 
-async def delete_tag(supabase: Client, tag_id: int):
+def delete_tag(supabase: Client, tag_id: int):
     """ 
     Deleting a tag
 
