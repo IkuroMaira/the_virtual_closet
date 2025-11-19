@@ -1,18 +1,28 @@
 import './App.css'
-import ClotheForm from "./components/ClotheForm.jsx";
+import AddClotheForm from "./components/AddClotheForm.jsx";
 import { useState } from 'react'
-import { testConnection } from './services/api.jsx'
+import Clothes, { testConnection } from './services/api.jsx'
 
 function App() {
-  const [message, setMessage] = useState('No connection yet')
+  const [message, setMessage] = useState('No connection yet');
+  const [clothes, setClothes] = useState([]);
+
   async function handleTestConnection() {
     try {
       const data = await testConnection()
       setMessage(`Connection successful! The backend says: ${JSON.stringify(data)}`)
-
     } catch (error) {
       setMessage(`Error: ${error.message}`)
     }
+  }
+
+  async function handleClothes() {
+      try {
+          const clotheData = await Clothes()
+          setClothes(`Mon catalogue : ${clotheData}`)
+      } catch (error) {
+          setClothes(`Error : ${error.clothes}`)
+      }
   }
 
   return (
@@ -24,7 +34,7 @@ function App() {
       </button>
 
       <p>{message}</p>
-        <ClotheForm />
+        <AddClotheForm />
     </>
   )
 }
