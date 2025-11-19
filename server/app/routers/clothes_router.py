@@ -31,6 +31,18 @@ def get_all_clothes(supabase: Client = Depends(get_supabase)):
         return {"clothes": clothes}
     except Exception:
         raise HTTPException(status_code=404, detail="Impossible de récupérer les vêtements du catalogue")
+
+# On doit apparemment placer ici, parce que sinon Fastapi peut confondre avec avec /{item_id}
+@router.get("/categories")
+def get_categories():
+    """
+    Get all available categories from CategoryEnum
+    """
+    try:
+        categories = [{"value": category.value} for category in clothes.CategoryEnum]
+        return {"categories": categories}
+    except Exception:
+        raise HTTPException(status_code=500, detail="Impossible de trouver la catégorie")
     
 
 @router.get("/{item_id}")

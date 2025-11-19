@@ -1,11 +1,10 @@
 import './App.css'
-import AddClotheForm from "./components/AddClotheForm.jsx";
+import Clothes from "./components/Clothes.jsx";
 import { useState } from 'react'
-import Clothes, { testConnection } from './services/api.jsx'
+import { testConnection } from './services/api.jsx'
 
 function App() {
   const [message, setMessage] = useState('No connection yet');
-  const [clothes, setClothes] = useState([]);
 
   async function handleTestConnection() {
     try {
@@ -16,25 +15,18 @@ function App() {
     }
   }
 
-  async function handleClothes() {
-      try {
-          const clotheData = await Clothes()
-          setClothes(`Mon catalogue : ${clotheData}`)
-      } catch (error) {
-          setClothes(`Error : ${error.clothes}`)
-      }
-  }
-
   return (
     <>
-      <h1>Test de Connexion React ↔ FastAPI</h1>
+      <h1>The Virtual Closet</h1>
 
       <button onClick={handleTestConnection}>
         Tester la connexion au backend
       </button>
 
       <p>{message}</p>
-        <AddClotheForm />
+
+      {/* Le composant Clothes affiche la liste et fournit le contexte pour AddClotheForm */}
+      <Clothes />
     </>
   )
 }
