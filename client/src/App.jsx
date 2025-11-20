@@ -1,7 +1,7 @@
 import './App.css'
-import Clothes from "./components/Clothes.jsx";
+import Clothes from "./features/wardrobe/Clothes.jsx";
 import { useState } from 'react'
-import { testConnection } from './services/api.jsx'
+import { testConnection } from './shared/services/api.jsx'
 
 function App() {
   const [message, setMessage] = useState('No connection yet');

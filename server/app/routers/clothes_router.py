@@ -32,7 +32,7 @@ def get_all_clothes(supabase: Client = Depends(get_supabase)):
     except Exception:
         raise HTTPException(status_code=404, detail="Impossible de récupérer les vêtements du catalogue")
 
-# On doit apparemment placer ici, parce que sinon Fastapi peut confondre avec avec /{item_id}
+# On doit apparemment placer ici, parce que sinon Fastapi peut confondre avec /{item_id}
 @router.get("/categories")
 def get_categories():
     """
