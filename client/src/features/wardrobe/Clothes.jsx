@@ -1,6 +1,6 @@
 import { useEffect, useState, createContext } from "react";
 import AddClotheForm from "./AddClotheForm";
-import Tags from "./Tags.jsx";
+import Tags from "../tags/Tags.jsx";
 const API_BASE_URL = '/api'
 
 // Création du contexte pour partager les données entre composants
