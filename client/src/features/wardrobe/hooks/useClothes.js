@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-const API_BASE_URL = '/api'
+const API_BASE_URL = 'http://localhost:8000/api'
 
 export const useClothes = () => {
     const [clothes, setClothes] = useState([]);
