@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 """ from supabase import create_client, Client """
 import os
-from sqlmodel import create_engine, Session, SQLModel
+from sqlmodel import create_engine, Session
 
 load_dotenv()
 
