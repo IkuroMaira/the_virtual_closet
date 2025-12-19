@@ -2,7 +2,7 @@ import { useClothes } from "../hooks/useClothes.js";
 import { useEffect, useState } from "react";
 import { ClothesContext } from "../context/ClothesContext.jsx";
 
-const API_BASE_URL = '/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL
 
 export  default function ClothesDisplay() {
     const { clothes, fetchClothes, categories, fetchCategories } = useClothes()
