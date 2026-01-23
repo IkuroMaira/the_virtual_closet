@@ -5,7 +5,7 @@ import ClothesDisplay from '../features/wardrobe/components/ClothesDisplay.jsx'
 import TagsDisplay from '../features/tags/index.js'
 
 // index.jsx correspond à la route "/" (page d'accueil)
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/') ({
     component: HomePage,
 })
 
@@ -29,7 +29,6 @@ function HomePage() {
 
             <p>{message}</p>
 
-            <TagsDisplay />
             <ClothesDisplay />
         </>
     )
