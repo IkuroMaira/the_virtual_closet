@@ -2,7 +2,6 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { testConnection } from '../shared/services/api.jsx'
 import ClothesDisplay from '../features/wardrobe/components/ClothesDisplay.jsx'
-import TagsDisplay from '../features/tags/index.js'
 
 // index.jsx correspond à la route "/" (page d'accueil)
 export const Route = createFileRoute('/') ({
