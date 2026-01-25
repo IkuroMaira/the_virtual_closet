@@ -1,7 +1,5 @@
 import logging
-
 from fastapi import APIRouter, Depends, HTTPException
-from supabase import Client
 from app.db.database import get_session
 from app.repository import tags_repository
 from app.models.tags import Tags, TagCreate, TagPublic, TagUpdate
