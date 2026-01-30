@@ -15,7 +15,7 @@ export default function TagsDisplay() {
         <TagsContext.Provider value={{ tags, fetchTags }}>
             <div>
                 <h2>Est-ce qu'il y a des tags en base de données ?</h2>
-                {tags.length === 0 ? (
+                {tags.table_tags.length === 0 ? (
                     <p>Aucun tags pour le moment.</p>
                 ) : (
                     <p>Il y a { tags.table_tags.length } tags !</p>
@@ -24,10 +24,9 @@ export default function TagsDisplay() {
             <div>
                 <h3>Tous mes tags</h3>
                 {
-                    tags.table_tags.map((tag, index) => (
-                        <div key={index}>
-                            <p>tag.id</p>
-                            <p>Name : { tag.name }</p>
+                    tags.table_tags.map((tag) => (
+                        <div key={tag.id}>
+                            <h3>Name : { tag.name }</h3>
                             <p>Color : { tag.color }</p>
                             <p>Par défaut : { tag.by_default }</p>
                             <p>ID User : { tag.id_user }</p>

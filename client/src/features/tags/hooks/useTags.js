@@ -9,7 +9,7 @@ import dataTags from '../mockTags.json'
 export const useTags = () => {
     // À reprendre plus tard quand on refera la connexion au back avec ORM installé
 
-    const [ tags, setTags] = useState(dataTags)
+    const [tags, setTags] = useState(dataTags)
 
     return {
         tags,
