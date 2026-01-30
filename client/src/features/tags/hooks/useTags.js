@@ -1,33 +1,18 @@
 // Hooks customisé pour la logique
 // Ici toute la logique de gestion des tags
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
+// import { API_BASE_URL } from '../../../shared/services/api.jsx'
 
-const API_BASE_URL = 'http://localhost:8000/api';
+import dataTags from '../mockTags.json'
 
 export const useTags = () => {
-    const [tags, setTags] = useState([]);
+    // À reprendre plus tard quand on refera la connexion au back avec ORM installé
 
-    const fetchTags = useCallback(async () => {
-        try {
-            const response = await fetch(API_BASE_URL + '/tags/');
-
-            if (!response.ok) {
-                throw new Error(`Error HTTP! Status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log("Les tags sont récupérés", data);
-
-            setTags(data.tags || []);
-        } catch (error) {
-            console.error("Erreur lors de la récupération des tags", error);
-            setTags([]);
-        }
-    }, []);
+    const [ tags, setTags] = useState(dataTags)
 
     return {
         tags,
-        fetchTags
+        fetchTags: () => {}
     };
 };

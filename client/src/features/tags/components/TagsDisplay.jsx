@@ -18,8 +18,22 @@ export default function TagsDisplay() {
                 {tags.length === 0 ? (
                     <p>Aucun tags pour le moment.</p>
                 ) : (
-                    <p>Il y a des tags !</p>
+                    <p>Il y a { tags.table_tags.length } tags !</p>
                 )}
+            </div>
+            <div>
+                <h3>Tous mes tags</h3>
+                {
+                    tags.table_tags.map((tag, index) => (
+                        <div key={index}>
+                            <p>tag.id</p>
+                            <p>Name : { tag.name }</p>
+                            <p>Color : { tag.color }</p>
+                            <p>Par défaut : { tag.by_default }</p>
+                            <p>ID User : { tag.id_user }</p>
+                        </div>
+                    ))
+                }
             </div>
         </TagsContext.Provider>
     );

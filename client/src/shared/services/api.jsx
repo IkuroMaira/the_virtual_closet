@@ -1,4 +1,4 @@
-const API_BASE_URL = '/api'
+export const API_BASE_URL = '/api'
 
 /**
  * Function to test the connection with the backend
