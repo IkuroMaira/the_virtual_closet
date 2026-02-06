@@ -1,7 +1,6 @@
-from app.models.tags import Tags, TagCreate, TagPublic, TagUpdate
-from app.models.users import Users
+from supabase import Client
+from app.models import tags
 import logging
-from sqlmodel import Session, select, SQLModel
 
 logger = logging.getLogger(__name__)
 
@@ -9,7 +8,7 @@ logger = logging.getLogger(__name__)
 # SERVICE FUNCTIONS
 # ============================================
 
-def create_tag(tag: TagCreate, session: Session) -> TagPublic:
+def create_tag(tag: tags.Tag, supabase: Client):
     """
     Create a new tag in the database
 
@@ -24,35 +23,28 @@ def create_tag(tag: TagCreate, session: Session) -> TagPublic:
         Exception: If error during insertion
     """
     try:
-        tag_db = Tags.model_validate(tag.model_dump())
-        session.add(tag_db)
-        session.commit()
-        session.refresh(tag_db)
-        return TagPublic.model_validate(tag_db)
+        tag_dict = tag.model_dump()
+        response = supabase.table('tags').insert(tag_dict).execute()
+        return response.data
     except Exception as e:
-        logger.error(f"Erreur lors de l'insertion du tag en BD: {str(e)}")
+        logger.error(f"Erreur Supabase lors de l'insertion du tag en BD: {str(e)}")
         raise Exception("Erreur lors de la création du tag")
     
 
-def get_all_tags(session: Session) -> list[TagPublic]:
+def get_all_tags(supabase: Client):
     """
     Get all tags from the database
     """
     try:
-        statement = select(Tags)
-        """ 
-        Pourquoi .all() ?
-        Parce que session.exec() renvoie un Result qui doit être converti en liste. 
-        """
-        tags = session.exec(statement).all()
-        return [TagPublic.model_validate(tag) for tag in tags]
+        response = supabase.table('tags').select("*").execute()
+        return response.data
     except Exception as e:
-        logger.error(f"Erreur lors de la récupération des tags: {str(e)}")
+        logger.error(f"Erreur Supabase lors de la récupération des tags: {str(e)}")
         raise Exception("Erreur lors de la récupération des tags")    
     
 
-def get_tag(session: Session, tag_id: int) -> TagPublic | None:
-    """     
+def get_tag(supabase: Client, tag_id: int):
+    """
     Retrieve a tag by its ID
 
     Args:
@@ -66,16 +58,15 @@ def get_tag(session: Session, tag_id: int) -> TagPublic | None:
         Exception: If error during retrieval
     """
     try:
-        statement = select(Tags).where(Tags.id == tag_id)
-        tag = session.exec(statement).first()
-        return TagPublic.model_validate(tag)
+        response = supabase.table('tags').select("*").eq('id', tag_id).execute()
+        return response.data[0]
     except Exception as e:
         logger.error(f"Erreur Supabase lors de la récupération du tag: {str(e)}")
         raise Exception("Erreur lors de la récupération du tag")    
     
 
-def update_tag(tag_updated: TagUpdate, session: Session, tag_id: int) -> TagPublic:
-    """      
+def update_tag(tag: tags.Tag, supabase: Client, tag_id: int):
+    """ 
     Updating a tag
 
     Args:
@@ -89,20 +80,16 @@ def update_tag(tag_updated: TagUpdate, session: Session, tag_id: int) -> TagPubl
         Exception: If error during updating
     """
     try:
-        tag = session.get(Tags, tag_id)
-        tag_update = tag_updated.model_dump(exclude_unset=True)
-        tag.sqlmodel_update(tag_update)
-        session.add(tag)
-        session.commit()
-        session.refresh(tag)
-        return  TagPublic.model_validate(tag)
+        tag_dict = tag.model_dump()
+        response = supabase.table('tags').update(tag_dict).eq('id', tag_id).execute()
+        return response.data[0]
     except Exception as e:
         logger.error(f"Erreur Supabase lors de la modification du tag: {str(e)}")
         raise Exception("Erreur lors de la mise à jour du tag")
-     
+    
 
-def delete_tag(session: Session, tag_id: int) -> TagPublic:
-    """
+def delete_tag(supabase: Client, tag_id: int):
+    """ 
     Deleting a tag
 
     Args:
@@ -116,14 +103,9 @@ def delete_tag(session: Session, tag_id: int) -> TagPublic:
         Exception: If error during deletion
     """
     try:
-        statement = select(Tags).where(Tags.id == tag_id)
-        tag = session.exec(statement).one()
-        public_tag = TagPublic.model_validate(tag)
-        session.delete(tag)
-        session.commit()
-        return public_tag
+        response = supabase.table('tags').delete().eq('id', tag_id).execute()
+        return {'Tag supprimé avec succès': response}
     except Exception as e:
         logger.error(f"Erreur Supabase lors de la suppression du tag: {str(e)}")
-        raise Exception("Erreur lors de la suppression du tag")  
-  
+        raise Exception("Erreur lors de la suppression du tag")    
     
