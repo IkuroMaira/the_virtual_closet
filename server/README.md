@@ -4,17 +4,17 @@
 # FRENCH VERSION
 
 # Pré-requis avant de lancer le projet :
-| Composant  | Version recommandée | Lien | Commande |
-|------------|---------------------|---|---|
-| Python     | 3.14                | | `python --version` |
-| Pip | | | `pip --version` |
-| FastAPI    |                     | |
-| PostgreSQL | 15 ou 16            | |
+| Composant  | Version recommandée | Lien | Commande           |
+|------------|---------------------|------|--------------------|
+| Python     | 3.12                |      | `python --version` |
+| Pip        |                     |      | `pip --version`    |
+| FastAPI    |                     |      |                    |
+| PostgreSQL | 15 ou 16            |      |                    |
 
 # Installation
 
 ## Installation de l'environnement virtuel
-1. Installer la version 3.14 de Python
+1. Installer la version 3.12 de Python
 
 2. Créer l'environnement virtuel
 ```bash
@@ -46,7 +46,9 @@ pip install -r requirements.txt
 ## Configuration
 6. Créer un fichier `.env` à la racine du projet avec vos identifiants Supabase :
 ```env
-SUPABASE_URL=votre_url_supabase
+ENV='dev'
+DATABASE_LOCAL=votre_localhost
+SUPABASE_URL_PROD=votre_url_supabase
 SUPABASE_KEY=votre_clé_supabase
 ```
 
