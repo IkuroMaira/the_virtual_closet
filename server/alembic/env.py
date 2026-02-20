@@ -7,7 +7,9 @@ from alembic import context
 
 from dotenv import load_dotenv
 import os
+
 from sqlmodel import SQLModel
+
 from app.models import Clothes, Tags, Users, Brands
 
 # this is the Alembic Config object, which provides
