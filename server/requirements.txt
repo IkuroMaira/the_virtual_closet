@@ -10,6 +10,7 @@ fastapi-cli==0.0.21
 sqlmodel==0.0.31
 sqlalchemy>=2.0,<2.1
 psycopg2-binary>=2.9,<3.0
+alembic>=1.18,<2.0
 
 # Data validation
 pydantic==2.12.4
