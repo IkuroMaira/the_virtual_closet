@@ -1,6 +1,5 @@
 import logging
 from fastapi import APIRouter, Depends, HTTPException
-from supabase import Client
 from app.repository import clothes_repository
 from app.models.clothes import ClotheCreate, ClothePublic, ClotheUpdate
 from app.db.database import get_session
@@ -64,7 +63,7 @@ def get_item(item_id: int, session: Session = Depends(get_session)):
 
     
 @router.put("/{item_id}/update", response_model=ClothePublic)
-def update_item(item_id: int, item_updated: ClotheUpdate, session: Client = Depends(get_session)):
+def update_item(item_id: int, item_updated: ClotheUpdate, session: Session = Depends(get_session)):
     """
     Update a piece of clothe
     """

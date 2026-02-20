@@ -2,7 +2,7 @@
   "name": "the_virtual_closet",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.py",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
