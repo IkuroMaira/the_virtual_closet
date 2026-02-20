@@ -1,3 +1,5 @@
+.envcat >> .gitignore << 'EOF'
+
 # local
 .idea
 
