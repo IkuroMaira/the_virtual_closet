@@ -1,5 +1,7 @@
 # VIRTUAL CLOSET
-### Mis à jour le 15/02/2026 / Updated on 2026/02/15
+### Mis à jour le 20/02/2026 / Updated on 2026/02/20
+
+> Pour plus de détails sur le projet, consultez le [Wiki](https://github.com/IkuroMaira/the_virtual_closet/wiki)
 
 # FRENCH VERSION
 
@@ -75,10 +77,10 @@ DATABASE_URL_PROD='votre_url_postgresql_supabase'
 
 Le projet utilise la variable `ENV` pour déterminer l'environnement :
 
-| Variable | Valeur | Comportement |
-|----------|--------|--------------|
+| Variable | Valeur | Comportement                                                               |
+|----------|--------|----------------------------------------------------------------------------|
 | `ENV`    | `dev`  | Connexion à PostgreSQL local, création automatique des tables au démarrage |
-| `ENV`    | `prod` | Connexion à PostgreSQL Supabase, les tables existent déjà |
+| `ENV`    | `prod` | Connexion à PostgreSQL Supabase, les tables existent déjà                  |
 
 ## Lancer l'application backend
 
@@ -92,18 +94,25 @@ Documentation automatique : http://localhost:8000/docs
 
 > **Note** : On utilise `python -m fastapi` au lieu de `fastapi` directement pour éviter les conflits avec pyenv.
 
-## Gestion des tables (en dev)
+## Gestion des migrations avec Alembic
 
-Au premier lancement en mode `dev`, les tables sont créées automatiquement à partir des modèles SQLModel.
+Les migrations de base de données sont gérées par **Alembic**.
 
-Si vous modifiez les modèles (ajout/suppression de colonnes), les tables existantes ne sont pas mises à jour automatiquement. En attendant la mise en place d'un outil de migration (Alembic), il faut :
+> Wiki : https://github.com/IkuroMaira/the_virtual_closet/wiki/BACK-%E2%80%90-Alembic-:-Guide-des-migrations
 
-1. Supprimer les tables existantes
+### Commandes principales
+
+1. Générer une nouvelle migration après modification d'un modèle
 ```bash
-psql -d virtual_closet -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+alembic revision --autogenerate -m "description de la migration"
 ```
 
-2. Relancer l'application pour recréer les tables
+2. Appliquer les migrations
 ```bash
-fastapi dev main.py
+alembic upgrade head
+```
+
+3. Revenir à la migration précédente
+```bash
+alembic downgrade -1
 ```
