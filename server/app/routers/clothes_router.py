@@ -13,7 +13,7 @@ router = APIRouter(
 @router.post("/new_clothe", response_model=ClothePublic)
 def create_item(item: ClotheCreate, session: Session = Depends(get_session)):
     """
-    Create a new clothe
+    Add a new piece of clothing
     """
     try:
         new_item = clothes_repository.create_item(item, session)
@@ -33,24 +33,12 @@ def get_all_clothes(session: Session = Depends(get_session)):
     except Exception as e:
         logging.error(f"Erreur: {e}")
         raise HTTPException(status_code=404, detail="Impossible de récupérer les vêtements du catalogue")
-
-# On doit apparemment placer ici, parce que sinon Fastapi peut confondre avec /{item_id}
-@router.get("/categories")
-def get_categories():
-    """
-    Get all available categories from CategoryEnum
-    """
-    try:
-        categories = [{"value": category.value} for category in clothes.CategoryEnum]
-        return {"categories": categories}
-    except Exception:
-        raise HTTPException(status_code=500, detail="Impossible de trouver la catégorie")
     
 
 @router.get("/{item_id}", response_model=ClothePublic)
 def get_item(item_id: int, session: Session = Depends(get_session)):
     """ 
-    Get a clothe
+    Get a piece of clothing
     """ 
     try:
         clothe = clothes_repository.get_item(session, item_id)
