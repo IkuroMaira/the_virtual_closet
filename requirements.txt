@@ -1,0 +1,15 @@
+# The Virtual Closet - Dependencies
+# Python 3.14 required
+
+# FastAPI framework and server
+fastapi[standard]
+uvicorn[standard]
+
+# Database
+supabase>=2.0.0
+
+# Environment variables
+python-dotenv>=1.0.0
+
+# Data validation (included with FastAPI but listed for clarity)
+pydantic>=2.0.0
