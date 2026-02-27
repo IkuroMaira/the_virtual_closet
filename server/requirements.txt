@@ -4,16 +4,16 @@
 # FastAPI framework and server
 fastapi>=0.110,<1.0
 uvicorn[standard]>=0.27,<1.0
+fastapi-cli==0.0.21
 
 # Database
 sqlmodel==0.0.31
 sqlalchemy>=2.0,<2.1
 psycopg2-binary>=2.9,<3.0
+alembic>=1.18,<2.0
 
 # Data validation
 pydantic==2.12.4
 
 # Environment variables
 python-dotenv>=1.0,<2.0
-
-
