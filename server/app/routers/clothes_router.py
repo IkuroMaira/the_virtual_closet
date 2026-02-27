@@ -13,7 +13,7 @@ router = APIRouter(
 @router.post("/new_clothe", response_model=ClothePublic)
 def create_item(item: ClotheCreate, session: Session = Depends(get_session)):
     """
-    Create a new piece of clothe
+    Add a new piece of clothing
     """
     try:
         new_item = clothes_repository.create_item(item, session)
