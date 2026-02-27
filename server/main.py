@@ -2,8 +2,7 @@ from fastapi import FastAPI
 from app.routers.clothes_router import router as clothes_router 
 from app.routers.tags_router import router as tags_router 
 from app.routers.tags_clothes_router import router as tags_clothes_router
-from sqlmodel import SQLModel
-from app.db.database import engine
+
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
