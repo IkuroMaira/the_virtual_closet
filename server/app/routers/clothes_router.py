@@ -38,7 +38,7 @@ def get_all_clothes(session: Session = Depends(get_session)):
 @router.get("/{item_id}", response_model=ClothePublic)
 def get_item(item_id: int, session: Session = Depends(get_session)):
     """ 
-    Get a piece of clothe
+    Get a piece of clothing
     """ 
     try:
         clothe = clothes_repository.get_item(session, item_id)
