@@ -22,7 +22,7 @@ def seed_users(session: Session):
         return
 
     users = [
-        Users(pseudo="Marie", password="password123", email="marie@test.com"),
+        Users(pseudo="Majda", password="password123", email="majda@test.com"),
         Users(pseudo="Gwen", password="password123", email="gwen@test.com"),
     ]
     for user in users:
