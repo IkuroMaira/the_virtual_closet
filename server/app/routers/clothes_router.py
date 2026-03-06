@@ -11,49 +11,49 @@ router = APIRouter(
 )
 
 @router.post("/new_clothe", response_model=ClothePublic)
-def create_item(item: ClotheCreate, session: Session = Depends(get_session)):
+def add_item(item: ClotheCreate, session: Session = Depends(get_session)):
     """
-    Create a new clothe
+    Adding a new piece of clothing
     """
     try:
-        new_item = clothes_repository.create_item(item, session)
+        new_item = clothes_repository.add_item(item, session)
         return new_item
     except Exception as e:
         raise HTTPException(status_code=400, detail="Impossible d'insérer le vêtement")
     
 
 @router.get("/", response_model=list[ClothePublic])
-def get_all_clothes(session: Session = Depends(get_session)):
+def get_all_items(session: Session = Depends(get_session)):
     """ 
     Get all clothes from the wardrobe
     """ 
     try:
-        clothes = clothes_repository.get_all_clothes(session)
-        return clothes
+        items = clothes_repository.get_all_items(session)
+        return items
     except Exception as e:
         logging.error(f"Erreur: {e}")
         raise HTTPException(status_code=404, detail="Impossible de récupérer les vêtements du catalogue")
 
-# On doit apparemment placer ici, parce que sinon Fastapi peut confondre avec /{item_id}
+""" # On doit apparemment placer ici, parce que sinon Fastapi peut confondre avec /{item_id}
 @router.get("/categories")
 def get_categories():
-    """
+    
     Get all available categories from CategoryEnum
-    """
+    
     try:
         categories = [{"value": category.value} for category in clothes.CategoryEnum]
         return {"categories": categories}
     except Exception:
-        raise HTTPException(status_code=500, detail="Impossible de trouver la catégorie")
+        raise HTTPException(status_code=500, detail="Impossible de trouver la catégorie") """
     
 
 @router.get("/{item_id}", response_model=ClothePublic)
 def get_item(item_id: int, session: Session = Depends(get_session)):
     """ 
-    Get a clothe
+    Get a piece of clothing
     """ 
     try:
-        clothe = clothes_repository.get_item(session, item_id)
+        item = clothes_repository.get_item(session, item_id)
         if clothe is None:
             logging.error("Le vêtement n'existe pas")
 

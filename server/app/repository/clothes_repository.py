@@ -11,13 +11,13 @@ logger = logging.getLogger(__name__)
 # SERVICE FUNCTIONS
 # ============================================
 
-def create_item(clothe_data: ClotheCreate, session: Session) -> ClothePublic:
+def add_item(item_data: ClotheCreate, session: Session) -> ClothePublic:
     """
     Create a new clothing item in the database
 
     Args:
-        supabase (Client): Connected Supabase Client
-        clothe_data (Clothe): Clothing item data to insert
+        session (Session): SQLModel session connected to the database
+        item_data (Clothe): Clothing item data to insert
 
     Returns:
         dict: Created clothing item data
@@ -26,7 +26,7 @@ def create_item(clothe_data: ClotheCreate, session: Session) -> ClothePublic:
         Exception: If error during insertion
     """
     try:
-        clothe_db = Clothes.model_validate(clothe_data.model_dump())
+        clothe_db = Clothes.model_validate(item_data.model_dump())
         session.add(clothe_db)
         session.commit()
         session.refresh(clothe_db)
