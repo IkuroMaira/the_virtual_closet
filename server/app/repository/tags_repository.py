@@ -9,13 +9,13 @@ logger = logging.getLogger(__name__)
 # SERVICE FUNCTIONS
 # ============================================
 
-def create_tag(tag: TagCreate, session: Session) -> TagPublic:
+def add_tag(tag: TagCreate, session: Session) -> TagPublic:
     """
-    Create a new tag in the database
+    Add a new tag 
 
     Args:
-        supabase (Client): Connected Supabase client
-        tag (Clothe):  Tag data to insert
+        tag (TagCreate):  Tag data to insert
+        session (Session): SQLModel session connected to the database
 
     Returns:
         dict: Created tag item data
@@ -37,6 +37,15 @@ def create_tag(tag: TagCreate, session: Session) -> TagPublic:
 def get_all_tags(session: Session) -> list[TagPublic]:
     """
     Get all tags from the database
+
+    Args:
+        session (Session): SQLModel session connected to the database
+
+    Returns:
+        list: All tags
+
+    Raises:
+        Exception: If error during retrieval 
     """
     try:
         statement = select(Tags)
@@ -51,13 +60,13 @@ def get_all_tags(session: Session) -> list[TagPublic]:
         raise Exception("Erreur lors de la récupération des tags")    
     
 
-def get_tag(session: Session, tag_id: int) -> TagPublic | None:
+def get_tag(tag_id: int, session: Session) -> TagPublic | None:
     """     
     Retrieve a tag by its ID
 
     Args:
-        supabase (Client): Connected Supabase client
         tag_id (int): ID of the tag 
+        session (Session): SQLModel session connected to the database
 
     Returns:
         dict: Tag data or None if not found
@@ -70,20 +79,21 @@ def get_tag(session: Session, tag_id: int) -> TagPublic | None:
         tag = session.exec(statement).first()
         return TagPublic.model_validate(tag)
     except Exception as e:
-        logger.error(f"Erreur Supabase lors de la récupération du tag: {str(e)}")
+        logger.error(f"Erreur lors de la récupération du tag: {str(e)}")
         raise Exception("Erreur lors de la récupération du tag")    
     
 
-def update_tag(tag_updated: TagUpdate, session: Session, tag_id: int) -> TagPublic:
+def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session) -> TagPublic:
     """      
     Updating a tag
 
     Args:
-        tag : Tag data to update
-        supabase (Client): Connected Supabase client
         tag_id (int): ID of tag
+        tag_updated (TagUpdate) : Tag data to update
+        session (Session): SQLModel session connected to the database
+
     Returns:
-        
+        TagPublic object: Updated tag data
 
     Raises:
         Exception: If error during updating
@@ -97,7 +107,7 @@ def update_tag(tag_updated: TagUpdate, session: Session, tag_id: int) -> TagPubl
         session.refresh(tag)
         return  TagPublic.model_validate(tag)
     except Exception as e:
-        logger.error(f"Erreur Supabase lors de la modification du tag: {str(e)}")
+        logger.error(f"Erreur lors de la modification du tag: {str(e)}")
         raise Exception("Erreur lors de la mise à jour du tag")
      
 
@@ -106,12 +116,12 @@ def delete_tag(session: Session, tag_id: int) -> TagPublic:
     Deleting a tag
 
     Args:
-        supabase (Client): Connected Supabase client
+        session (Session): SQLModel session connected to the database
         tag_id (int): ID of the tag
 
     Returns:
-        string: Message
-
+       TagPublic object: The deleted tag data
+       
     Raises:
         Exception: If error during deletion
     """
@@ -123,7 +133,7 @@ def delete_tag(session: Session, tag_id: int) -> TagPublic:
         session.commit()
         return public_tag
     except Exception as e:
-        logger.error(f"Erreur Supabase lors de la suppression du tag: {str(e)}")
+        logger.error(f"Erreur lors de la suppression du tag: {str(e)}")
         raise Exception("Erreur lors de la suppression du tag")  
   
     
