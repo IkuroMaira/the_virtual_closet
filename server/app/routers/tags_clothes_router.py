@@ -17,8 +17,8 @@ def get_all_tags_from_item(item_id: int, session: Session = Depends(get_session)
     Get all tags assigned to a specific piece of clothing
     """
     try:
-        clothe_tags = tags_clothes_repository.get_all_tags_from_item(item_id, session)
-        return clothe_tags
+        item_tags = tags_clothes_repository.get_all_tags_from_item(item_id, session)
+        return item_tags
     
     except ValueError as e:
         error_msg = str(e)

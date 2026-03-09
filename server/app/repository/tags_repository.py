@@ -9,13 +9,13 @@ logger = logging.getLogger(__name__)
 # SERVICE FUNCTIONS
 # ============================================
 
-def create_tag(tag: TagCreate, session: Session) -> TagPublic:
+def add_tag(tag: TagCreate, session: Session) -> TagPublic:
     """
-    Create a new tag in the database
+    Add a new tag 
 
     Args:
-        session (Session): SQLModel session connected to the database
         tag (TagCreate):  Tag data to insert
+        session (Session): SQLModel session connected to the database
 
     Returns:
         dict: Created tag item data
@@ -60,13 +60,13 @@ def get_all_tags(session: Session) -> list[TagPublic]:
         raise Exception("Erreur lors de la récupération des tags")    
     
 
-def get_tag(session: Session, tag_id: int) -> TagPublic | None:
+def get_tag(tag_id: int, session: Session) -> TagPublic | None:
     """     
     Retrieve a tag by its ID
 
     Args:
-        session (Session): SQLModel session connected to the database
         tag_id (int): ID of the tag 
+        session (Session): SQLModel session connected to the database
 
     Returns:
         dict: Tag data or None if not found
@@ -83,14 +83,14 @@ def get_tag(session: Session, tag_id: int) -> TagPublic | None:
         raise Exception("Erreur lors de la récupération du tag")    
     
 
-def update_tag(tag_updated: TagUpdate, session: Session, tag_id: int) -> TagPublic:
+def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session) -> TagPublic:
     """      
     Updating a tag
 
     Args:
-        tag_updates (TagUpdate) : Tag data to update
-        session (Session): SQLModel session connected to the database
         tag_id (int): ID of tag
+        tag_updated (TagUpdate) : Tag data to update
+        session (Session): SQLModel session connected to the database
 
     Returns:
         TagPublic object: Updated tag data
@@ -121,6 +121,7 @@ def delete_tag(session: Session, tag_id: int) -> TagPublic:
 
     Returns:
        TagPublic object: The deleted tag data
+       
     Raises:
         Exception: If error during deletion
     """
