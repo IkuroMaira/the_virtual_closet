@@ -1,3 +1,5 @@
+// Ce hook récupère les données de mock
+
 import { useState } from "react";
 // import { API_BASE_URL } from '../../../shared/services/api.jsx'
 
