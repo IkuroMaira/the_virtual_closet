@@ -21,8 +21,8 @@ def get_all_tags_from_item(item_id: int, session: Session) -> list[Tags]:
     Raises: 
         ValueError: If item doesn't exist
     """
-    clothe = session.get(Clothes, item_id)
-    if not clothe:
+    item = session.get(Clothes, item_id)
+    if not item:
         raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
     statement = (
         select(Tags)
@@ -48,8 +48,8 @@ def add_tag_to_item(item_id: int, tag_id: int, user_id:int, session: Session) ->
     Raises:
         ValueError: If item/tag doesn't exist, or if an association exists already
     """
-    clothe = session.get(Clothes, item_id)
-    if not clothe:
+    item = session.get(Clothes, item_id)
+    if not item:
         raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
         
     tag = session.get(Tags, tag_id)

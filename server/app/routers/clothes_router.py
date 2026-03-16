@@ -11,72 +11,93 @@ router = APIRouter(
 )
 
 @router.post("/new_clothe", response_model=ClothePublic)
-def create_item(item: ClotheCreate, session: Session = Depends(get_session)):
+def add_item(item: ClotheCreate, session: Session = Depends(get_session)):
     """
-    Create a new piece of clothe
+    Adding a new piece of clothing
     """
     try:
-        new_item = clothes_repository.create_item(item, session)
+        new_item = clothes_repository.add_item(item, session)
         return new_item
-    except Exception as e:
-        raise HTTPException(status_code=400, detail="Impossible d'insérer le vêtement")
+    
+    except ValueError as e:
+        # Nom déjà existant
+        raise HTTPException(status_code=409, detail=str(e))
+    
+    except Exception:
+        logging.error(f"Erreur technique lors de l'insertion du vêtement {item.name}")
+        raise HTTPException(status_code=500, detail="Erreur interne lors de l'insertion de ce vêtement")
     
 
 @router.get("/", response_model=list[ClothePublic])
-def get_all_clothes(session: Session = Depends(get_session)):
+def get_all_items(session: Session = Depends(get_session)):
     """ 
-    Get all clothes from the wardrobe
+    Get all items from the wardrobe
     """ 
     try:
-        clothes = clothes_repository.get_all_clothes(session)
-        return clothes
-    except Exception as e:
-        logging.error(f"Erreur: {e}")
-        raise HTTPException(status_code=404, detail="Impossible de récupérer les vêtements du catalogue")
+        items = clothes_repository.get_all_items(session)
+        return items
+    
+    except Exception:
+        logging.error(f"Erreur technique lors de la récupération des vêtements du catalogue")
+        raise HTTPException(status_code=500, detail="Erreur interne lors de la récupération des vêtements du catalogue")
     
 
 @router.get("/{item_id}", response_model=ClothePublic)
 def get_item(item_id: int, session: Session = Depends(get_session)):
     """ 
-    Get a piece of clothe
+    Get a piece of clothing
     """ 
     try:
-        clothe = clothes_repository.get_item(session, item_id)
-        if clothe is None:
-            logging.error("Le vêtement n'existe pas")
+        item = clothes_repository.get_item(item_id, session)
+        return item
+    
+    except ValueError as e:
+        # Vêtement inexistant
+        raise HTTPException(status_code=404, detail=str(e))
 
-        return clothe
     except Exception:
-        raise HTTPException(status_code=404, detail="Impossible de trouver le vêtement")
+        logging.error(f"Erreur technique lors de la récupération du vêtement {item_id}")
+        raise HTTPException(status_code=500, detail="Erreur interne lors de la récupération de ce vêtement")
 
     
 @router.put("/{item_id}/update", response_model=ClothePublic)
 def update_item(item_id: int, item_updated: ClotheUpdate, session: Session = Depends(get_session)):
     """
-    Update a piece of clothe
+    Update a piece of clothing
     """
     try:
-        updated_item = clothes_repository.update_item(item_updated, session, item_id)
-       
-        if updated_item is None:
-            logging.error("Le vêtement n'existe pas")
-
+        updated_item = clothes_repository.update_item(item_id, item_updated, session)
         return updated_item
+        
+    except ValueError as e:
+        error_msg = str(e)
+        # Vêtement inexistant
+        if "n'existe pas" in error_msg:
+            raise HTTPException(status_code=404, detail=str(e))
+        elif "existe déjà" in error_msg:
+            # Nom déjà existant
+            raise HTTPException(status_code=409, detail=str(e))
+        else:
+            raise HTTPException(status_code=400, detail=str(e))
+
     except Exception:
-        raise HTTPException(status_code=500, detail="Impossible de mettre à jour le vêtement")
+        logging.error(f"Erreur technique lors de la mise à jour du vêtement {item_id}")
+        raise HTTPException(status_code=500, detail="Erreur interne lors de la mise à jour de ce vêtement")
     
 
 @router.delete("/{item_id}/delete", response_model=ClothePublic)
 def delete_item(item_id: int, session: Session = Depends(get_session)):
     """ 
-    Delete a piece of clothe
+    Delete a piece of clothing
     """ 
     try:
-        deleted_item = clothes_repository.delete_item(session, item_id)
-
-        if deleted_item is None:
-            logging.error("Le vêtement n'existe pas")
-
+        deleted_item = clothes_repository.delete_item(item_id, session)
         return deleted_item
+    
+    except ValueError as e:
+        # Vêtement inexistant
+        raise HTTPException(status_code=404, detail=str(e))
+    
     except Exception:
-        raise HTTPException(status_code=500, detail="Impossible de supprimer le vêtement")
+        logging.error(f"Erreur technique lors de la suppression du vêtement {item_id}")
+        raise HTTPException(status_code=500, detail="Erreur interne lors de la suppression de ce vêtement")
