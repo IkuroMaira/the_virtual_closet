@@ -11,127 +11,134 @@ logger = logging.getLogger(__name__)
 # SERVICE FUNCTIONS
 # ============================================
 
-def create_item(clothe_data: ClotheCreate, session: Session) -> ClothePublic:
+def add_item(item: ClotheCreate, session: Session) -> ClothePublic:
     """
-    Create a new clothing item in the database
+    Add a new piece of clothing 
 
     Args:
+        item (ClotheCreate): Clothing item data to insert
         session (Session): SQLModel session connected to the database
-        clothe_data (ClotheCreate): Clothing item data to insert
 
     Returns:
         dict: Created clothing item data
 
     Raises:
-        Exception: If error during insertion
+        ValueError: If item name already exist
     """
-    try:
-        clothe_db = Clothes.model_validate(clothe_data.model_dump())
-        session.add(clothe_db)
-        session.commit()
-        session.refresh(clothe_db)
-        return ClothePublic.model_validate(clothe_db)
-    except Exception as e:
-        logger.error(f"Erreur lors de l'insertion: {str(e)}")
-        raise Exception("Erreur lors de la création du vêtement")
+    existing = session.exec(
+        select(Clothes)
+        .where(Clothes.name == item.name)
+    ).first()
+
+    if existing:
+        raise ValueError(f"Un vêtement nommé '{item.name}' existe déjà")
+
+    item_db = Clothes.model_validate(item.model_dump())
+    session.add(item_db)
+    session.commit()
+    session.refresh(item_db)
+
+    return ClothePublic.model_validate(item_db)
     
 
-def get_all_clothes(session: Session) -> list[ClothePublic]:
+def get_all_items(session: Session) -> list[ClothePublic]:
     """ 
-    Get all clothes from the database
+    Get all items from the wardrobe
 
     Args:
         session (Session): SQLModel session connected to the database
 
     Returns:
-        list: All the clothes
-
-    Raises:
-        Exception: If error during retrieval
+        list: All the items (empty list if none)
     """ 
-    try:
-        statement = select(Clothes)
-        clothes = session.exec(statement).all()
-        return [ClothePublic.model_validate(clothe) for clothe in clothes]
-    except Exception as e:
-        logger.error(f"Erreur lors de la récupération du catalogue: {str(e)}")
-        raise Exception("Erreur lors de la récupération des vêtements")
+    statement = select(Clothes)
+    items = session.exec(statement).all()
+
+    return [ClothePublic.model_validate(item) for item in items]
 
 
-def get_item(session: Session, item_id: int) -> ClothePublic | None:
+def get_item(item_id: int, session: Session) -> ClothePublic:
     """ 
-    Retrieve a single clothing item by its ID
+    Get a piece of clothing by its ID
 
     Args:
-        session (Session): SQLModel session connected to the database
         item_id (int): ID of the clothing item
+        session (Session): SQLModel session connected to the database
 
     Returns:
-        ClothePublic object or None: Clothing item data or None if not found
+        ClothePublic object: Clothing item data
 
     Raises:
-        Exception: If error during retrieval
+        ValueError: If clothing item doesn't exist
     """ 
-    try:
-        statement = select(Clothes).where(Clothes.id == item_id)
-        item = session.exec(statement).first()
-        if item is None:
-            return None
-        return ClothePublic.model_validate(item)
-    except Exception as e:
-        logger.error(f"Erreur lors de la récupération du vêtement: {str(e)}")
-        raise Exception("Erreur lors de la récupération du vêtement")
+    statement = select(Clothes).where(Clothes.id == item_id)
+    item = session.exec(statement).first()
+
+    if not item:
+        raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
+    
+    return ClothePublic.model_validate(item)
     
 
-def update_item(clothe_updated: ClotheUpdate, session: Session, item_id: int) -> ClothePublic:
+def update_item(item_id: int, item_updated: ClotheUpdate, session: Session) -> ClothePublic:
     """ 
     Updating a piece of clothe
 
     Args:
-        session (Session): SQLModel session connected to the database
         item_id (int): ID of the clothing item
-        clothe_updated (ClotheUpdate): Fields to update
+        item_updated (ClotheUpdate): Fields to update
+        session (Session): SQLModel session connected to the database
 
     Returns:
         ClothePublic object: Updated clothing item data
 
     Raises:
-        Exception: If error during updating
+        ValueError: If item doesn't exist or name already exists
     """ 
-    try:
-        clothe = session.get(Clothes, item_id)
-        clothe_update = clothe_updated.model_dump(exclude_unset=True)
-        clothe.sqlmodel_update(clothe_update)
-        session.add(clothe)
-        session.commit()
-        session.refresh(clothe)
-        return  ClothePublic.model_validate(clothe)
-    except Exception as e:
-        logger.error(f"Erreur lors de la modification: {str(e)}")
-        raise Exception("Erreur lors de la mise à jour du vêtement")
-    
+    item = session.get(Clothes, item_id)
 
-def delete_item(session: Session, item_id: int) -> ClothePublic:
+    if not item:
+        raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
+    
+    if item_updated.name and item_updated.name != item.name:
+        existing = session.exec(
+            select(Clothes)
+            .where(Clothes.name == item_updated.name)
+        ).first()
+        if existing:
+            raise ValueError(f"Un vêtement nommé '{item_updated.name}' existe déjà")
+        
+    item_update = item_updated.model_dump(exclude_unset=True)
+    item.sqlmodel_update(item_update)
+    session.add(item)
+    session.commit()
+    session.refresh(item)
+
+    return ClothePublic.model_validate(item)
+
+    
+def delete_item(item_id: int, session: Session) -> ClothePublic:
     """ 
-    Deleting a piece of clothe
+    Deleting a piece of clothing
 
     Args:
-        session (Session): SQLModel session connected to the database
         item_id (int): ID of the clothing item
+        session (Session): SQLModel session connected to the database
 
     Returns:
         ClothePublic object: The deleted clothing item data
 
     Raises:
-        Exception: If error during deletion
+        ValueError: If clothing item doesn't exist
     """ 
-    try:
-        statement = select(Clothes).where(Clothes.id == item_id)
-        item = session.exec(statement).one()
-        public_clothe = ClothePublic.model_validate(item)
-        session.delete(item)
-        session.commit()
-        return public_clothe
-    except Exception as e:
-        logger.error(f"Erreur lors de la suppression du vêtement: {str(e)}")
-        raise Exception("Erreur lors de la suppression du vêtement")
+    statement = select(Clothes).where(Clothes.id == item_id)
+    item = session.exec(statement).first()
+    
+    if not item:
+        raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
+    
+    public_item = ClothePublic.model_validate(item)
+    session.delete(item)
+    session.commit()
+
+    return public_item
