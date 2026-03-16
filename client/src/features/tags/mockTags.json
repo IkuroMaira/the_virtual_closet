@@ -1,0 +1,25 @@
+{
+  "table_tags": [
+    {
+      "id": 1,
+      "name": "Mes favoris",
+      "color": "yellow",
+      "by_default": true,
+      "id_user": 1
+    },
+    {
+      "id": 2,
+      "name": "Travail",
+      "color": "blue",
+      "by_default": true,
+      "id_user": 1
+    },
+    {
+      "id": 3,
+      "name": "Travail",
+      "color": "grey",
+      "by_default": true,
+      "id_user": 2
+    }
+  ]
+}
