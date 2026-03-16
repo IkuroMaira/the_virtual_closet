@@ -5,9 +5,11 @@ updates:
     directory: "/client"
     schedule:
       interval: "weekly"
+    target-branch: "release-1.0.1"
 
   # Dependencies back (server) - adapt the ecosystem to your situation
   - package-ecosystem: "pip"
     directory: "/server"
     schedule:
       interval: "weekly"
+    target-branch: "release-1.0.1"
