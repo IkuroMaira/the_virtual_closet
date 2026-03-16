@@ -32,7 +32,7 @@ def get_all_tags_from_item(item_id: int, session: Session = Depends(get_session)
         raise HTTPException(status_code=500, detail="Erreur interne lors de la récupèreration des tags de ce vêtement")
 
 
-@router.post("/{clothe_id}/tags/{tag_id}", response_model=Tags_Clothes)
+@router.post("/{item_id}/tags/{tag_id}", response_model=Tags_Clothes)
 def add_tag_to_item(item_id: int, tag_id: int, user_id: int = 2, session: Session = Depends(get_session)):
     """      
     Create a tag association with a piece of clothing
@@ -57,7 +57,7 @@ def add_tag_to_item(item_id: int, tag_id: int, user_id: int = 2, session: Sessio
         raise HTTPException(status_code=500, detail="Erreur interne lors de l'ajout du tag à un vêtement")
 
 
-@router.delete("/{clothe_id}/tags/{tag_id}", response_model=Tags_Clothes)
+@router.delete("/{item_id}/tags/{tag_id}", response_model=Tags_Clothes)
 def remove_tag_from_item(item_id: int, tag_id: int, session: Session = Depends(get_session)):
     """          
     Delete a tag association with a piece of clothing

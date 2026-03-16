@@ -24,7 +24,7 @@ def add_item(item: ClotheCreate, session: Session = Depends(get_session)):
         raise HTTPException(status_code=409, detail=str(e))
     
     except Exception:
-        logging.error(f"Erreur technique lors de l'insertion du vêtement {item}")
+        logging.error(f"Erreur technique lors de l'insertion du vêtement {item.name}")
         raise HTTPException(status_code=500, detail="Erreur interne lors de l'insertion de ce vêtement")
     
 
@@ -36,6 +36,7 @@ def get_all_items(session: Session = Depends(get_session)):
     try:
         items = clothes_repository.get_all_items(session)
         return items
+    
     except Exception:
         logging.error(f"Erreur technique lors de la récupération des vêtements du catalogue")
         raise HTTPException(status_code=500, detail="Erreur interne lors de la récupération des vêtements du catalogue")
@@ -51,7 +52,7 @@ def get_item(item_id: int, session: Session = Depends(get_session)):
         return item
     
     except ValueError as e:
-    # Vêtement inexistant
+        # Vêtement inexistant
         raise HTTPException(status_code=404, detail=str(e))
 
     except Exception:
@@ -70,12 +71,15 @@ def update_item(item_id: int, item_updated: ClotheUpdate, session: Session = Dep
         
     except ValueError as e:
         error_msg = str(e)
-    # Vêtement inexistant
+        # Vêtement inexistant
         if "n'existe pas" in error_msg:
             raise HTTPException(status_code=404, detail=str(e))
-        else:
+        elif "existe déjà" in error_msg:
             # Nom déjà existant
             raise HTTPException(status_code=409, detail=str(e))
+        else:
+            raise HTTPException(status_code=400, detail=str(e))
+
     except Exception:
         logging.error(f"Erreur technique lors de la mise à jour du vêtement {item_id}")
         raise HTTPException(status_code=500, detail="Erreur interne lors de la mise à jour de ce vêtement")
@@ -91,7 +95,7 @@ def delete_item(item_id: int, session: Session = Depends(get_session)):
         return deleted_item
     
     except ValueError as e:
-    # Vêtement inexistant
+        # Vêtement inexistant
         raise HTTPException(status_code=404, detail=str(e))
     
     except Exception:

@@ -21,19 +21,24 @@ def add_tag(tag: TagCreate, session: Session) -> TagPublic:
         dict: Created tag item data
 
     Raises:
-        Exception: If error during insertion
+        ValueError: If tag name already exist
     """
-    try:
-        tag_db = Tags.model_validate(tag.model_dump())
-        session.add(tag_db)
-        session.commit()
-        session.refresh(tag_db)
-        return TagPublic.model_validate(tag_db)
-    except Exception as e:
-        logger.error(f"Erreur lors de l'insertion du tag en BD: {str(e)}")
-        raise Exception("Erreur lors de la création du tag")
-    
+    existing = session.exec(
+        select(Tags)
+        .where(Tags.name == tag.name)
+    ).first()
 
+    if existing:
+        raise ValueError(f"Un tag nommé '{tag.name}' existe déjà")
+    
+    tag_db = Tags.model_validate(tag.model_dump())
+    session.add(tag_db)
+    session.commit()
+    session.refresh(tag_db)
+
+    return TagPublic.model_validate(tag_db)
+
+    
 def get_all_tags(session: Session) -> list[TagPublic]:
     """
     Get all tags from the database
@@ -42,25 +47,19 @@ def get_all_tags(session: Session) -> list[TagPublic]:
         session (Session): SQLModel session connected to the database
 
     Returns:
-        list: All tags
-
-    Raises:
-        Exception: If error during retrieval 
+        list: All tags (empty list if none) 
     """
-    try:
-        statement = select(Tags)
-        """ 
-        Pourquoi .all() ?
-        Parce que session.exec() renvoie un Result qui doit être converti en liste. 
-        """
-        tags = session.exec(statement).all()
-        return [TagPublic.model_validate(tag) for tag in tags]
-    except Exception as e:
-        logger.error(f"Erreur lors de la récupération des tags: {str(e)}")
-        raise Exception("Erreur lors de la récupération des tags")    
-    
+    statement = select(Tags)
+    tags = session.exec(statement).all()
+    """ 
+    Pourquoi .all() ?
+    Parce que session.exec() renvoie un Result qui doit être converti en liste. 
+    """
 
-def get_tag(tag_id: int, session: Session) -> TagPublic | None:
+    return [TagPublic.model_validate(tag) for tag in tags]
+    
+    
+def get_tag(tag_id: int, session: Session) -> TagPublic:
     """     
     Retrieve a tag by its ID
 
@@ -69,19 +68,19 @@ def get_tag(tag_id: int, session: Session) -> TagPublic | None:
         session (Session): SQLModel session connected to the database
 
     Returns:
-        dict: Tag data or None if not found
+        dict: Tag data
 
     Raises:
-        Exception: If error during retrieval
+        ValueError: If tag doesn't exist
     """
-    try:
-        statement = select(Tags).where(Tags.id == tag_id)
-        tag = session.exec(statement).first()
-        return TagPublic.model_validate(tag)
-    except Exception as e:
-        logger.error(f"Erreur lors de la récupération du tag: {str(e)}")
-        raise Exception("Erreur lors de la récupération du tag")    
-    
+    statement = select(Tags).where(Tags.id == tag_id)
+    tag = session.exec(statement).first()
+
+    if not tag:
+        raise ValueError(f"Le tag avec l'ID {tag_id} n'existe pas")
+
+    return TagPublic.model_validate(tag)
+      
 
 def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session) -> TagPublic:
     """      
@@ -96,22 +95,31 @@ def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session) -> TagPubl
         TagPublic object: Updated tag data
 
     Raises:
-        Exception: If error during updating
+        ValueError: If tag doesn't exist or name already exists
     """
-    try:
-        tag = session.get(Tags, tag_id)
-        tag_update = tag_updated.model_dump(exclude_unset=True)
-        tag.sqlmodel_update(tag_update)
-        session.add(tag)
-        session.commit()
-        session.refresh(tag)
-        return  TagPublic.model_validate(tag)
-    except Exception as e:
-        logger.error(f"Erreur lors de la modification du tag: {str(e)}")
-        raise Exception("Erreur lors de la mise à jour du tag")
+    tag = session.get(Tags, tag_id)
+
+    if not tag:
+        raise ValueError(f"Le tag avec l'ID {tag_id} n'existe pas")
+    
+    if tag_updated.name and tag_updated.name != tag.name:
+        existing = session.exec(
+            select(Tags)
+            .where(Tags.name == tag_updated.name)
+        ).first()
+        if existing:
+            raise ValueError(f"Un tag nommé '{tag_updated.name}' existe déjà")
+
+    tag_update = tag_updated.model_dump(exclude_unset=True)
+    tag.sqlmodel_update(tag_update)
+    session.add(tag)
+    session.commit()
+    session.refresh(tag)
+
+    return  TagPublic.model_validate(tag)
      
 
-def delete_tag(session: Session, tag_id: int) -> TagPublic:
+def delete_tag(tag_id: int, session: Session) -> TagPublic:
     """
     Deleting a tag
 
@@ -123,17 +131,19 @@ def delete_tag(session: Session, tag_id: int) -> TagPublic:
        TagPublic object: The deleted tag data
        
     Raises:
-        Exception: If error during deletion
+         ValueError: If tag doesn't exist 
     """
-    try:
-        statement = select(Tags).where(Tags.id == tag_id)
-        tag = session.exec(statement).one()
-        public_tag = TagPublic.model_validate(tag)
-        session.delete(tag)
-        session.commit()
-        return public_tag
-    except Exception as e:
-        logger.error(f"Erreur lors de la suppression du tag: {str(e)}")
-        raise Exception("Erreur lors de la suppression du tag")  
+    statement = select(Tags).where(Tags.id == tag_id)
+    tag = session.exec(statement).first()
+    
+    if not tag:
+        raise ValueError(f"Le tag avec l'ID {tag_id} n'existe pas")
+    
+    public_tag = TagPublic.model_validate(tag)
+    session.delete(tag)
+    session.commit()
+
+    return public_tag
+
   
     

@@ -23,12 +23,13 @@ def add_item(item: ClotheCreate, session: Session) -> ClothePublic:
         dict: Created clothing item data
 
     Raises:
-        Exception: If error during insertion
+        ValueError: If item name already exist
     """
     existing = session.exec(
         select(Clothes)
         .where(Clothes.name == item.name)
     ).first()
+
     if existing:
         raise ValueError(f"Un vêtement nommé '{item.name}' existe déjà")
 
@@ -48,13 +49,11 @@ def get_all_items(session: Session) -> list[ClothePublic]:
         session (Session): SQLModel session connected to the database
 
     Returns:
-        list: All the items
-
-    Raises:
-        Exception: If error during retrieval
+        list: All the items (empty list if none)
     """ 
     statement = select(Clothes)
     items = session.exec(statement).all()
+
     return [ClothePublic.model_validate(item) for item in items]
 
 
@@ -67,17 +66,17 @@ def get_item(item_id: int, session: Session) -> ClothePublic:
         session (Session): SQLModel session connected to the database
 
     Returns:
-        ClothePublic object or None: Clothing item data or None if not found
+        ClothePublic object: Clothing item data
 
     Raises:
         ValueError: If clothing item doesn't exist
     """ 
-    item = session.get(Clothes, item_id)
+    statement = select(Clothes).where(Clothes.id == item_id)
+    item = session.exec(statement).first()
+
     if not item:
         raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
     
-    statement = select(Clothes).where(Clothes.id == item_id)
-    item = session.exec(statement).first()
     return ClothePublic.model_validate(item)
     
 
@@ -94,9 +93,10 @@ def update_item(item_id: int, item_updated: ClotheUpdate, session: Session) -> C
         ClothePublic object: Updated clothing item data
 
     Raises:
-        Exception: If error during updating
+        ValueError: If item doesn't exist or name already exists
     """ 
     item = session.get(Clothes, item_id)
+
     if not item:
         raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
     
@@ -113,10 +113,10 @@ def update_item(item_id: int, item_updated: ClotheUpdate, session: Session) -> C
     session.add(item)
     session.commit()
     session.refresh(item)
+
     return ClothePublic.model_validate(item)
 
     
-
 def delete_item(item_id: int, session: Session) -> ClothePublic:
     """ 
     Deleting a piece of clothing
@@ -131,12 +131,12 @@ def delete_item(item_id: int, session: Session) -> ClothePublic:
     Raises:
         ValueError: If clothing item doesn't exist
     """ 
-    item = session.get(Clothes, item_id)
+    statement = select(Clothes).where(Clothes.id == item_id)
+    item = session.exec(statement).first()
+    
     if not item:
         raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
     
-    statement = select(Clothes).where(Clothes.id == item_id)
-    item = session.exec(statement).one()
     public_item = ClothePublic.model_validate(item)
     session.delete(item)
     session.commit()
