@@ -5,7 +5,7 @@ import { ClothesContext } from "../context/ClothesContext.jsx";
 
 export default function ClothesDisplay() {
     const { clothes, fetchClothes } = useClothes()
-    // userClothes va chercher la liste des vêtements depuis le mock
+    // userClothes va chercher la liste des vêtements depuis l'api
     // ClothesDisplay reçoit la liste et boucle dessus avec le .map
 
     useEffect(() => {
@@ -17,11 +17,11 @@ export default function ClothesDisplay() {
         <>
             <ClothesContext.Provider value={{ clothes, fetchClothes }}>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {clothes.table_clothes.length === 0 ? (
+                    {clothes.length === 0 ? (
                         <p>Aucun vêtement dans votre garde-robe pour le moment.</p>
                     ) : (
-                        clothes.table_clothes.map(clothe =>
-                            <ClothingCard key={clothe.id} clothe={clothe} />
+                        clothes.map(item =>
+                            <ClothingCard key={item.id} clothe={item} />
                         )
                     )}
                 </div>

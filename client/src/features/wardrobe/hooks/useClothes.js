@@ -1,17 +1,16 @@
-// Ce hook récupère les données de mock
-
 import { useState } from "react";
-// import { API_BASE_URL } from '../../../shared/services/api.jsx'
 
-import dataClothes from '../mockClothes.json'
+import { getAllClothes } from "@/shared/services/clothes_api.jsx"
 
 export const useClothes = () => {
-    // À reprendre plus tard quand on refera la connexion au back avec ORM installé
 
-    const [clothes, setClothes] = useState(dataClothes);
+    const [clothes, setClothes] = useState([]);
 
     return {
         clothes,
-        fetchClothes: () => {},
+        fetchClothes: async () => {
+            const data = await getAllClothes();
+            setClothes(data)
+        },
     }
 }

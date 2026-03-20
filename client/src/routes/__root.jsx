@@ -1,6 +1,6 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import Header from '../layouts/Header'
+import Header from '../layouts/Header.jsx'
 
 // __root.jsx est le layout principal qui englobe toutes les routes
 export const Route = createRootRoute({
