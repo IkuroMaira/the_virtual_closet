@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TagsRouteImport } from './routes/tags'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ClothesIdRouteImport } from './routes/clothes/$id'
 
 const TagsRoute = TagsRouteImport.update({
   id: '/tags',
@@ -22,31 +23,40 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ClothesIdRoute = ClothesIdRouteImport.update({
+  id: '/clothes/$id',
+  path: '/clothes/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/tags': typeof TagsRoute
+  '/clothes/$id': typeof ClothesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/tags': typeof TagsRoute
+  '/clothes/$id': typeof ClothesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/tags': typeof TagsRoute
+  '/clothes/$id': typeof ClothesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/tags'
+  fullPaths: '/' | '/tags' | '/clothes/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/tags'
-  id: '__root__' | '/' | '/tags'
+  to: '/' | '/tags' | '/clothes/$id'
+  id: '__root__' | '/' | '/tags' | '/clothes/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   TagsRoute: typeof TagsRoute
+  ClothesIdRoute: typeof ClothesIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/clothes/$id': {
+      id: '/clothes/$id'
+      path: '/clothes/$id'
+      fullPath: '/clothes/$id'
+      preLoaderRoute: typeof ClothesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   TagsRoute: TagsRoute,
+  ClothesIdRoute: ClothesIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
