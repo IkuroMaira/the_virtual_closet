@@ -1,12 +1,12 @@
 import { useClothes } from "../hooks/useClothes.js";
 import { useEffect } from "react";
-import ClothingCard from "./ClothingCard.jsx"
+import ClothingCard from "../components/ClothingCard.jsx"
 import { ClothesContext } from "../context/ClothesContext.jsx";
 
-export default function ClothesDisplay() {
+export default function WardrobeView() {
     const { clothes, fetchClothes } = useClothes()
     // userClothes va chercher la liste des vêtements depuis l'api
-    // ClothesDisplay reçoit la liste et boucle dessus avec le .map
+    // WardrobeView reçoit la liste et boucle dessus avec le .map
 
     useEffect(() => {
         fetchClothes();
@@ -21,7 +21,7 @@ export default function ClothesDisplay() {
                         <p>Aucun vêtement dans votre garde-robe pour le moment.</p>
                     ) : (
                         clothes.map(item =>
-                            <ClothingCard key={item.id} clothe={item} />
+                            <ClothingCard key={item.id} clothing={item} />
                         )
                     )}
                 </div>
