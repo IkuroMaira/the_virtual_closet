@@ -60,7 +60,7 @@ def get_tag(tag_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=500, detail="Erreur interne lors de la récupération du tag") 
     
 
-@router.put("/{tag_id}/update", response_model=TagPublic)
+@router.patch("/{tag_id}/update", response_model=TagPublic)
 def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session = Depends(get_session)):
     """  
     Update a tag

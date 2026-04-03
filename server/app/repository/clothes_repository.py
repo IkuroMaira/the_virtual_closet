@@ -3,6 +3,7 @@ import logging
 from sqlmodel import Session, select, SQLModel
 from app.models.brands import Brands
 from app.models.users import Users
+from datetime import datetime
 
 
 logger = logging.getLogger(__name__)
@@ -109,6 +110,7 @@ def update_item(item_id: int, item_updated: ClotheUpdate, session: Session) -> C
             raise ValueError(f"Un vêtement nommé '{item_updated.name}' existe déjà")
         
     item_update = item_updated.model_dump(exclude_unset=True)
+    item.updated_at = datetime.now()
     item.sqlmodel_update(item_update)
     session.add(item)
     session.commit()

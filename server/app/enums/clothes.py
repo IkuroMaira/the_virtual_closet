@@ -37,6 +37,9 @@ class SizeEnum(str, Enum):
 class StatusEnum(str, Enum):
     clean = "Propre"
     dirty = "Sale"
+    sold = "Vendu"
+    given = "Donné"
+    asset = "Actif"
 
 class StyleEnum(str, Enum):
     boheme = "Bohème"
@@ -51,18 +54,6 @@ class SeasonEnum(str, Enum):
     summer = "Été"
     autumn = "Automne"
     winter = "Hiver"
-
-class NoteEnum(int, Enum):
-    one = 1
-    two = 2
-    three = 3
-    four = 4
-    five = 5
-    six = 6
-    seven = 7
-    eight = 8
-    nine = 9
-    ten = 10
 
 class ColorEnum(str, Enum):
     black = "Noir"
