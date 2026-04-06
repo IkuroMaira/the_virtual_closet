@@ -60,7 +60,7 @@ def get_item(item_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=500, detail="Erreur interne lors de la récupération de ce vêtement")
 
     
-@router.put("/{item_id}/update", response_model=ClothePublic)
+@router.patch("/{item_id}/update", response_model=ClothePublic)
 def update_item(item_id: int, item_updated: ClotheUpdate, session: Session = Depends(get_session)):
     """
     Update a piece of clothing

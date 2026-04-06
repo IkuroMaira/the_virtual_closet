@@ -4,7 +4,6 @@ from app.enums.clothes import (
     StatusEnum,
     StyleEnum,
     SeasonEnum,
-    NoteEnum,
     ColorEnum,
     MaterialsEnum
 )
