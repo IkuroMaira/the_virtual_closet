@@ -25,3 +25,5 @@ src/routeTree.gen.ts
 *.njsproj
 *.sln
 *.sw?
+
+src/routeTree.gen.ts
