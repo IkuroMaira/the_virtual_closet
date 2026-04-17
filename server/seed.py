@@ -1,13 +1,16 @@
 """
 Script de seed pour peupler la base de données locale avec des données de test.
 
+Prérequis : le schéma doit être à jour via Alembic.
+    alembic upgrade head
+
 Usage:
     cd server
     python seed.py
 """
 
 from sqlmodel import Session, select
-from app.db.database import engine, create_db_and_tables
+from app.db.database import engine
 from app.models.users import Users
 from app.models.brands import Brands
 from app.models.clothes import Clothes
@@ -149,10 +152,7 @@ def seed_tags_clothes(session: Session):
 
 
 def main():
-    print("Creating tables...")
-    create_db_and_tables()
-
-    print("\nSeeding database...")
+    print("Seeding database...")
     with Session(engine) as session:
         seed_users(session)
         seed_brands(session)
