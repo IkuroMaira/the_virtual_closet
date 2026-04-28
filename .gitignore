@@ -1,2 +1,18 @@
+# IDE
 .idea
 .DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Environments
+.venv/
+venv/
+ENV/
+.env
+.env.local
+.env.*.local
