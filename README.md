@@ -1,7 +1,5 @@
 # 🧥 The Virtual Closet
 
-> Application web fullstack de gestion de garde-robe — Projet RNCP 6, Ada Tech School
-
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React_19-61DAFB?style=flat&logo=react&logoColor=black)
