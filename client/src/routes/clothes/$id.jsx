@@ -6,9 +6,10 @@ export const Route = createFileRoute('/clothes/$id')({
 })
 
 function ClothingDetail() {
+  const { id } = Route.useParams()
   return (
-      <>
-          <ClothingDetailView />
-      </>
+    <>
+      <ClothingDetailView />
+    </>
   )
 }
