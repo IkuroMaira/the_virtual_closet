@@ -1,7 +1,7 @@
 // Hooks customisé pour la logique
 // Ici toute la logique de gestion des tags
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { getAllTags } from '../../../shared/services/tags_api';
 // import { API_BASE_URL } from '../../../shared/services/api.jsx'
 
@@ -13,11 +13,17 @@ export const useTags = () => {
 /*     const [tags, setTags] = useState(dataTags) */
     const [tags, setTags] = useState([])
 
-    return {
+    const fetchTags = useCallback(async () => {
+        const data = await getAllTags();
+        setTags(data)
+    }, []);
+
+    return { tags, fetchTags }
+/*     return {
         tags,
         fetchTags: async () => {
             const data = await getAllTags();
             setTags(data)
         }
-    };
+    }; */
 };
