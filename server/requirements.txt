@@ -13,7 +13,7 @@ psycopg2-binary>=2.9,<3.0
 alembic>=1.18.4,<2.0
 
 # Data validation
-pydantic==2.13.0
+pydantic==2.13.3
 
 # Environment variables
 python-dotenv>=1.2.2,<2.0
