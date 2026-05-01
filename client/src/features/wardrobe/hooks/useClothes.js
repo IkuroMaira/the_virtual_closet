@@ -1,10 +1,8 @@
 import { useState } from "react";
-
 import { getAllClothes } from "@/shared/services/clothes_api.jsx"
 
 export const useClothes = () => {
-
-    const [clothes, setClothes] = useState([]);
+  const [clothes, setClothes] = useState([]);
 
     return {
         clothes,

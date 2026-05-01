@@ -5,7 +5,7 @@ import { ClothesContext } from "../context/ClothesContext.jsx";
 
 export default function WardrobeView() {
     const { clothes, fetchClothes } = useClothes()
-    // userClothes va chercher la liste des vêtements depuis l'api
+    // useClothes va chercher la liste des vêtements depuis l'api
     // WardrobeView reçoit la liste et boucle dessus avec le .map
 
     useEffect(() => {
