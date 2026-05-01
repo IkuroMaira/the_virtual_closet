@@ -11,7 +11,7 @@ export default function ClothingDetailView() {
   }
   
   if (isError) {
-    return <span>isError: `{error.message}`</span>
+    return <span>Error: `{error.message}`</span>
   }
   
   return <>

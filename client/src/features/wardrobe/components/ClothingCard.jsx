@@ -14,7 +14,7 @@ export default function ClothingCard({ clothing }) {
     return (
         <Card className="relative mx-auto w-full max-w-sm pt-0 overflow-hidden">
             <img
-                src="https://avatar.vercel.sh/shadcn1"
+                src="" // Récupérer l'image en de base données
                 alt="Clothing"
                 className="relative aspect-4/5 w-full object-cover"
             />
