@@ -1,6 +1,6 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import '../App.css'
+import Header from '../layouts/Header.jsx'
 
 // __root.jsx est le layout principal qui englobe toutes les routes
 export const Route = createRootRoute({
@@ -9,14 +9,16 @@ export const Route = createRootRoute({
 
 function RootComponent() {
     return (
-        <>
-            <h1>The Virtual Closet</h1>
+        <div className="min-h-screen bg-background text-foreground">
+            <Header />
 
-            {/* Outlet affiche le contenu de la route active */}
-            <Outlet />
+            <main className="mx-auto max-w-7xl px-4 py-6">
+                {/* Outlet affiche le contenu de la route active */}
+                <Outlet />
+            </main>
 
             {/* Devtools visible uniquement en développement */}
             <TanStackRouterDevtools initialIsOpen={false} />
-        </>
+        </div>
     )
 }

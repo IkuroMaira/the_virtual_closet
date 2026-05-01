@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 import os
-from sqlmodel import SQLModel, create_engine, Session
+from sqlmodel import create_engine, Session
 
 load_dotenv()
 
@@ -10,10 +10,6 @@ DATABASE_LOCAL = os.getenv('DATABASE_LOCAL')
 
 if ENV == 'dev':
     engine = create_engine(DATABASE_LOCAL, echo=True)
-
-    # Function to create database tables from SQLModel classes
-    def create_db_and_tables():
-        SQLModel.metadata.create_all(engine)
 
 elif ENV == 'prod':
     engine = create_engine(DATABASE_URL_PROD, echo=True)
