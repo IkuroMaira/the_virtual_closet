@@ -2,7 +2,7 @@
 # Python 3.12 required
 
 # FastAPI framework and server
-fastapi>=0.136.0,<1.0
+fastapi>=0.136.1,<1.0
 uvicorn[standard]>=0.27,<1.0
 fastapi-cli==0.0.24
 
