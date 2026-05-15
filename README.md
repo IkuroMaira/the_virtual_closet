@@ -78,20 +78,7 @@ alembic upgrade head
 fastapi dev main.py
 ```
 
-API disponible sur `http://localhost:8000`<br>
-Documentation interactive (Swagger UI): `http://localhost:8000/docs`
-
-### Frontend
-
-```bash
-cd client
-npm install
-npm run dev
-```
-
-Application disponible sur `http://localhost:5173`
-
-## 🔌 Endpoints API
+🔌 Endpoints API
 
 | Méthode | Route | Description |
 |---|---|---|
@@ -106,6 +93,19 @@ Application disponible sur `http://localhost:5173`
 | `DELETE` | `/tags/{id}/delete` | Supprimer un tag |
 | `POST` | `/tags_clothes/new_relation` | Associer un tag à un vêtement |
 | `DELETE` | `/tags_clothes/{id}/delete` | Retirer un tag d'un vêtement |
+
+API disponible sur `http://localhost:8000`<br>
+Documentation interactive (Swagger UI): `http://localhost:8000/docs`
+
+### Frontend
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+Application disponible sur `http://localhost:5173`
 
 ## 👩‍💻 Développé par
 
