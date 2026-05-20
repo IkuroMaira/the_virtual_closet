@@ -12,9 +12,9 @@ export async function getAllClothes() {
             throw new Error(`Erreur HTTP! Status: ${response.status}`)
         }
 
-        const datas = await response.json()
+        const data = await response.json()
 
-        return datas
+        return data
 
     } catch (error) {
         console.error('=> Erreur dans getAllClothes:', error)
