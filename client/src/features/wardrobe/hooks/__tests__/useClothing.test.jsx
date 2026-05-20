@@ -2,12 +2,11 @@ import { describe, test, expect, vi } from "vitest";
 import { useClothing } from "../useClothing";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
+import { getItem } from "@/shared/services/clothes_api.jsx";
 
 vi.mock('@/shared/services/clothes_api.jsx', () => ({
     getItem: vi.fn()
 }));
-
-import { getItem } from "@/shared/services/clothes_api.jsx";
 
 function createWrapper() {
     const queryClient = new QueryClient({
@@ -25,18 +24,14 @@ function createWrapper() {
     );
 }
 
-describe("useClothing", () => {
+describe('useClothing', () => {
     test('should return garment details', async () => {
         const fakeGarment = {
-            id: 1,
-            created_at: "2025-09-05",
-            updated_at: "2025-11-02",
             category: "shirt",
             size: "L",
             status: "clean",
             style: "business",
             brand_id: 2,
-            user_is: 1,
             season: "spring",
             note: 8,
             material: "linen",
@@ -55,11 +50,25 @@ describe("useClothing", () => {
         });
     });
 
-    test('should return an error message when there is error', () => {
-        expect(useClothing());
+    test('should return an error message when service fails', async () => {
+        getItem.mockRejectedValue(new Error('Erreur serveur'))
+
+        const { result } = renderHook(() => useClothing(1), { wrapper: createWrapper() });
+
+        await waitFor(() => {
+            expect(result.current.isError).toBe(true);
+        });
+        expect(result.current.error.message).toBe('Erreur serveur');
     });
 
-    test("'should return an error message when it's not fount'", () => {
-        expect(useClothing());
+    test('should handle not found', async () => {
+        getItem.mockRejectedValue(new Error('Not found'));
+
+        const { result } = renderHook(() => useClothing(1), { wrapper: createWrapper() });
+
+        await waitFor(() => {
+            expect(result.current.isError).toBe(true);
+        });
+        expect(result.current.error.message).toBe('Not found');
     });
 })
