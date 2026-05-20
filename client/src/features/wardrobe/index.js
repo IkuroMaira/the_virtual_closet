@@ -1,2 +1,2 @@
 export { useClothes } from './hooks/useClothes.js';
-export  { default } from './views/WardrobeView.jsx'clear
+export  { default } from './views/WardrobeView.jsx'
