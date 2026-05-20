@@ -7,7 +7,7 @@ export default function ClothingDetailView() {
   const { isPending, isError, data, error } = useClothing(id)
   
   if (isPending) {
-    return <span>Loading..</span>
+    return <span>Loading...</span>
   }
   
   if (isError) {
