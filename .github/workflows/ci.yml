@@ -33,7 +33,7 @@ jobs:
         run: npm test -- --run
 
   server:
-    name: Server — install dependencies
+    name: Server — install dependencies, lint
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -50,3 +50,9 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Lint
+        run: npm run lint
+
+      - name: typecheck
+        run: npm run typecheck

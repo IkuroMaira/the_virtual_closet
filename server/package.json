@@ -5,7 +5,8 @@
   "main": "main.py",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "python -m flake8 app/"
+    "lint": "python -m flake8 app/",
+    "typecheck": "python -m mypy app/"
   },
   "repository": {
     "type": "git",

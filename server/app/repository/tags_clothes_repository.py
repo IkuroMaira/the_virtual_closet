@@ -27,10 +27,10 @@ def get_all_tags_from_item(item_id: int, session: Session) -> list[Tags]:
         raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
     statement = (
         select(Tags)
-        .join(Tags_Clothes, Tags.id == Tags_Clothes.tag_id)
+        .join(Tags_Clothes, Tags.id == Tags_Clothes.tag_id) # type: ignore[arg-type]
         .where(Tags_Clothes.clothe_id == item_id))
     tags = session.exec(statement).all()
-    return tags
+    return list(tags)
 
 
 def add_tag_to_item(item_id: int, tag_id: int, user_id: int, session: Session) -> Tags_Clothes:
@@ -67,7 +67,7 @@ def add_tag_to_item(item_id: int, tag_id: int, user_id: int, session: Session) -
         raise ValueError("Le tag est déjà assigné à ce vêtement")
 
     current_tags_count = session.exec(
-        select(func.count(Tags_Clothes.id))
+        select(func.count(Tags_Clothes.id)) # type: ignore[arg-type]
         .where(Tags_Clothes.clothe_id == item_id)
     ).one()
 
