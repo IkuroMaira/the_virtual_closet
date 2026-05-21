@@ -94,11 +94,16 @@ Documentation automatique : http://localhost:8000/docs
 
 > **Note** : On utilise `python -m fastapi` au lieu de `fastapi` directement pour éviter les conflits avec pyenv.
 
-## Linter
+## Linters
 
 Lancer l'analyse statique du code avec flake8 :
 ```bash
-npm run lint
+python -m flake8 app/
+```
+
+Lancer l'analyse statique de types code avec MyPy :
+```bash
+python -m mypy app/
 ```
 
 ## Gestion des migrations avec Alembic

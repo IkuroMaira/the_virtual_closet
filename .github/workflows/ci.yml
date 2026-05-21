@@ -49,10 +49,10 @@ jobs:
           cache-dependency-path: server/requirements.txt
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Lint
-        run: npm run lint
+        run: python -m flake8 app/
 
       - name: typecheck
-        run: npm run typecheck
+        run: python -m mypy app/
