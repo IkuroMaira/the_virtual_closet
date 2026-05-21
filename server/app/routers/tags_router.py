@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.db.database import get_session
 from app.repository import tags_repository
 from app.models.tags import Tags, TagCreate, TagPublic, TagUpdate
+from app.models.clothes import ClothePublic
 from sqlmodel import Session
 
 router = APIRouter(
@@ -60,6 +61,27 @@ def get_tag(tag_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=500, detail="Erreur interne lors de la récupération du tag") 
     
 
+@router.get("/{tag_id}/clothes", response_model=list[ClothePublic])
+def get_all_items_from_tag(tag_id: int, session: Session = Depends(get_session)):
+    """ 
+    Get all items associated to a specific tag
+    """
+    try:
+        tag_items = tags_repository.get_all_items_from_tag(tag_id, session)
+        return tag_items
+    
+    except ValueError as e:
+        error_msg = str(e)
+        if "n'existe pas" in str(e):
+            raise HTTPException(status_code=404, detail=error_msg)
+        else:
+            raise HTTPException(400, detail=error_msg)
+        
+    except Exception:
+        logging.error(f"Erreur technique lors de la récupération des vêtements associés au tag {tag_id}")
+        raise HTTPException(status_code=500, detail="Erreur interne lors de la récupèreration des vêtements associés au tag")
+    
+    
 @router.patch("/{tag_id}/update", response_model=TagPublic)
 def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session = Depends(get_session)):
     """  

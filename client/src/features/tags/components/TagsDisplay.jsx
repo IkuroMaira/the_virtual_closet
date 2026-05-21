@@ -2,7 +2,8 @@
 
 import { useTags } from '../hooks/useTags';
 import { Badge } from "@/components/ui/badge"
-
+import { Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 
 export default function TagsDisplay() {
@@ -35,6 +36,7 @@ export default function TagsDisplay() {
                         </div>
                     ))
                 }
+                <Button>Ajouter un tag<Plus/></Button>
             </div>
         </>
     );
