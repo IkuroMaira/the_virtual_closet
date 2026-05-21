@@ -42,7 +42,7 @@ python -m pip install --upgrade pip
 ## Installation des dépendances
 5. Installer toutes les dépendances requises
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements-dev.txt
 ```
 
 ## Configuration de la base de données locale
@@ -93,6 +93,13 @@ L'API sera accessible sur : http://localhost:8000
 Documentation automatique : http://localhost:8000/docs
 
 > **Note** : On utilise `python -m fastapi` au lieu de `fastapi` directement pour éviter les conflits avec pyenv.
+
+## Linter
+
+Lancer l'analyse statique du code avec flake8 :
+```bash
+npm run lint
+```
 
 ## Gestion des migrations avec Alembic
 

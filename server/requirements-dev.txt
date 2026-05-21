@@ -1,0 +1,5 @@
+# The Virual Closet - Dependencies
+# Python 3.12 required
+
+# Linter
+flake8>=7.0.0
