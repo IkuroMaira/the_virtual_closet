@@ -23,6 +23,7 @@ def get_session():
     with Session(engine) as session:
         yield session
 
+
 DATABASE_URL_PROD = os.getenv('DATABASE_URL_PROD')
 DATABASE_LOCAL = os.getenv('DATABASE_LOCAL')
 
