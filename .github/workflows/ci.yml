@@ -8,7 +8,7 @@ on:
 
 jobs:
   client:
-    name: Client — install, lint, test
+    name: Client - install, lint, test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -33,7 +33,7 @@ jobs:
         run: npm test -- --run
 
   server:
-    name: Server — install dependencies, lint
+    name: Server - install dependencies
     runs-on: ubuntu-latest
     defaults:
       run:
