@@ -28,3 +28,10 @@ app.include_router(tags_clothes_router)
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://https://thevirtualcloset.netlify.app"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
