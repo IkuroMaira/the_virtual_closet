@@ -60,7 +60,7 @@ cd server
 python -m venv .venv
 source .venv/bin/activate      # macOS/Linux
 source .venv/Scripts/activate  # Windows
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements-dev.txt
 ```
 
 Créer un fichier `.env` dans `server/` :
