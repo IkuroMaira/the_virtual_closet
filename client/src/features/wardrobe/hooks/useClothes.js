@@ -1,14 +1,16 @@
-import { useState } from "react";
 import { getAllClothes } from "@/shared/services/clothes_api.jsx"
+import { useQuery } from "@tanstack/react-query"
 
 export const useClothes = () => {
-  const [clothes, setClothes] = useState([]);
+    const  { isPending, isError, data, error } = useQuery({
+        queryKey: ["clothes"],
+        queryFn: () => getAllClothes()
+    })
 
     return {
-        clothes,
-        fetchClothes: async () => {
-            const data = await getAllClothes();
-            setClothes(data)
-        },
+        isPending,
+        isError,
+        data,
+        error,
     }
 }
