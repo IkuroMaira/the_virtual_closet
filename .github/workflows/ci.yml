@@ -33,7 +33,7 @@ jobs:
         run: npm test -- --run
 
   server:
-    name: Server - install dependencies
+    name: Server - install dependencies, lint
     runs-on: ubuntu-latest
     defaults:
       run:
