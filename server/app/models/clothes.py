@@ -14,6 +14,7 @@ from app.enums import (
 # PYDANTIC SCHEMAS (Models)
 # ============================================
 
+
 class Clothes(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     created_at: datetime = Field(default_factory=datetime.now)

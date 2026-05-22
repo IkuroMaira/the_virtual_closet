@@ -1,4 +1,4 @@
-import { getItem } from "../../../shared/services/clothes_api";
+import { getItem } from "@/shared/services/clothes_api";
 import { useQuery } from "@tanstack/react-query";
 
 export const useClothing = (id) => {

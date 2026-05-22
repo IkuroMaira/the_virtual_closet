@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, Field, UniqueConstraint
 
+
 class Tags_Clothes(SQLModel, table=True):
     __table_args__ = (UniqueConstraint("clothe_id", "tag_id"),)
 

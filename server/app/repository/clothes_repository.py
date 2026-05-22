@@ -1,8 +1,6 @@
 from app.models.clothes import ClotheCreate, Clothes, ClothePublic, ClotheUpdate
 import logging
-from sqlmodel import Session, select, SQLModel
-from app.models.brands import Brands
-from app.models.users import Users
+from sqlmodel import Session, select
 from datetime import datetime
 
 
@@ -12,9 +10,10 @@ logger = logging.getLogger(__name__)
 # SERVICE FUNCTIONS
 # ============================================
 
+
 def add_item(item: ClotheCreate, session: Session) -> ClothePublic:
     """
-    Add a new piece of clothing 
+    Add a new piece of clothing
 
     Args:
         item (ClotheCreate): Clothing item data to insert
@@ -40,10 +39,10 @@ def add_item(item: ClotheCreate, session: Session) -> ClothePublic:
     session.refresh(item_db)
 
     return ClothePublic.model_validate(item_db)
-    
+
 
 def get_all_items(session: Session) -> list[ClothePublic]:
-    """ 
+    """
     Get all items from the wardrobe
 
     Args:
@@ -51,7 +50,7 @@ def get_all_items(session: Session) -> list[ClothePublic]:
 
     Returns:
         list: All the items (empty list if none)
-    """ 
+    """
     statement = select(Clothes)
     items = session.exec(statement).all()
 
@@ -59,7 +58,7 @@ def get_all_items(session: Session) -> list[ClothePublic]:
 
 
 def get_item(item_id: int, session: Session) -> ClothePublic:
-    """ 
+    """
     Get a piece of clothing by its ID
 
     Args:
@@ -71,18 +70,18 @@ def get_item(item_id: int, session: Session) -> ClothePublic:
 
     Raises:
         ValueError: If clothing item doesn't exist
-    """ 
+    """
     statement = select(Clothes).where(Clothes.id == item_id)
     item = session.exec(statement).first()
 
     if not item:
         raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
-    
+
     return ClothePublic.model_validate(item)
-    
+
 
 def update_item(item_id: int, item_updated: ClotheUpdate, session: Session) -> ClothePublic:
-    """ 
+    """
     Updating a piece of clothe
 
     Args:
@@ -95,12 +94,12 @@ def update_item(item_id: int, item_updated: ClotheUpdate, session: Session) -> C
 
     Raises:
         ValueError: If item doesn't exist or name already exists
-    """ 
+    """
     item = session.get(Clothes, item_id)
 
     if not item:
         raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
-    
+
     if item_updated.name and item_updated.name != item.name:
         existing = session.exec(
             select(Clothes)
@@ -108,7 +107,7 @@ def update_item(item_id: int, item_updated: ClotheUpdate, session: Session) -> C
         ).first()
         if existing:
             raise ValueError(f"Un vêtement nommé '{item_updated.name}' existe déjà")
-        
+
     item_update = item_updated.model_dump(exclude_unset=True)
     item.updated_at = datetime.now()
     item.sqlmodel_update(item_update)
@@ -118,9 +117,9 @@ def update_item(item_id: int, item_updated: ClotheUpdate, session: Session) -> C
 
     return ClothePublic.model_validate(item)
 
-    
+
 def delete_item(item_id: int, session: Session) -> ClothePublic:
-    """ 
+    """
     Deleting a piece of clothing
 
     Args:
@@ -132,13 +131,13 @@ def delete_item(item_id: int, session: Session) -> ClothePublic:
 
     Raises:
         ValueError: If clothing item doesn't exist
-    """ 
+    """
     statement = select(Clothes).where(Clothes.id == item_id)
     item = session.exec(statement).first()
-    
+
     if not item:
         raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
-    
+
     public_item = ClothePublic.model_validate(item)
     session.delete(item)
     session.commit()
