@@ -16,6 +16,7 @@ app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://thevirtualcloset.netlify.app"],
+    allow_origin_regex=r"https://.*--the-virtual-closet\.netlify\.app",
     allow_methods=["*"],
     allow_headers=["*"],
 )
