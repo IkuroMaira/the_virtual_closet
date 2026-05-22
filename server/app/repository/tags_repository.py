@@ -1,5 +1,4 @@
 from app.models.tags import Tags, TagCreate, TagPublic, TagUpdate
-# from app.models.users import Users
 import logging
 from sqlmodel import Session, select
 
