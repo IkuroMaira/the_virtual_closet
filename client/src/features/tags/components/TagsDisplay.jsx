@@ -1,13 +1,23 @@
 // Composant d'affichage pur
 
 import { useTags } from '../hooks/useTags';
+import { Plus, Pencil, Trash } from 'lucide-react';
 import { Badge } from "@/components/ui/badge"
-import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from "@/components/ui/input"
+import { useState } from 'react';
+import { useCreateTag, useDeleteTag, useUpdateTag } from '../hooks/useMutateTag';
 
 
 export default function TagsDisplay() {
     const { isPending, isError, data, error } = useTags();
+    const {  mutate: createMutate, isPending: createPending, isError: createIsError, error: createError } = useCreateTag();
+    const {  mutate: updateMutate, isPending: updatePending, isError: updateIsError, error: updateError } = useUpdateTag();
+    const {  mutate: deleteMutate, isPending: deletePending, isError: deleteIsError, error: deleteError } = useDeleteTag();
+
+    const [tagName, setTagName] = useState("");
+    const [editingTagId, setEditingTagId] = useState(null);
+    const [editingName, setEditingName] = useState("");
 
     if (isPending) {
         return <span> Loading ...</span>
@@ -32,11 +42,32 @@ export default function TagsDisplay() {
                 {
                     data.map((tag) => (
                         <div key={tag.id}>
-                            <Badge style={{ backgroundColor: tag.color }}>{ tag.name }</Badge>
+                            {editingTagId === tag.id ? (
+                                <>
+                                    <Input value={editingName} onChange={ (e) => setEditingName(e.target.value)} />
+                                    <Button onClick={ () => 
+                                    {updateMutate({tagId : tag.id, tagData: { name: editingName }}); setEditingTagId(null)}}>Sauvegarder</Button>
+                                    <Button onClick={ () => setEditingTagId(null) }>Annuler</Button>
+                                </>
+                            ) : (
+                                <>
+                                 <Badge style={{ backgroundColor: tag.color }}>{ tag.name }</Badge>
+                                    {tag.by_default === false && (
+                                        <>
+                                            <Button onClick={ () => {setEditingTagId(tag.id);setEditingName(tag.name)}}>< Pencil/></Button>
+                                            <Button onClick={ () => deleteMutate(tag.id)}> <Trash /></Button> 
+                                        </>
+                                    ) 
+                                    }
+                                </>
+                            )
+               
+                        }
                         </div>
                     ))
                 }
-                <Button>Ajouter un tag<Plus/></Button>
+                <Input value={tagName} onChange={ (e) => setTagName(e.target.value) }/>
+                <Button onClick={ () => createMutate({ name: tagName })}>Ajouter un tag<Plus/></Button>
             </div>
         </>
     );
