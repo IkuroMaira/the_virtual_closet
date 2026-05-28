@@ -50,7 +50,7 @@ export async function getItem(item_id) {
 export async function createClothing(clothing) {
     try {
         const response = await fetch(`${API_BASE_URL}/clothes/new_clothing`, {
-            method: 'POST',
+            method: 'POST', // On indique au fetch d'utiliser la méthode POST - c'est ce que la route FastAPI attend (@router.post)
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(clothing),
         })
