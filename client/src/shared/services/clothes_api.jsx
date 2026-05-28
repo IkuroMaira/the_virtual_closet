@@ -42,3 +42,24 @@ export async function getItem(item_id) {
         throw error
     }
 }
+
+/**
+ * Function to create one item in the backend
+ *
+ */
+export async function createClothing(clothing) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/clothes/new_clothing`, {
+            method: 'POST',
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(clothing),
+        })
+
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP! Status: ${response.status}`)
+        }
+    } catch (error) {
+        console.error('=> Erreur dans createClothing:', error)
+        throw error
+    }
+}

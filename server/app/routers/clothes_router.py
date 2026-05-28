@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 
-@router.post("/new_clothe", response_model=ClothePublic)
+@router.post("/new_clothing", response_model=ClothePublic)
 def add_item(item: ClotheCreate, session: Session = Depends(get_session)):
     """
     Adding a new piece of clothing
@@ -21,7 +21,7 @@ def add_item(item: ClotheCreate, session: Session = Depends(get_session)):
         return new_item
 
     except ValueError as e:
-        # Nom déjà existant
+        # Name already existing
         raise HTTPException(status_code=409, detail=str(e))
 
     except Exception as e:
