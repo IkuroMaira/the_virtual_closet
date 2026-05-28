@@ -2,5 +2,5 @@
 # Python 3.12 required
 
 # Linter
-flake8>=7.0.0
+flake8>=7.3.0
 mypy>=2.1.0
