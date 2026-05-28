@@ -13,8 +13,8 @@
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@tabler/icons-react": "^3.41.1",
-    "@tailwindcss/vite": "^4.3.0",
-    "@tanstack/react-query": "^5.100.11",
+    "@tailwindcss/vite": "^4.2.4",
+    "@tanstack/react-query": "^5.100.14",
     "@tanstack/react-router": "^1.141.6",
     "@tanstack/react-router-devtools": "^1.167.0",
     "class-variance-authority": "^0.7.1",
