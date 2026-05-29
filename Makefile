@@ -1,16 +1,22 @@
-.PHONY: help dev front back install install-front install-back
+.PHONY: help dev front back stop install install-front install-back
 
 help:
 	@echo "Commandes disponibles :"
 	@echo "  make dev            — Lance le front et le back en parallèle"
 	@echo "  make front          — Lance uniquement le client (Vite)"
 	@echo "  make back           — Lance uniquement le serveur (FastAPI)"
+	@echo "  make stop           — Arrête le front et le back"
 	@echo "  make install        — Installe les dépendances front et back"
 	@echo "  make install-front  — Installe les dépendances npm"
 	@echo "  make install-back   — Installe les dépendances Python"
 
 dev:
 	make -j2 front back
+
+stop:
+	@pkill -f "uvicorn main:app" || true
+	@pkill -f "vite" || true
+	@echo "Serveurs arrêtés."
 
 front:
 	cd client && npm run dev
