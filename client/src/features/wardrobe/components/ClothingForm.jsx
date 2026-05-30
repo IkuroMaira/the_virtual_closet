@@ -21,6 +21,7 @@ import { toast } from "sonner"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import { useEnums } from "../hooks/useEnums"
 
 const schema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères.").max(50, "Le nom ne peut pas dépasser 50 caractères."),
@@ -56,6 +57,9 @@ export default function ClothingForm() {
 
   const onSubmit = (data) => mutate(data)
 
+  const { data: enums } = useEnums()
+  
+
   return (
     <>
       <h1>Ajouter un vêtement à votre dressing</h1>
@@ -89,7 +93,11 @@ export default function ClothingForm() {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Catégories</SelectLabel>
-                      <SelectItem value="Tops">Tops</SelectItem>
+                      {
+                        enums?.CategoryEnum?.map(item =>
+                          <SelectItem value={item} key={item}   >{item}</SelectItem>
+                        )
+                      }
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -112,7 +120,11 @@ export default function ClothingForm() {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Couleurs</SelectLabel>
-                        <SelectItem value="Bleu">Bleu</SelectItem>
+                        {
+                          enums?.ColorEnum?.map(item =>
+                            <SelectItem value={item} key={item}>{item}</SelectItem>
+                          )
+                        }
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -134,7 +146,11 @@ export default function ClothingForm() {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Taille</SelectLabel>
-                        <SelectItem value="apple">Apple</SelectItem>
+                        {
+                          enums?.SizeEnum?.map(item =>
+                            <SelectItem value={item} key={item}>{item}</SelectItem>
+                          )
+                        }
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -157,7 +173,11 @@ export default function ClothingForm() {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Statut</SelectLabel>
-                        <SelectItem value="apple">Apple</SelectItem>
+                        {
+                          enums?.StatusEnum?.map(item =>
+                            <SelectItem value={item} key={item}>{item}</SelectItem>
+                          )
+                        }
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -178,7 +198,11 @@ export default function ClothingForm() {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Style</SelectLabel>
-                        <SelectItem value="apple">Apple</SelectItem>
+                        {
+                          enums?.StyleEnum?.map(item =>
+                            <SelectItem value={item} key={item}>{item}</SelectItem>
+                          )
+                        }
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -201,7 +225,11 @@ export default function ClothingForm() {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Saison</SelectLabel>
-                        <SelectItem value="apple">Apple</SelectItem>
+                        {
+                          enums?.SeasonEnum?.map(item =>
+                            <SelectItem value={item} key={item}>{item}</SelectItem>
+                          )
+                        }
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -238,7 +266,11 @@ export default function ClothingForm() {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Composition</SelectLabel>
-                      <SelectItem value="apple">Apple</SelectItem>
+                      {
+                        enums?.MaterialsEnum?.map(item =>
+                          <SelectItem value={item} key={item}>{item}</SelectItem>
+                        )
+                      }
                     </SelectGroup>
                   </SelectContent>
                 </Select>

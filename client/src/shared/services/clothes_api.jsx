@@ -28,7 +28,7 @@ export async function getAllClothes() {
  */
 export async function getItem(item_id) {
     try {
-        const response = await fetch(`${API_BASE_URL}/clothes/${item_id}`)
+        const response = await fetch(`${API_BASE_URL}/clothes/item/${item_id}`)
 
         if (!response.ok) {
             throw new Error(`Erreur HTTP! Status: ${response.status}`)
@@ -60,6 +60,23 @@ export async function createClothing(clothing) {
         }
     } catch (error) {
         console.error('=> Erreur dans createClothing:', error)
+        throw error
+    }
+}
+
+export async function getAllEnums() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/clothes/enums`)
+
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP! Status: ${response.status}`)
+        }
+
+        const data = await response.json()
+
+        return data
+    } catch (error) {
+        console.error('=> Erreur dans getAllEnums:', error)
         throw error
     }
 }
