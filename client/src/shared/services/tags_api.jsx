@@ -25,7 +25,9 @@ export async function addNewTag(tagData) {
         const response = await fetch(API_BASE_URL + '/tags/new_tag', { headers: { 'Content-Type': 'application/json' }, method: "POST", body: JSON.stringify({...tagData, by_default: false, color: color}) } )  
 
         if (!response.ok) {
-            throw new Error(`Erreur HTTP! Status: ${response.status}`) 
+            const promise = await response.json()
+            const message = promise.detail
+            throw new Error(` ${message}`) 
         }
 
         const data = await response.json()
