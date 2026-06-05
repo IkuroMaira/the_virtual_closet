@@ -24,9 +24,13 @@ def setup_database():
 
 @pytest.fixture()
 def session():
-    with Session(test_engine) as s:
-        yield s
-        s.rollback()
+    connection = test_engine.connect()
+    transaction = connection.begin()
+    s = Session(bind=connection, join_transaction_mode="create_savepoint")
+    yield s
+    s.close()
+    transaction.rollback()
+    connection.close()
 
 
 @pytest.fixture()
