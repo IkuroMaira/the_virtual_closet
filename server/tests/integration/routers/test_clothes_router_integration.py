@@ -1,7 +1,7 @@
 # tests/integration/routers/test_clothes_router_integration.py
 
 
-def test_create_clothing_returns_200(client):
+def test_create_clothing_returns_201(client):
     payload = {
         "name": "t-shirt de mon père",
         "category": "Tops",
@@ -19,7 +19,7 @@ def test_create_clothing_returns_200(client):
 
     response = client.post("/clothes/new_clothing", json=payload)
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert response.json()["name"] == payload["name"]
     assert response.json()["id"] is not None
 

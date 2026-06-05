@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post("/new_clothing", response_model=ClothePublic)
+@router.post("/new_clothing", response_model=ClothePublic, status_code=201)
 def add_item(item: ClotheCreate, session: Session = Depends(get_session)):
     """
     Adding a new piece of clothing

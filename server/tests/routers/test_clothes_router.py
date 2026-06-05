@@ -62,7 +62,7 @@ def test_get_clothing_by_id_not_found_returns_404():
         assert response.status_code == 404
 
 
-def test_create_clothing_returns_200(fake_clothing):
+def test_create_clothing_returns_201(fake_clothing):
     payload = {
         "name": "t-shirt de mon père",
         "category": "Tops",
@@ -80,7 +80,7 @@ def test_create_clothing_returns_200(fake_clothing):
     with patch("app.routers.clothes_router.clothes_repository.add_item", return_value=fake_clothing):
         response = client.post("/clothes/new_clothing", json=payload)
 
-        assert response.status_code == 200
+        assert response.status_code == 201
         assert response.json()["name"] == payload["name"]
 
 
