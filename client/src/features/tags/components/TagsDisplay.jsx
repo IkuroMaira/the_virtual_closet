@@ -12,9 +12,9 @@ import { useDeleteTag } from '../hooks/useDeleteTag';
 
 export default function TagsDisplay() {
     const { isPending, isError, data, error } = useTags();
-    const {  mutate: createMutate, isPending: createPending, isError: createIsError, error: createError } = useCreateTag();
-    const {  mutate: updateMutate, isPending: updatePending, isError: updateIsError, error: updateError, isSuccess: updateIsSuccess } = useUpdateTag();
-    const {  mutate: deleteMutate, isPending: deletePending, isError: deleteIsError, error: deleteError } = useDeleteTag();
+    const {  mutate: createMutate, isError: createIsError, error: createError } = useCreateTag();
+    const {  mutate: updateMutate, isSuccess: updateIsSuccess } = useUpdateTag();
+    const {  mutate: deleteMutate } = useDeleteTag();
 
     const [tagName, setTagName] = useState("");
     const [editingTagId, setEditingTagId] = useState(null);
@@ -82,7 +82,7 @@ export default function TagsDisplay() {
                 )}
                 { isCreating === false ? (
                     <>
-                        <Button onClick={ (e) => setIsCreating(true) } disabled={ customTagsCount >= 50 }>Ajouter un tag<Plus/></Button>
+                        <Button onClick={ () => setIsCreating(true) } disabled={ customTagsCount >= 50 }>Ajouter un tag<Plus/></Button>
                         { customTagsCount >= 50 && (
                             <p> Vous avez atteint la limite de 50 tags personnalisés </p>
                         )}

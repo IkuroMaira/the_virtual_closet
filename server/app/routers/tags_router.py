@@ -2,7 +2,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException
 from app.db.database import get_session
 from app.repository import tags_repository
-from app.models.tags import Tags, TagCreate, TagPublic, TagUpdate
+from app.models.tags import TagCreate, TagPublic, TagUpdate
 from app.models.clothes import ClothePublic
 from sqlmodel import Session
 
