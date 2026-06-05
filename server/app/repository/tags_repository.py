@@ -102,10 +102,10 @@ def get_all_items_from_tag(tag_id: int, session: Session) -> list[Clothes]:
         raise ValueError(f"Le tag avec l'ID {tag_id} n'existe pas")
     statement = (
         select(Clothes)
-        .join(Tags_Clothes, Clothes.id == Tags_Clothes.clothe_id)
+        .join(Tags_Clothes, Clothes.id == Tags_Clothes.clothe_id)  # type: ignore[arg-type]
         .where(Tags_Clothes.tag_id == tag_id))
     clothes = session.exec(statement).all()
-    return clothes
+    return list(clothes)
 
 
 def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session) -> TagPublic:
