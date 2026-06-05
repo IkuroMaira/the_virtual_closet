@@ -39,7 +39,7 @@ def get_all_tags(session: Session = Depends(get_session)):
         return tags
 
     except Exception:
-        logging.error(f"Erreur technique lors de la récupération des tags")
+        logging.error("Erreur technique lors de la récupération des tags")
         raise HTTPException(status_code=500, detail="Erreur interne lors de la récupération des tags")
 
 
