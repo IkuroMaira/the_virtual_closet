@@ -1,4 +1,6 @@
 from app.models.tags import Tags, TagCreate, TagPublic, TagUpdate
+from app.models.clothes import Clothes
+from app.models.tags_clothes import Tags_Clothes
 import logging
 from sqlmodel import Session, select
 
@@ -80,6 +82,31 @@ def get_tag(tag_id: int, session: Session) -> TagPublic:
         raise ValueError(f"Le tag avec l'ID {tag_id} n'existe pas")
 
     return TagPublic.model_validate(tag)
+
+
+def get_all_items_from_tag(tag_id: int, session: Session) -> list[Clothes]:
+    """
+     Get all items associated to a specific tag
+
+    Args:
+        tag_id (int): ID of the tag
+        session (Session): SQLModel session connected to the database
+
+    Returns:
+        List: Clothes object assigned to a piece of clothing (empty list if no tags)
+
+    Raises:
+        ValueError: If tag doesn't exist
+    """
+    tag = session.get(Tags, tag_id)
+    if not tag:
+        raise ValueError(f"Le tag avec l'ID {tag_id} n'existe pas")
+    statement = (
+        select(Clothes)
+        .join(Tags_Clothes, Clothes.id == Tags_Clothes.clothe_id)  # type: ignore[arg-type]
+        .where(Tags_Clothes.tag_id == tag_id))
+    clothes = session.exec(statement).all()
+    return list(clothes)
 
 
 def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session) -> TagPublic:
