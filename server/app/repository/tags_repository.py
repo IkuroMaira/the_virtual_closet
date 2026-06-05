@@ -2,13 +2,14 @@ from app.models.tags import Tags, TagCreate, TagPublic, TagUpdate
 from app.models.clothes import Clothes
 from app.models.tags_clothes import Tags_Clothes
 import logging
-from sqlmodel import Session, select, SQLModel
+from sqlmodel import Session, select
 
 logger = logging.getLogger(__name__)
 
 # ============================================
 # SERVICE FUNCTIONS
 # ============================================
+
 
 def add_tag(tag: TagCreate, session: Session) -> TagPublic:
     """
@@ -142,7 +143,7 @@ def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session) -> TagPubl
     session.commit()
     session.refresh(tag)
 
-    return  TagPublic.model_validate(tag)
+    return TagPublic.model_validate(tag)
 
 
 def delete_tag(tag_id: int, session: Session) -> TagPublic:
@@ -170,6 +171,3 @@ def delete_tag(tag_id: int, session: Session) -> TagPublic:
     session.commit()
 
     return public_tag
-
-
-

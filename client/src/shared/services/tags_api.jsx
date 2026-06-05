@@ -1,6 +1,7 @@
 import { API_BASE_URL } from "./api.jsx"
 
 export async function getAllTags() {
+    const response = await fetch(API_BASE_URL + '/tags/')
 
     const response = await fetch(API_BASE_URL + '/tags/')
 

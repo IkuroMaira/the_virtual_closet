@@ -11,7 +11,7 @@ export default function WardrobeView() {
     }
 
     if (isError) {
-        return <span>Error: `{error.message}`</span>
+        return <span>Error: { error.message }</span>
     }
 
     return (

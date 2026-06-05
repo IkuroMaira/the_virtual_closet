@@ -11,6 +11,7 @@ router = APIRouter(
     tags=["Tags"]
 )
 
+
 @router.post("/new_tag", response_model=TagPublic)
 def add_tag(tag: TagCreate, session: Session = Depends(get_session)):
     """

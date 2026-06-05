@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class CategoryEnum(str, Enum):
     tops = "Tops"
     shirts = "Chemises"
@@ -24,6 +25,7 @@ class CategoryEnum(str, Enum):
     accessories = "Accessoires"
     swimwear = "Maillots de bains"
 
+
 class SizeEnum(str, Enum):
     XS = "XS"
     S = "S"
@@ -34,12 +36,14 @@ class SizeEnum(str, Enum):
     XXXL = "3XL"
     XXXXL = "4XL"
 
+
 class StatusEnum(str, Enum):
     clean = "Propre"
     dirty = "Sale"
     sold = "Vendu"
     given = "Donné"
     asset = "Actif"
+
 
 class StyleEnum(str, Enum):
     boheme = "Bohème"
@@ -49,11 +53,13 @@ class StyleEnum(str, Enum):
     streetwear = "Streetwear"
     chic = "Chic"
 
+
 class SeasonEnum(str, Enum):
     spring = "Printemps"
     summer = "Été"
     autumn = "Automne"
     winter = "Hiver"
+
 
 class ColorEnum(str, Enum):
     black = "Noir"
@@ -68,6 +74,7 @@ class ColorEnum(str, Enum):
     red = "Rouge"
     yellow = "Jaune"
     brown = "Marron"
+
 
 class MaterialsEnum(str, Enum):
     cotton = "Coton"

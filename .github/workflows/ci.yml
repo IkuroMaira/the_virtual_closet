@@ -8,7 +8,7 @@ on:
 
 jobs:
   client:
-    name: Client — install, lint, test
+    name: Client - install, lint, test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -33,7 +33,7 @@ jobs:
         run: npm test -- --run
 
   server:
-    name: Server — install dependencies
+    name: Server - install dependencies, lint
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -49,4 +49,10 @@ jobs:
           cache-dependency-path: server/requirements.txt
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Lint
+        run: python -m flake8 app/
+
+      - name: typecheck
+        run: python -m mypy app/
