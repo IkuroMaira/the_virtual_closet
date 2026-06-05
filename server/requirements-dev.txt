@@ -4,3 +4,7 @@
 # Linter
 flake8>=7.3.0
 mypy>=2.1.0
+
+# Testing
+pytest>=9.0.3
+httpx>=0.27.0
