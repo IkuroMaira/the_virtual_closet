@@ -104,6 +104,7 @@ def delete_item(item_id: int, session: Session = Depends(get_session)):
         logging.error(f"Erreur technique lors de la suppression du vêtement {item_id}: {e}")
         raise HTTPException(status_code=500, detail="Erreur interne lors de la suppression de ce vêtement")
 
+
 @router.get("/enums", response_model=dict)
 def get_clothes_enums():
     """
