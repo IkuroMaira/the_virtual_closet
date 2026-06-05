@@ -43,7 +43,7 @@ def get_all_tags(session: Session = Depends(get_session)):
         raise HTTPException(status_code=500, detail="Erreur interne lors de la récupération des tags")
     
 
-@router.get("/{tag_id}", response_model=TagPublic)
+@router.get("/tag/{tag_id}", response_model=TagPublic)
 def get_tag(tag_id: int, session: Session = Depends(get_session)):
     """     
     Get a tag
@@ -61,7 +61,7 @@ def get_tag(tag_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=500, detail="Erreur interne lors de la récupération du tag") 
     
 
-@router.get("/{tag_id}/clothes", response_model=list[ClothePublic])
+@router.get("/tag/{tag_id}/clothes", response_model=list[ClothePublic])
 def get_all_items_from_tag(tag_id: int, session: Session = Depends(get_session)):
     """ 
     Get all items associated to a specific tag
@@ -82,7 +82,7 @@ def get_all_items_from_tag(tag_id: int, session: Session = Depends(get_session))
         raise HTTPException(status_code=500, detail="Erreur interne lors de la récupèreration des vêtements associés au tag")
     
     
-@router.patch("/{tag_id}/update", response_model=TagPublic)
+@router.patch("/tag/{tag_id}/update", response_model=TagPublic)
 def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session = Depends(get_session)):
     """  
     Update a tag
@@ -107,7 +107,7 @@ def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session = Depends(g
         raise HTTPException(status_code=500, detail="Erreur interne lors de la mise à jour du tag")
   
 
-@router.delete("/{tag_id}/delete", response_model=TagPublic)
+@router.delete("/tag/{tag_id}/delete", response_model=TagPublic)
 def delete_tag(tag_id: int, session: Session = Depends(get_session)):
     """ 
     Delete a piece of clothe
