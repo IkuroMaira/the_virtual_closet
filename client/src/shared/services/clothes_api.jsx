@@ -1,25 +1,20 @@
-import { API_BASE_URL } from "./api.jsx"
+import { API_BASE_URL } from "./api.jsx";
+const API_CLOTHES_URL = `${API_BASE_URL}/clothes/`;
 
 /**
  * Function to get all clothes with the backend
  * @returns {Promise} - Returns the backend datas
  */
 export async function getAllClothes() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/clothes/`)
+  const response = await fetch(`${API_CLOTHES_URL}`);
 
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP! Status: ${response.status}`)
-        }
+  if (!response.ok) {
+    throw new Error(`Erreur HTTP! Status: ${response.status}`);
+  }
 
-        const data = await response.json()
+  const data = await response.json();
 
-        return data
-
-    } catch (error) {
-        console.error('=> Erreur dans getAllClothes:', error)
-        throw error
-    }
+  return data;
 }
 
 /**
@@ -27,20 +22,15 @@ export async function getAllClothes() {
  * @returns {Promise} - Returns the backend datas
  */
 export async function getItem(item_id) {
-    try {
-        const response = await fetch(`${API_BASE_URL}/clothes/item/${item_id}`)
+  const response = await fetch(`${API_CLOTHES_URL}/item/${item_id}`);
 
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP! Status: ${response.status}`)
-        }
+  if (!response.ok) {
+    throw new Error(`Erreur HTTP! Status: ${response.status}`);
+  }
 
-        const data = await response.json()
+  const data = await response.json();
 
-        return data
-    } catch (error) {
-        console.error('=> Erreur dans getItem:', error)
-        throw error
-    }
+  return data;
 }
 
 /**
@@ -48,35 +38,44 @@ export async function getItem(item_id) {
  *
  */
 export async function createClothing(clothing) {
-    try {
-        const response = await fetch(`${API_BASE_URL}/clothes/new_clothing`, {
-            method: 'POST', // On indique au fetch d'utiliser la méthode POST - c'est ce que la route FastAPI attend (@router.post)
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(clothing),
-        })
+  const response = await fetch(`${API_CLOTHES_URL}/new_clothing`, {
+    method: "POST", // On indique au fetch d'utiliser la méthode POST - c'est ce que la route FastAPI attend (@router.post)
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(clothing),
+  });
 
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP! Status: ${response.status}`)
-        }
-    } catch (error) {
-        console.error('=> Erreur dans createClothing:', error)
-        throw error
-    }
+  if (!response.ok) {
+    throw new Error(`Erreur HTTP! Status: ${response.status}`);
+  }
 }
 
 export async function getAllEnums() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/clothes/enums`)
+  const response = await fetch(`${API_CLOTHES_URL}/enums`);
 
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP! Status: ${response.status}`)
-        }
+  if (!response.ok) {
+    throw new Error(`Erreur HTTP! Status: ${response.status}`);
+  }
 
-        const data = await response.json()
+  const data = await response.json();
 
-        return data
-    } catch (error) {
-        console.error('=> Erreur dans getAllEnums:', error)
-        throw error
-    }
+  return data;
+}
+
+/**
+ * Function to update one item in the backend
+ */
+export async function updateClothing(clothing) {
+  const response = await fetch(`${API_CLOTHES_URL}/${clothing.id}/update`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(clothing),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Erreur HTTP! Status: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  return data;
 }
