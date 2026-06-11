@@ -15,13 +15,15 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { useCreateClothing } from "../hooks/useCreateClothing"
-import { useNavigate } from "@tanstack/react-router"
 import { toast } from "sonner"
-import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+
+import { useCreateClothing } from "../hooks/useCreateClothing"
+import { useNavigate } from "@tanstack/react-router"
+import { useForm, Controller } from "react-hook-form"
 import { useEnums } from "../hooks/useEnums"
+import { useState } from "react"
 
 const schema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères.").max(50, "Le nom ne peut pas dépasser 50 caractères."),
@@ -58,7 +60,19 @@ export default function ClothingForm() {
   const onSubmit = (data) => mutate(data)
 
   const { data: enums } = useEnums()
-  
+
+  // State pour les champs
+  const [name, setForm] = useState({
+    name: "",
+    category: ""
+  })
+
+  function handleChange(e) {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    })
+  }
 
   return (
     <>
@@ -71,7 +85,10 @@ export default function ClothingForm() {
             <Input
               id="name"
               placeholder="Quel petit nom ?"
-              {...register("name")} />
+              {...register("name")}
+              name="name" // 1. Lie l'inpur au state
+              onChange={handleChange} // 2. Met à jour le state à chaque frappe
+            />
             {errors.name && <p className="text-destructive text-xs mt-1">{errors.name.message}</p>}
           </Field>
 

@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator"
 const display = (value) => value ?? "-"
 
 export default function ClothingDetailView() {
-  const { id } = useParams({ from: '/clothes/$id' })
+  const { id } = useParams({ from: '/clothes/$id/' })
   const { isPending, isError, data, error } = useClothing(id)
   
   if (isPending) {
