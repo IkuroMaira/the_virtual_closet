@@ -1,12 +1,12 @@
 import { API_BASE_URL } from "./api.jsx";
-const API_CLOTHES_URL = `${API_BASE_URL}/clothes/`;
+const API_CLOTHES_URL = `${API_BASE_URL}/clothes`;
 
 /**
  * Function to get all clothes with the backend
  * @returns {Promise} - Returns the backend datas
  */
 export async function getAllClothes() {
-  const response = await fetch(`${API_CLOTHES_URL}`);
+  const response = await fetch(`${API_CLOTHES_URL}/`);
 
   if (!response.ok) {
     throw new Error(`Erreur HTTP! Status: ${response.status}`);
