@@ -65,7 +65,7 @@ describe("UpdateClothingView — intégration", () => {
         await user.click(screen.getByText("Enregistrer"));
 
         await waitFor(() => {
-            expect(updateClothing.mock.calls[0][0]).toMatchObject({ id: '1', name: "Robe bleue d'été", category: "Robes", color: "Bleu" });
+            expect(updateClothing.mock.calls[0][0]).toMatchObject({ id: 1, name: "Robe bleue d'été", category: "Robes", color: "Bleu" });
         });
     });
 

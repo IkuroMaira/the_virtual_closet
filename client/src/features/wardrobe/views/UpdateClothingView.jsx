@@ -12,7 +12,7 @@ export default function UpdateClothingView() {
 
   const handleSubmit = (formData) => {
     mutate(
-      { ...formData, id },
+      { ...formData, id: Number(id) },
       {
         onSuccess: () => {
           toast.success('Le vêtement a bien été modifié !')
