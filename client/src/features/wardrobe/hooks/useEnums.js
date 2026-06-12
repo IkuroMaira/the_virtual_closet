@@ -1,10 +1,10 @@
-import { getAllClothes } from "@/shared/services/clothes_api.jsx"
+import { getAllEnums } from "../../../shared/services/clothes_api";
 import { useQuery } from "@tanstack/react-query"
 
-export const useClothes = () => {
+export const useEnums = () => {
     const { isPending, isError, data, error } = useQuery({
-        queryKey: ["clothes"],
-        queryFn: () => getAllClothes()
+        queryKey: ["enums"],
+        queryFn: () => getAllEnums()
     })
 
     return {
