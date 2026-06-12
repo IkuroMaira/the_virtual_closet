@@ -88,6 +88,38 @@ describe("UpdateClothingView — intégration", () => {
         });
     });
 
+    test("soumet le formulaire quand les champs optionnels sont null dans l'API", async () => {
+        const clothingWithNulls = {
+            id: 1,
+            name: "Robe bleue d'été",
+            category: "Robes",
+            color: "Bleu",
+            size: null,
+            status: null,
+            style: null,
+            season: null,
+            materials: null,
+            note: null,
+            comment: null,
+        };
+        getAllEnums.mockResolvedValue({ CategoryEnum: ["Robes"], ColorEnum: ["Bleu"] });
+        getItem.mockResolvedValue(clothingWithNulls);
+        updateClothing.mockResolvedValue(clothingWithNulls);
+
+        const user = userEvent.setup();
+        render(<UpdateClothingView />, { wrapper: createWrapper() });
+
+        await waitFor(() => {
+            expect(screen.getByPlaceholderText("Quel petit nom ?")).toHaveValue("Robe bleue d'été");
+        });
+
+        await user.click(screen.getByText("Enregistrer"));
+
+        await waitFor(() => {
+            expect(updateClothing).toHaveBeenCalled();
+        });
+    });
+
     test("affiche une erreur de validation si le nom est trop court", async () => {
         getAllEnums.mockResolvedValue({});
         getItem.mockResolvedValue(fakeClothing);
