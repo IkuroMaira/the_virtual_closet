@@ -7,6 +7,8 @@ import { toast } from "sonner"
 
 const display = (value) => value ?? "-"
 
+const display = (value) => value ?? "-"
+
 export default function ClothingDetailView() {
   const { id } = useParams({ from: '/clothes/$id/' })
   const navigate = useNavigate()
