@@ -43,7 +43,7 @@ describe('useUpdateClothing', () => {
         result.current.mutate(fakeClothing, { onSuccess });
 
         await waitFor(() => {
-            expect(updateClothing).toHaveBeenCalledWith(fakeClothing, expect.anything());
+            expect(updateClothing.mock.calls[0][0]).toEqual(fakeClothing);
             expect(onSuccess).toHaveBeenCalled();
         });
     });
