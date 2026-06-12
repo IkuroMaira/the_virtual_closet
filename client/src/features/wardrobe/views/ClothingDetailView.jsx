@@ -29,6 +29,8 @@ export default function ClothingDetailView() {
         label: 'Annuler',
       },
     })
+    
+    deleteClothing(id, { onSuccess: () => navigate({ to: '/' }) })
   }
   
   if (isPending) {
