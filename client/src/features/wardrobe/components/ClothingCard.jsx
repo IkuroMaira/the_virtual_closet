@@ -11,29 +11,32 @@ import {
 import {Link} from "@tanstack/react-router";
 
 export default function ClothingCard({ clothing }) {
-    return (
-        <Card className="relative mx-auto w-full max-w-sm pt-0 overflow-hidden">
-            <img
-                src="" // Récupérer l'image en de base données
-                alt="Clothing"
-                className="relative aspect-4/5 w-full object-cover"
-            />
-            <CardHeader>
-                <CardAction>
-                    <Badge variant="secondary">Tag</Badge>
-                </CardAction>
-                <CardTitle>
-                    {clothing.name}
-                </CardTitle>
-                <CardDescription>
-                    {clothing.category}
-                </CardDescription>
-            </CardHeader>
-            <CardFooter>
-                <Button className="w-full">
-                    <Link to="/clothes/$id" params={{ id: clothing.id }}>Voir détails</Link>
-                </Button>
-            </CardFooter>
-        </Card>
-    )
+  return (
+    <Card className="relative mx-auto w-full max-w-sm pt-0 overflow-hidden">
+      <img
+          src="" // Récupérer l'image en de base données
+          alt="Clothing"
+          className="relative aspect-4/5 w-full object-cover"
+      />
+      <CardHeader>
+        <CardAction>
+          <Badge variant="secondary">Tag</Badge>
+        </CardAction>
+        <CardTitle>
+          {clothing.name}
+        </CardTitle>
+        <CardDescription>
+          {clothing.category}
+        </CardDescription>
+      </CardHeader>
+      <CardFooter>
+      
+        <Link to="/clothes/$id" params={{ id: clothing.id }} className="w-full">
+          <Button className="w-full cursor-pointer">
+            Voir détails
+          </Button>
+        </Link>
+      </CardFooter>
+    </Card>
+  )
 }

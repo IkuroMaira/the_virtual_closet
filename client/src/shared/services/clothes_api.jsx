@@ -28,7 +28,7 @@ export async function getAllClothes() {
  */
 export async function getItem(item_id) {
     try {
-        const response = await fetch(`${API_BASE_URL}/clothes/${item_id}`)
+        const response = await fetch(`${API_BASE_URL}/clothes/item/${item_id}`)
 
         if (!response.ok) {
             throw new Error(`Erreur HTTP! Status: ${response.status}`)
@@ -39,6 +39,44 @@ export async function getItem(item_id) {
         return data
     } catch (error) {
         console.error('=> Erreur dans getItem:', error)
+        throw error
+    }
+}
+
+/**
+ * Function to create one item in the backend
+ *
+ */
+export async function createClothing(clothing) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/clothes/new_clothing`, {
+            method: 'POST', // On indique au fetch d'utiliser la méthode POST - c'est ce que la route FastAPI attend (@router.post)
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(clothing),
+        })
+
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP! Status: ${response.status}`)
+        }
+    } catch (error) {
+        console.error('=> Erreur dans createClothing:', error)
+        throw error
+    }
+}
+
+export async function getAllEnums() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/clothes/enums`)
+
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP! Status: ${response.status}`)
+        }
+
+        const data = await response.json()
+
+        return data
+    } catch (error) {
+        console.error('=> Erreur dans getAllEnums:', error)
         throw error
     }
 }
