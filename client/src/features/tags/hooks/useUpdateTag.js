@@ -12,7 +12,7 @@ export const useUpdateTag = () => {
                 queryKey: ['tags']
             }
         )   
-    })
+    })  
 
     return {
         mutate,

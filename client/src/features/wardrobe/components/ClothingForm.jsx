@@ -15,12 +15,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { useCreateClothing } from "../hooks/useCreateClothing"
-import { useNavigate } from "@tanstack/react-router"
-import { toast } from "sonner"
-import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+
+import { useForm, Controller } from "react-hook-form"
 import { useEnums } from "../hooks/useEnums"
 
 const schema = z.object({
@@ -36,42 +34,42 @@ const schema = z.object({
   comment: z.string().optional(),
 })
 
-export default function ClothingForm() {
-  const navigate = useNavigate()
+const toFormValues = (data) => {
+  if (!data) return { name: '', category: '', color: '' }
+  return Object.fromEntries(
+    Object.entries(data).map(([k, v]) => {
+      if (k === 'note') return [k, v != null ? String(v) : '']
+      return [k, v ?? undefined]
+    })
+  )
+}
+
+export default function ClothingForm({ onSubmit, clothingData }) {
   const { register, handleSubmit, control, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: {
-      name: '',
-      category: '',
-      color: '',
-    },
+    defaultValues: toFormValues(clothingData),
   })
-
-  const { mutate } = useCreateClothing({
-    onSuccess: () => {
-      toast.success('Le vêtement a bien été ajouté au dressing !')
-      navigate({ to: '/' })
-    },
-    onError: () => toast.error('Une erreur est survenue, veuillez réessayer.'),
-  })
-
-  const onSubmit = (data) => mutate(data)
 
   const { data: enums } = useEnums()
-  
+
+  const handleFormSubmit = (data) => {
+    const cleaned = Object.fromEntries(
+      Object.entries(data).filter(([, v]) => v !== '')
+    )
+    onSubmit(cleaned)
+  }
 
   return (
     <>
-      <h1>Ajouter un vêtement à votre dressing</h1>
-
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
         <FieldGroup>
           <Field className="w-full max-w-100">
             <FieldLabel htmlFor="name">Nom<span className="text-destructive">*</span></FieldLabel>
             <Input
               id="name"
               placeholder="Quel petit nom ?"
-              {...register("name")} />
+              {...register("name")}
+            />
             {errors.name && <p className="text-destructive text-xs mt-1">{errors.name.message}</p>}
           </Field>
 
@@ -306,7 +304,7 @@ export default function ClothingForm() {
           <Textarea placeholder="Ajouter un commentaire..." className="w-full max-w-100" {...register("comment")} />
 
           <Field orientation="horizontal">
-            <Button type="submit">Submit</Button>
+            <Button type="submit">Enregistrer</Button>
           </Field>
         </FieldGroup>
       </form>
