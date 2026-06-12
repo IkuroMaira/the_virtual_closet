@@ -14,7 +14,6 @@ export default function ClothingDetailView() {
   const { mutate: deleteClothing } = useDeleteClothing()
 
   const handleDelete = () => {
-
     toast('Voulez-vous vraiment supprimer ce vêtement ?', {
       action: {
         label: 'Confirmer',
@@ -30,8 +29,6 @@ export default function ClothingDetailView() {
         label: 'Annuler',
       },
     })
-
-    deleteClothing(id, { onSuccess: () => navigate({ to: '/' }) })
   }
   
   if (isPending) {
