@@ -3,6 +3,7 @@ import { useClothing } from "../hooks/useClothing"
 import { useDeleteClothing } from "../hooks/useDeleteClothing"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 
 const display = (value) => value ?? "-"
 
@@ -13,7 +14,21 @@ export default function ClothingDetailView() {
   const { mutate: deleteClothing } = useDeleteClothing()
 
   const handleDelete = () => {
-    deleteClothing(id, { onSuccess: () => navigate({ to: '/' }) })
+    toast('Voulez-vous vraiment supprimer ce vêtement ?', {
+      action: {
+        label: 'Confirmer',
+        onClick: () => deleteClothing(id, {
+          onSuccess: () => {
+            navigate({ to: '/' })
+            toast.success('Le vêtement a bien été supprimé !')
+          },
+          onError: () => toast.error('Une erreur est survenue, veuillez réessayer.'),
+        }),
+      },
+      cancel: {
+        label: 'Annuler',
+      },
+    })
   }
   
   if (isPending) {
