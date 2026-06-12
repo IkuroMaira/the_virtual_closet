@@ -13,11 +13,13 @@ import {Link} from "@tanstack/react-router";
 export default function ClothingCard({ clothing }) {
   return (
     <Card className="relative mx-auto w-full max-w-sm pt-0 overflow-hidden">
-      <img
-          src="" // Récupérer l'image en de base données
+      {clothing.image_url && (
+        <img
+          src={clothing.image_url}
           alt="Clothing"
           className="relative aspect-4/5 w-full object-cover"
-      />
+        />
+      )}
       <CardHeader>
         <CardAction>
           <Badge variant="secondary">Tag</Badge>

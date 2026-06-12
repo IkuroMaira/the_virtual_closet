@@ -15,7 +15,11 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://thevirtualcloset.netlify.app"],
+    allow_origins=[
+        "https://thevirtualcloset.netlify.app",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
     allow_origin_regex=r"https://.*--the-virtual-closet\.netlify\.app",
     allow_methods=["*"],
     allow_headers=["*"],
@@ -28,10 +32,3 @@ app.include_router(tags_clothes_router)
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://https://thevirtualcloset.netlify.app"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
