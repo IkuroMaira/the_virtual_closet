@@ -6,7 +6,7 @@ import ClothingForm from "../components/ClothingForm"
 
 export default function UpdateClothingView() {
   const { id } = useParams({ from: '/clothes/$id/update' })
-  const { data } = useClothing(id)
+  const { data, isPending, isError } = useClothing(id)
   const navigate = useNavigate()
   const { mutate } = useUpdateClothing()
 
@@ -22,6 +22,9 @@ export default function UpdateClothingView() {
       }
     )
   }
+
+  if (isPending) return <span>Loading...</span>
+  if (isError) return <span>Une erreur est survenue.</span>
 
   return <ClothingForm onSubmit={handleSubmit} clothingData={data} />
 }

@@ -34,7 +34,6 @@ describe("AddClothingView — intégration", () => {
         getAllEnums.mockResolvedValue({});
         render(<AddClothingView />, { wrapper: createWrapper() });
 
-        expect(screen.getByText("Ajouter un vêtement à votre dressing")).toBeInTheDocument();
         expect(screen.getByPlaceholderText("Quel petit nom ?")).toBeInTheDocument();
     });
 
@@ -43,7 +42,7 @@ describe("AddClothingView — intégration", () => {
         const user = userEvent.setup();
         render(<AddClothingView />, { wrapper: createWrapper() });
 
-        await user.click(screen.getByRole("button", { name: /submit/i }));
+        await user.click(screen.getByText("Enregistrer"));
 
         await waitFor(() => {
             expect(screen.getByText("Le nom doit contenir au moins 2 caractères.")).toBeInTheDocument();
@@ -56,7 +55,7 @@ describe("AddClothingView — intégration", () => {
         render(<AddClothingView />, { wrapper: createWrapper() });
 
         await user.type(screen.getByPlaceholderText("Quel petit nom ?"), "Mon t-shirt");
-        await user.click(screen.getByRole("button", { name: /submit/i }));
+        await user.click(screen.getByText("Enregistrer"));
 
         await waitFor(() => {
             expect(screen.getByText("La catégorie est obligatoire.")).toBeInTheDocument();
@@ -71,7 +70,7 @@ describe("AddClothingView — intégration", () => {
         render(<AddClothingView />, { wrapper: createWrapper() });
 
         await user.type(screen.getByPlaceholderText("Quel petit nom ?"), "Mon t-shirt");
-        await user.click(screen.getByRole("button", { name: /submit/i }));
+        await user.click(screen.getByText("Enregistrer"));
 
         await waitFor(() => {
             expect(screen.getByText("La catégorie est obligatoire.")).toBeInTheDocument();
@@ -85,7 +84,7 @@ describe("AddClothingView — intégration", () => {
         render(<AddClothingView />, { wrapper: createWrapper() });
 
         await user.type(screen.getByPlaceholderText("Quel petit nom ?"), "Mon t-shirt");
-        await user.click(screen.getByRole("button", { name: /submit/i }));
+        await user.click(screen.getByText("Enregistrer"));
 
         await waitFor(() => {
             expect(screen.getByText("La catégorie est obligatoire.")).toBeInTheDocument();

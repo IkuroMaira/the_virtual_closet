@@ -20,7 +20,6 @@ import { z } from "zod"
 
 import { useForm, Controller } from "react-hook-form"
 import { useEnums } from "../hooks/useEnums"
-import { useEffect } from "react"
 
 const schema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères.").max(50, "Le nom ne peut pas dépasser 50 caractères."),
@@ -36,20 +35,12 @@ const schema = z.object({
 })
 
 export default function ClothingForm({ onSubmit, clothingData }) {
-  const { register, handleSubmit, control, reset, formState: { errors } } = useForm({
+  const { register, handleSubmit, control, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: {
-      name: '',
-      category: '',
-      color: '',
-    },
+    defaultValues: clothingData ?? { name: '', category: '', color: '' },
   })
 
   const { data: enums } = useEnums()
-
-  useEffect(() => {
-    if (clothingData) reset(clothingData)
-  }, [clothingData, reset])
 
   const handleFormSubmit = (data) => {
     const cleaned = Object.fromEntries(
