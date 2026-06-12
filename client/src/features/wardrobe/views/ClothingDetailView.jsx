@@ -1,6 +1,7 @@
-import { useParams } from "@tanstack/react-router";
+import { useParams, Link } from "@tanstack/react-router";
 import { useClothing } from "../hooks/useClothing"
 import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
 
 const display = (value) => value ?? "-"
 
@@ -64,6 +65,9 @@ export default function ClothingDetailView() {
         <dt>ID de la marque: {display(data.brand_id)}</dt>
       </dl>
       <Separator />
+      <Button asChild>
+        <Link to="/clothes/$id/update" params={{ id }}>Modifier</Link>
+      </Button>
     </div>
   </>;
 }
