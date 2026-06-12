@@ -62,43 +62,43 @@ def seed_clothes(session: Session):
     clothes = [
         Clothes(
             category="Robes", size="M", status="Propre", style="Chic",
-            brand_id=1, user_id=1, season="Été", note=8,
+            brand_id=1, user_id=1, season="Été", note=3,
             materials="Coton", comment="Ma robe d'été préférée",
             picture="robe_ete.jpg", color="Bleu", name="Robe bleue d'été"
         ),
         Clothes(
             category="Pantalons", size="S", status="Propre", style="Casual",
-            brand_id=4, user_id=1, season="Automne", note=7,
+            brand_id=4, user_id=1, season="Automne", note=2,
             materials="Coton", comment="Jean classique",
             picture="jean.jpg", color="Bleu", name="Jean slim"
         ),
         Clothes(
             category="T-shirt", size="M", status="Sale", style="Streetwear",
-            brand_id=5, user_id=1, season="Été", note=6,
+            brand_id=5, user_id=1, season="Été", note=4,
             materials="Coton", comment="T-shirt de sport",
             picture="tshirt_nike.jpg", color="Noir", name="T-shirt Nike"
         ),
         Clothes(
             category="Vestes", size="M", status="Propre", style="Classique",
-            brand_id=3, user_id=1, season="Automne", note=9,
+            brand_id=3, user_id=1, season="Automne", note=2,
             materials="Laine", comment="Veste de mi-saison",
             picture="veste_sandro.jpg", color="Beige", name="Veste Sandro"
         ),
         Clothes(
             category="Pulls", size="L", status="Propre", style="Bohème",
-            brand_id=2, user_id=2, season="Hiver", note=7,
+            brand_id=2, user_id=2, season="Hiver", note=2,
             materials="Laine", comment="Pull chaud pour l'hiver",
             picture="pull_hm.jpg", color="Blanc", name="Pull oversize"
         ),
         Clothes(
             category="Jupes", size="S", status="Propre", style="Vintage",
-            brand_id=1, user_id=2, season="Printemps", note=8,
+            brand_id=1, user_id=2, season="Printemps", note=5,
             materials="Lin", comment="Jupe midi fleurie",
             picture="jupe_zara.jpg", color="Rose", name="Jupe midi"
         ),
         Clothes(
             category="Blazers", size="M", status="Propre", style="Chic",
-            brand_id=3, user_id=1, season="Printemps", note=10,
+            brand_id=3, user_id=1, season="Printemps", note=5,
             materials="Polyester", comment="Mon blazer préféré pour le bureau",
             picture="blazer.jpg", color="Noir", name="Blazer noir"
         ),
