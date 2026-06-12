@@ -4,6 +4,7 @@ from app.repository import clothes_repository
 from app.models.clothes import ClotheCreate, ClothePublic, ClotheUpdate
 from app.db.database import get_session
 from sqlmodel import Session
+from app.enums import ColorEnum, StatusEnum, CategoryEnum, SizeEnum, StyleEnum, SeasonEnum, MaterialsEnum
 
 router = APIRouter(
     prefix="/clothes",
@@ -11,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post("/new_clothe", response_model=ClothePublic)
+@router.post("/new_clothing", response_model=ClothePublic, status_code=201)
 def add_item(item: ClotheCreate, session: Session = Depends(get_session)):
     """
     Adding a new piece of clothing
@@ -21,7 +22,7 @@ def add_item(item: ClotheCreate, session: Session = Depends(get_session)):
         return new_item
 
     except ValueError as e:
-        # Nom déjà existant
+        # Name already existing
         raise HTTPException(status_code=409, detail=str(e))
 
     except Exception as e:
@@ -43,7 +44,7 @@ def get_all_items(session: Session = Depends(get_session)):
         raise HTTPException(status_code=500, detail="Erreur interne lors de la récupération des vêtements du catalogue")
 
 
-@router.get("/{item_id}", response_model=ClothePublic)
+@router.get("/item/{item_id}", response_model=ClothePublic)
 def get_item(item_id: int, session: Session = Depends(get_session)):
     """
     Get a piece of clothing
@@ -61,7 +62,7 @@ def get_item(item_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=500, detail="Erreur interne lors de la récupération de ce vêtement")
 
 
-@router.patch("/{item_id}/update", response_model=ClothePublic)
+@router.patch("/item/{item_id}/update", response_model=ClothePublic)
 def update_item(item_id: int, item_updated: ClotheUpdate, session: Session = Depends(get_session)):
     """
     Update a piece of clothing
@@ -86,7 +87,7 @@ def update_item(item_id: int, item_updated: ClotheUpdate, session: Session = Dep
         raise HTTPException(status_code=500, detail="Erreur interne lors de la mise à jour de ce vêtement")
 
 
-@router.delete("/{item_id}/delete", response_model=ClothePublic)
+@router.delete("/item/{item_id}/delete", response_model=ClothePublic)
 def delete_item(item_id: int, session: Session = Depends(get_session)):
     """
     Delete a piece of clothing
@@ -102,3 +103,29 @@ def delete_item(item_id: int, session: Session = Depends(get_session)):
     except Exception as e:
         logging.error(f"Erreur technique lors de la suppression du vêtement {item_id}: {e}")
         raise HTTPException(status_code=500, detail="Erreur interne lors de la suppression de ce vêtement")
+
+
+@router.get("/enums", response_model=dict)
+def get_clothes_enums():
+    """
+    Get all available enums for clothes
+    """
+    try:
+        enums = {
+            "ColorEnum": [e.value for e in ColorEnum],
+            "StatusEnum": [e.value for e in StatusEnum],
+            "CategoryEnum": [e.value for e in CategoryEnum],
+            "SizeEnum": [e.value for e in SizeEnum],
+            "StyleEnum": [e.value for e in StyleEnum],
+            "SeasonEnum": [e.value for e in SeasonEnum],
+            "MaterialsEnum": [e.value for e in MaterialsEnum],
+        }
+        return enums
+
+    except ValueError as e:
+        # Enum invalide
+        raise HTTPException(status_code=400, detail=str(e))
+
+    except Exception as e:
+        logging.error(f"Erreur technique lors de la récupération des enums: {e}")
+        raise HTTPException(status_code=500, detail="Erreur interne lors de la récupération des enums")

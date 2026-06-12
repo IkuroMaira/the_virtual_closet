@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.db.database import get_session
 from app.repository import tags_repository
 from app.models.tags import TagCreate, TagPublic, TagUpdate
+from app.models.clothes import ClothePublic
 from sqlmodel import Session
 
 router = APIRouter(
@@ -24,8 +25,8 @@ def add_tag(tag: TagCreate, session: Session = Depends(get_session)):
         # Nom déjà existant
         raise HTTPException(status_code=409, detail=str(e))
 
-    except Exception as e:
-        logging.error(f"Erreur technique lors de l'insertion du tag {tag.name}: {e}")
+    except Exception:
+        logging.error(f"Erreur technique lors de l'insertion du tag {tag.name}")
         raise HTTPException(status_code=500, detail="Erreur interne lors de l'insertion de ce tag")
 
 
@@ -38,12 +39,12 @@ def get_all_tags(session: Session = Depends(get_session)):
         tags = tags_repository.get_all_tags(session)
         return tags
 
-    except Exception as e:
-        logging.error(f"Erreur technique lors de la récupération des tags: {e}")
+    except Exception:
+        logging.error("Erreur technique lors de la récupération des tags")
         raise HTTPException(status_code=500, detail="Erreur interne lors de la récupération des tags")
 
 
-@router.get("/{tag_id}", response_model=TagPublic)
+@router.get("/tag/{tag_id}", response_model=TagPublic)
 def get_tag(tag_id: int, session: Session = Depends(get_session)):
     """
     Get a tag
@@ -56,12 +57,33 @@ def get_tag(tag_id: int, session: Session = Depends(get_session)):
         # Tag inexistant
         raise HTTPException(status_code=404, detail=str(e))
 
-    except Exception as e:
-        logging.error(f"Erreur technique lors de la récupération du tag {tag_id}: {e}")
+    except Exception:
+        logging.error(f"Erreur technique lors de la récupération du tag {tag_id}")
         raise HTTPException(status_code=500, detail="Erreur interne lors de la récupération du tag")
 
 
-@router.patch("/{tag_id}/update", response_model=TagPublic)
+@router.get("/tag/{tag_id}/clothes", response_model=list[ClothePublic])
+def get_all_items_from_tag(tag_id: int, session: Session = Depends(get_session)):
+    """
+    Get all items associated to a specific tag
+    """
+    try:
+        tag_items = tags_repository.get_all_items_from_tag(tag_id, session)
+        return tag_items
+
+    except ValueError as e:
+        error_msg = str(e)
+        if "n'existe pas" in str(e):
+            raise HTTPException(status_code=404, detail=error_msg)
+        else:
+            raise HTTPException(400, detail=error_msg)
+
+    except Exception:
+        logging.error(f"Erreur technique lors de la récupération des vêtements associés au tag {tag_id}")
+        raise HTTPException(status_code=500, detail="Erreur interne lors de la récupèreration des vêtements associés au tag")
+
+
+@router.patch("/tag/{tag_id}/update", response_model=TagPublic)
 def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session = Depends(get_session)):
     """
     Update a tag
@@ -81,12 +103,12 @@ def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session = Depends(g
         else:
             raise HTTPException(status_code=400, detail=str(e))
 
-    except Exception as e:
-        logging.error(f"Erreur technique lors de la mise à jour du tag {tag_id}: {e}")
+    except Exception:
+        logging.error(f"Erreur technique lors de la mise à jour du tag {tag_id}")
         raise HTTPException(status_code=500, detail="Erreur interne lors de la mise à jour du tag")
 
 
-@router.delete("/{tag_id}/delete", response_model=TagPublic)
+@router.delete("/tag/{tag_id}/delete", response_model=TagPublic)
 def delete_tag(tag_id: int, session: Session = Depends(get_session)):
     """
     Delete a piece of clothe
@@ -99,6 +121,6 @@ def delete_tag(tag_id: int, session: Session = Depends(get_session)):
         # Tag inexistant
         raise HTTPException(status_code=404, detail=str(e))
 
-    except Exception as e:
-        logging.error(f"Erreur technique lors de la suppression du tag {tag_id}: {e}")
+    except Exception:
+        logging.error(f"Erreur technique lors de la suppression du tag {tag_id}")
         raise HTTPException(status_code=500, detail="Erreur interne lors de la suppression du tag")
