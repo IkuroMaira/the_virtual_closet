@@ -2,11 +2,14 @@ import { useParams, Link, useNavigate } from "@tanstack/react-router";
 import { useClothing } from "../hooks/useClothing"
 import { useDeleteClothing } from "../hooks/useDeleteClothing"
 import { useItemTags } from "../../tags/hooks/useItemTags";
+import { useRemoveTagFromItem } from "../../tags/hooks/useRemoveTagFromItem";
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 
 const display = (value) => value ?? "-"
+
 
 export default function ClothingDetailView() {
   const { id } = useParams({ from: '/clothes/$id/' })
@@ -32,8 +35,13 @@ export default function ClothingDetailView() {
     })
   }
   const { isPending: getIsPending, isError: getIsError, data: getData, error: getError } = useItemTags(id)
+  const { mutate: removeMutate, isPending: removeIsPending, isError: removeIsError, error: removeError } = useRemoveTagFromItem(id)
   
   if (isPending) {
+    return <span>Loading...</span>
+  }
+
+  if (getIsPending) {
     return <span>Loading...</span>
   }
   
@@ -43,6 +51,12 @@ export default function ClothingDetailView() {
     }
     return <span>Error: { error.message }</span>
   }
+
+  if (getIsError) {
+    return <span>Error: { getError.message }</span>
+  }
+
+  const tags = [...getData].sort((a, b) => a.name.localeCompare(b.name))
 
   return <>
     <div className="flex w-full max-w-sm flex-col gap-2 text-sm">
@@ -95,6 +109,17 @@ export default function ClothingDetailView() {
         <dt>ID de la marque:</dt>
         <dd className="text-muted-foreground">{display(data.brand_id)}</dd>
       </dl>
+      <Separator />
+      <dl className="flex items-center justify-between">
+        <dt>ID de la marque: {data.brand_id}</dt>
+      </dl>
+      <Separator />
+      <dl className="flex items-center justify-between"></dl>
+        <dt>Tags:</dt>
+          { tags.map((tag) => (
+              <dd key={tag.id} className="text-muted-foreground"><Badge style={{ backgroundColor: tag.color }}>{ tag.name }</Badge></dd>
+            ))
+          }
       <Separator />
       <div className="flex gap-2">
         <Button asChild className="flex-1">
