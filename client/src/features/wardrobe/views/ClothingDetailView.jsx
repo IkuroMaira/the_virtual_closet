@@ -1,12 +1,47 @@
-import { useParams } from "@tanstack/react-router";
+import { useParams, Link, useNavigate } from "@tanstack/react-router";
 import { useClothing } from "../hooks/useClothing"
+import { useDeleteClothing } from "../hooks/useDeleteClothing"
+import { useItemTags } from "../../tags/hooks/useItemTags";
+import { useRemoveTagFromItem } from "../../tags/hooks/useRemoveTagFromItem";
 import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { toast } from "sonner"
+
+const display = (value) => value ?? "-"
+
 
 export default function ClothingDetailView() {
-  const { id } = useParams({ from: '/clothes/$id' })
+  const { id } = useParams({ from: '/clothes/$id/' })
+  const navigate = useNavigate()
   const { isPending, isError, data, error } = useClothing(id)
+  const { mutate: deleteClothing } = useDeleteClothing()
+
+  const handleDelete = () => {
+    toast('Voulez-vous vraiment supprimer ce vêtement ?', {
+      action: {
+        label: 'Confirmer',
+        onClick: () => deleteClothing(id, {
+          onSuccess: () => {
+            navigate({ to: '/' })
+            toast.success('Le vêtement a bien été supprimé !')
+          },
+          onError: () => toast.error('Une erreur est survenue, veuillez réessayer.'),
+        }),
+      },
+      cancel: {
+        label: 'Annuler',
+      },
+    })
+  }
+  const { isPending: getIsPending, isError: getIsError, data: getData, error: getError } = useItemTags(id)
+  const { mutate: removeMutate, isPending: removeIsPending, isError: removeIsError, error: removeError } = useRemoveTagFromItem(id)
   
   if (isPending) {
+    return <span>Loading...</span>
+  }
+
+  if (getIsPending) {
     return <span>Loading...</span>
   }
   
@@ -17,51 +52,81 @@ export default function ClothingDetailView() {
     return <span>Error: { error.message }</span>
   }
 
+  if (getIsError) {
+    return <span>Error: { getError.message }</span>
+  }
+
+  const tags = [...getData].sort((a, b) => a.name.localeCompare(b.name))
+
   return <>
     <div className="flex w-full max-w-sm flex-col gap-2 text-sm">
       <dl className="flex items-center justify-between">
-        <dt>{data.name}</dt>
+        <dt>Nom:</dt>
+        <dd className="text-muted-foreground">{display(data.name)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
-        <dt>{data.category}</dt>
+        <dt>Catégorie:</dt>
+        <dd className="text-muted-foreground">{display(data.category)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
-        <dt>{data.color}</dt>
+        <dt>Couleur:</dt>
+        <dd className="text-muted-foreground">{display(data.color)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
-        <dt>{data.size}</dt>
+        <dt>Taille:</dt>
+        <dd className="text-muted-foreground">{display(data.size)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
-        <dt>{data.style}</dt>
+        <dt>Style:</dt>
+        <dd className="text-muted-foreground">{display(data.style)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
-        <dt>Saison</dt>
-        <dd className="text-muted-foreground">{data.season}</dd>
+        <dt>Saison:</dt>
+        <dd className="text-muted-foreground">{display(data.season)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
-        <dt>{data.materials}</dt>
+        <dt>Matière(s):</dt>
+        <dd className="text-muted-foreground">{display(data.materials)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
         <dt>Note:</dt>
-        <dd className="text-muted-foreground">{data.note}</dd>
+        <dd className="text-muted-foreground">{display(data.note)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
         <dt>Commentaire:</dt>
-        <dd className="text-muted-foreground">{data.comment}</dd>
+        <dd className="text-muted-foreground">{display(data.comment)}</dd>
+      </dl>
+      <Separator />
+      <dl className="flex items-center justify-between">
+        <dt>ID de la marque:</dt>
+        <dd className="text-muted-foreground">{display(data.brand_id)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
         <dt>ID de la marque: {data.brand_id}</dt>
       </dl>
       <Separator />
+      <dl className="flex items-center justify-between"></dl>
+        <dt>Tags:</dt>
+          { tags.map((tag) => (
+              <dd key={tag.id} className="text-muted-foreground"><Badge style={{ backgroundColor: tag.color }}>{ tag.name }</Badge></dd>
+            ))
+          }
+      <Separator />
+      <div className="flex gap-2">
+        <Button asChild className="flex-1">
+          <Link to="/clothes/$id/update" params={{ id }}>Modifier</Link>
+        </Button>
+        <Button variant="destructive" className="flex-1" onClick={handleDelete}>Supprimer</Button>
+      </div>
     </div>
   </>;
 }
