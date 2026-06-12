@@ -1,0 +1,17 @@
+import { getItemTags } from '../../../shared/services/tags_clothes_api';
+import { useQuery } from "@tanstack/react-query"
+
+export const useItemTags = (itemId) => {
+
+    const { isPending, isError, data, error } = useQuery({
+        queryKey: ["itemTags", itemId],
+        queryFn: () => getItemTags(itemId)
+    })
+
+    return {
+        isPending,
+        isError,
+        data,
+        error,
+    }
+};

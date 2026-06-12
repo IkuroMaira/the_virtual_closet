@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from "@tanstack/react-router";
 import { useClothing } from "../hooks/useClothing"
 import { useDeleteClothing } from "../hooks/useDeleteClothing"
+import { useItemTags } from "../../tags/hooks/useItemTags";
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
@@ -30,6 +31,7 @@ export default function ClothingDetailView() {
       },
     })
   }
+  const { isPending: getIsPending, isError: getIsError, data: getData, error: getError } = useItemTags(id)
   
   if (isPending) {
     return <span>Loading...</span>
