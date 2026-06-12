@@ -15,15 +15,12 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "sonner"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 
-import { useCreateClothing } from "../hooks/useCreateClothing"
-import { useNavigate } from "@tanstack/react-router"
 import { useForm, Controller } from "react-hook-form"
 import { useEnums } from "../hooks/useEnums"
-import { useState } from "react"
+import { useEffect } from "react"
 
 const schema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères.").max(50, "Le nom ne peut pas dépasser 50 caractères."),
@@ -38,9 +35,8 @@ const schema = z.object({
   comment: z.string().optional(),
 })
 
-export default function ClothingForm() {
-  const navigate = useNavigate()
-  const { register, handleSubmit, control, formState: { errors } } = useForm({
+export default function ClothingForm({ onSubmit, clothingData }) {
+  const { register, handleSubmit, control, reset, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       name: '',
@@ -49,36 +45,22 @@ export default function ClothingForm() {
     },
   })
 
-  const { mutate } = useCreateClothing({
-    onSuccess: () => {
-      toast.success('Le vêtement a bien été ajouté au dressing !')
-      navigate({ to: '/' })
-    },
-    onError: () => toast.error('Une erreur est survenue, veuillez réessayer.'),
-  })
-
-  const onSubmit = (data) => mutate(data)
-
   const { data: enums } = useEnums()
 
-  // State pour les champs
-  const [name, setForm] = useState({
-    name: "",
-    category: ""
-  })
+  useEffect(() => {
+    if (clothingData) reset(clothingData)
+  }, [clothingData, reset])
 
-  function handleChange(e) {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
-    })
+  const handleFormSubmit = (data) => {
+    const cleaned = Object.fromEntries(
+      Object.entries(data).filter(([, v]) => v !== '')
+    )
+    onSubmit(cleaned)
   }
 
   return (
     <>
-      <h1>Ajouter un vêtement à votre dressing</h1>
-
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
         <FieldGroup>
           <Field className="w-full max-w-100">
             <FieldLabel htmlFor="name">Nom<span className="text-destructive">*</span></FieldLabel>
@@ -86,8 +68,6 @@ export default function ClothingForm() {
               id="name"
               placeholder="Quel petit nom ?"
               {...register("name")}
-              name="name" // 1. Lie l'inpur au state
-              onChange={handleChange} // 2. Met à jour le state à chaque frappe
             />
             {errors.name && <p className="text-destructive text-xs mt-1">{errors.name.message}</p>}
           </Field>
@@ -323,7 +303,7 @@ export default function ClothingForm() {
           <Textarea placeholder="Ajouter un commentaire..." className="w-full max-w-100" {...register("comment")} />
 
           <Field orientation="horizontal">
-            <Button type="submit">Submit</Button>
+            <Button type="submit">Enregistrer</Button>
           </Field>
         </FieldGroup>
       </form>

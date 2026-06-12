@@ -65,7 +65,7 @@ export async function getAllEnums() {
  * Function to update one item in the backend
  */
 export async function updateClothing(clothing) {
-  const response = await fetch(`${API_CLOTHES_URL}/${clothing.id}/update`, {
+  const response = await fetch(`${API_CLOTHES_URL}/item/${clothing.id}/update`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(clothing),
