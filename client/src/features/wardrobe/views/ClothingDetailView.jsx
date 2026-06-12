@@ -45,32 +45,38 @@ export default function ClothingDetailView() {
   return <>
     <div className="flex w-full max-w-sm flex-col gap-2 text-sm">
       <dl className="flex items-center justify-between">
-        <dt>{display(data.name)}</dt>
+        <dt>Nom:</dt>
+        <dd className="text-muted-foreground">{display(data.name)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
-        <dt>{display(data.category)}</dt>
+        <dt>Catégorie:</dt>
+        <dd className="text-muted-foreground">{display(data.category)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
-        <dt>{display(data.color)}</dt>
+        <dt>Couleur:</dt>
+        <dd className="text-muted-foreground">{display(data.color)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
-        <dt>{display(data.size)}</dt>
+        <dt>Taille:</dt>
+        <dd className="text-muted-foreground">{display(data.size)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
-        <dt>{display(data.style)}</dt>
+        <dt>Style:</dt>
+        <dd className="text-muted-foreground">{display(data.style)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
-        <dt>Saison</dt>
+        <dt>Saison:</dt>
         <dd className="text-muted-foreground">{display(data.season)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
-        <dt>{display(data.materials)}</dt>
+        <dt>Matière(s):</dt>
+        <dd className="text-muted-foreground">{display(data.materials)}</dd>
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
@@ -84,7 +90,8 @@ export default function ClothingDetailView() {
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
-        <dt>ID de la marque: {display(data.brand_id)}</dt>
+        <dt>ID de la marque:</dt>
+        <dd className="text-muted-foreground">{display(data.brand_id)}</dd>
       </dl>
       <Separator />
       <div className="flex gap-2">

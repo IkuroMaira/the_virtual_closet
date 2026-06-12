@@ -5,7 +5,8 @@ import { useUpdateClothing } from "../hooks/useUpdateClothing"
 import ClothingForm from "../components/ClothingForm"
 
 export default function UpdateClothingView() {
-  const { id } = useParams({ from: '/clothes/$id/update' })
+  const { id } = useParams({ from: '/clothes/$id/update' 
+  })
   const { data, isPending, isError } = useClothing(id)
   const navigate = useNavigate()
   const { mutate } = useUpdateClothing()

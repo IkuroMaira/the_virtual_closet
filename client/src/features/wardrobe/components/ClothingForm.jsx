@@ -34,10 +34,20 @@ const schema = z.object({
   comment: z.string().optional(),
 })
 
+const toFormValues = (data) => {
+  if (!data) return { name: '', category: '', color: '' }
+  return Object.fromEntries(
+    Object.entries(data).map(([k, v]) => {
+      if (k === 'note') return [k, v != null ? String(v) : '']
+      return [k, v ?? undefined]
+    })
+  )
+}
+
 export default function ClothingForm({ onSubmit, clothingData }) {
   const { register, handleSubmit, control, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: clothingData ?? { name: '', category: '', color: '' },
+    defaultValues: toFormValues(clothingData),
   })
 
   const { data: enums } = useEnums()
