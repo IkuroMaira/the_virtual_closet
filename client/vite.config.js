@@ -33,6 +33,6 @@ export default defineConfig({
     setupFiles: './src/tests/setupTests.js',
   },
   build: {
-    minify: 'esbuild',
+    minify: 'oxc',
   }
 })
