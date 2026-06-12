@@ -61,6 +61,21 @@ export async function getAllEnums() {
   return data;
 }
 
+export async function deleteClothing(item_id) {
+  const response = await fetch(`${API_CLOTHES_URL}/item/${item_id}/delete`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Erreur HTTP! Status: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  return data;
+}
+
 /**
  * Function to update one item in the backend
  */
