@@ -1,4 +1,4 @@
-.PHONY: help dev front back stop install install-front install-back
+.PHONY: help dev front back stop install install-front install-back install-back-dev
 
 help:
 	@echo "Commandes disponibles :"
@@ -9,6 +9,7 @@ help:
 	@echo "  make install        — Installe les dépendances front et back"
 	@echo "  make install-front  — Installe les dépendances npm"
 	@echo "  make install-back   — Installe les dépendances Python"
+	@echo "  make install-back-dev — Installe les dépendances Python + dev (tests, lint)"
 
 dev:
 	make -j2 front back
@@ -31,3 +32,6 @@ install-front:
 
 install-back:
 	cd server && pip install -r requirements.txt
+
+install-back-dev:
+	cd server && pip install -r requirements.txt -r requirements-dev.txt

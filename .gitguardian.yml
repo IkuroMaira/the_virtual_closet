@@ -1,0 +1,4 @@
+version: 2
+matches-ignore:
+  - name: CI test database URL
+    match: "postgresql://postgres:postgres@localhost"

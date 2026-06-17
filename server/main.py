@@ -7,7 +7,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Startup")
+    from rembg import new_session as rembg_new_session
+    app.state.rembg_session = rembg_new_session("u2net_cloth_seg")
+    print("rembg session ready")
     yield
     print("Shutdown")
 
