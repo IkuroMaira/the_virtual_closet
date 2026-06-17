@@ -47,7 +47,7 @@ const toFormValues = (data) => {
   )
 }
 
-export default function ClothingForm({ onSubmit, clothingData }) {
+export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
   const { register, handleSubmit, control, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: toFormValues(clothingData),
@@ -127,13 +127,13 @@ export default function ClothingForm({ onSubmit, clothingData }) {
               control={control}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
-                  <FieldLabel>Catégories<span className="text-destructive">*</span></FieldLabel>
+                  <FieldLabel>Catégorie<span className="text-destructive">*</span></FieldLabel>
                   <SelectTrigger className="w-full max-w-100">
                     <SelectValue placeholder="Choisissez la catégorie" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>Catégories</SelectLabel>
+                      <SelectLabel>Catégorie</SelectLabel>
                       {
                         enums?.CategoryEnum?.map(item =>
                           <SelectItem value={item} key={item}   >{item}</SelectItem>
@@ -154,13 +154,13 @@ export default function ClothingForm({ onSubmit, clothingData }) {
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <FieldLabel>Couleurs<span className="text-destructive">*</span></FieldLabel>
+                    <FieldLabel>Couleur<span className="text-destructive">*</span></FieldLabel>
                     <SelectTrigger className="w-full max-w-100">
                       <SelectValue placeholder="Choisissez la couleur" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectLabel>Couleurs</SelectLabel>
+                        <SelectLabel>Couleur</SelectLabel>
                         {
                           enums?.ColorEnum?.map(item =>
                             <SelectItem value={item} key={item}>{item}</SelectItem>
@@ -252,47 +252,30 @@ export default function ClothingForm({ onSubmit, clothingData }) {
             </Field>
           </FieldGroup>
 
-          <FieldGroup className="grid max-w-100 grid-cols-2">
-            <Field>
-              <Controller
-                name="season"
-                control={control}
-                render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FieldLabel>Saison</FieldLabel>
-                    <SelectTrigger className="w-full max-w-100">
-                      <SelectValue placeholder="Choisissez la saison" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Saison</SelectLabel>
-                        {
-                          enums?.SeasonEnum?.map(item =>
-                            <SelectItem value={item} key={item}>{item}</SelectItem>
-                          )
-                        }
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </Field>
-
-            <Field>
-              <Select>
-                <FieldLabel>Marque</FieldLabel>
-                <SelectTrigger className="w-full max-w-100">
-                  <SelectValue placeholder="Choisissez la marque" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Marque</SelectLabel>
-                    <SelectItem value="apple">Apple</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-          </FieldGroup>
+          <Field className="w-full max-w-100">
+            <Controller
+              name="season"
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FieldLabel>Saison</FieldLabel>
+                  <SelectTrigger className="w-full max-w-100">
+                    <SelectValue placeholder="Choisissez la saison" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Saison</SelectLabel>
+                      {
+                        enums?.SeasonEnum?.map(item =>
+                          <SelectItem value={item} key={item}>{item}</SelectItem>
+                        )
+                      }
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </Field>
 
           <Field>
             <Controller
@@ -344,12 +327,20 @@ export default function ClothingForm({ onSubmit, clothingData }) {
             />
           </Field>
 
-          <Textarea placeholder="Ajouter un commentaire..." className="w-full max-w-100" {...register("comment")} />
+          <Field className="w-full max-w-100">
+            <FieldLabel htmlFor="comment">Commentaire</FieldLabel>
+            <Textarea id="comment" placeholder="Ajouter un commentaire..." className="w-full" {...register("comment")} />
+          </Field>
 
-          <Field orientation="horizontal">
-            <Button type="submit" disabled={isUploading}>
+          <Field orientation="horizontal" className="flex gap-2 w-full max-w-100">
+            <Button type="submit" disabled={isUploading} className="flex-1">
               {isUploading ? "Upload en cours..." : "Enregistrer"}
             </Button>
+            {onCancel && (
+              <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
+                Annuler
+              </Button>
+            )}
           </Field>
         </FieldGroup>
       </form>

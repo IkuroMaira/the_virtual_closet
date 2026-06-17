@@ -1,6 +1,7 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/shared/context/AuthContext'
+import { LayoutGrid, Tag } from 'lucide-react'
 
 export default function Header() {
     const { session, signOut } = useAuth()
@@ -22,10 +23,16 @@ export default function Header() {
                     {session && (
                         <>
                             <Button variant="ghost" asChild>
-                                <Link to="/">Catalogue</Link>
+                                <Link to="/" aria-label="Catalogue">
+                                    <LayoutGrid className="sm:hidden w-5 h-5" />
+                                    <span className="hidden sm:inline">Catalogue</span>
+                                </Link>
                             </Button>
                             <Button variant="ghost" asChild>
-                                <Link to="/tags">Tags</Link>
+                                <Link to="/tags" aria-label="Tags">
+                                    <Tag className="sm:hidden w-5 h-5" />
+                                    <span className="hidden sm:inline">Tags</span>
+                                </Link>
                             </Button>
                             <Button variant="outline" onClick={handleSignOut}>
                                 Se déconnecter
