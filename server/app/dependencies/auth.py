@@ -6,8 +6,15 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 security = HTTPBearer()
 
-_supabase_url = os.getenv("SUPABASE_URL", "").rstrip("/")
-_jwks_client = PyJWKClient(f"{_supabase_url}/auth/v1/.well-known/jwks.json")
+_jwks_client: PyJWKClient | None = None
+
+
+def _get_jwks_client() -> PyJWKClient:
+    global _jwks_client
+    if _jwks_client is None:
+        supabase_url = os.getenv("SUPABASE_URL", "").rstrip("/")
+        _jwks_client = PyJWKClient(f"{supabase_url}/auth/v1/.well-known/jwks.json")
+    return _jwks_client
 
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
@@ -16,7 +23,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
 
     # Try JWKS first (new P-256 / ES256 keys)
     try:
-        signing_key = _jwks_client.get_signing_key_from_jwt(token)
+        signing_key = _get_jwks_client().get_signing_key_from_jwt(token)
         payload = jwt.decode(
             token,
             signing_key.key,
