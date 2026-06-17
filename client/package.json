@@ -33,7 +33,10 @@
     "zod": "^4.4.3"
   },
   "overrides": {
-    "seroval": "^1.5.0"
+    "seroval": "^1.5.0",
+    "vite-node": {
+      "vite": ">=7.3.4"
+    }
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
