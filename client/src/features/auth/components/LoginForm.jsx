@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useNavigate, Link } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { supabase } from '@/shared/services/supabaseClient'
 import { Button } from '@/components/ui/button'
@@ -13,7 +13,6 @@ const loginSchema = z.object({
 })
 
 export default function LoginForm() {
-    const navigate = useNavigate()
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
         resolver: zodResolver(loginSchema),
     })
@@ -25,8 +24,7 @@ export default function LoginForm() {
             toast.error(error.message)
             return
         }
-
-        navigate({ to: '/' })
+        // La navigation est gérée dans LoginPage via useEffect sur la session
     }
 
     return (
