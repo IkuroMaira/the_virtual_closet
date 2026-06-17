@@ -105,7 +105,7 @@ async def process_picture(
         input_bytes = await file.read()
         output_bytes = rembg_remove(input_bytes, session=request.app.state.rembg_session)
 
-        img = Image.open(io.BytesIO(output_bytes))
+        img: Image.Image = Image.open(io.BytesIO(output_bytes))
         img_arr = np.array(img)
         alpha_arr = img_arr[:, :, 3]
 
@@ -128,7 +128,7 @@ async def process_picture(
             offset_x = (size - img.width) // 2
             offset_y = (size - img.height) // 2
             square.paste(img, (offset_x, offset_y))
-            square = square.resize((800, 800), Image.LANCZOS)
+            square = square.resize((800, 800), Image.Resampling.LANCZOS)
             buf = io.BytesIO()
             square.save(buf, format="PNG")
             output_bytes = buf.getvalue()
