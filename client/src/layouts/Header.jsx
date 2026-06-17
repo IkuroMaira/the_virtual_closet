@@ -1,6 +1,6 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
-import { useAuth } from '@/shared/context/AuthContext'
+import { useAuth } from '@/shared/context/useAuth'
 import { LayoutGrid, Tag } from 'lucide-react'
 
 export default function Header() {

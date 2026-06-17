@@ -82,7 +82,7 @@ export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
         const processedBlob = await processClothingPicture(selectedFile)
         const pictureUrl = await uploadClothingPicture(processedBlob, user.id, "png")
         cleaned.picture = pictureUrl
-      } catch (err) {
+      } catch {
         setUploadError("Impossible de traiter ou d'uploader la photo. Réessayez.")
         setIsUploading(false)
         return
