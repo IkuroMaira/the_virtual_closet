@@ -20,7 +20,7 @@ export default function ClothingCard({ clothing }) {
         <img
           src={signedUrl}
           alt={clothing.name}
-          className="relative aspect-4/5 w-full object-cover"
+          className="relative aspect-square w-full object-contain bg-muted/40 p-4"
         />
       )}
       <CardHeader>

@@ -60,7 +60,7 @@ export default function ClothingDetailView() {
           <img
             src={signedUrl}
             alt={data.name}
-            className="w-full rounded-md object-cover aspect-4/5"
+            className="w-full rounded-md object-contain aspect-square bg-muted/40 p-6"
           />
         ) : (
           <div className="w-full aspect-4/5 rounded-md bg-muted flex items-center justify-center text-muted-foreground text-sm">

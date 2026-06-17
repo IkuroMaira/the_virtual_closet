@@ -10,9 +10,21 @@ const STORAGE_BUCKET = "clothes-pictures";
  * @param {string} userId - used to namespace files per user
  * @returns {Promise<string>} public URL
  */
-export async function uploadClothingPicture(file, userId) {
-  const extension = file.name.split(".").pop();
-  const fileName = `${userId}/${Date.now()}.${extension}`;
+export async function processClothingPicture(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await fetch(`${API_CLOTHES_URL}/process-picture`, {
+    method: "POST",
+    headers: { ...await getAuthHeaders() },
+    body: formData,
+  });
+  if (!response.ok) throw new Error(`Erreur détourage : ${response.status}`);
+  return response.blob();
+}
+
+export async function uploadClothingPicture(file, userId, extension = null) {
+  const ext = extension ?? file.name.split(".").pop();
+  const fileName = `${userId}/${Date.now()}.${ext}`;
 
   const { error } = await supabase.storage
     .from(STORAGE_BUCKET)

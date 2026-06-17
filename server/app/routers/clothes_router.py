@@ -1,12 +1,18 @@
 import uuid
 import logging
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request
+from fastapi.responses import Response
 from app.repository import clothes_repository
 from app.models.clothes import ClotheCreate, ClothePublic, ClotheUpdate
 from app.db.database import get_session
 from app.dependencies.auth import get_current_user
 from sqlmodel import Session
 from app.enums import ColorEnum, StatusEnum, CategoryEnum, SizeEnum, StyleEnum, SeasonEnum, MaterialsEnum
+from rembg import remove as rembg_remove
+from PIL import Image
+from scipy import ndimage
+import numpy as np
+import io
 
 router = APIRouter(
     prefix="/clothes",
@@ -87,6 +93,51 @@ def delete_item(item_id: int, session: Session = Depends(get_session), current_u
     except Exception as e:
         logging.error(f"Erreur technique lors de la suppression du vêtement {item_id}: {e}")
         raise HTTPException(status_code=500, detail="Erreur interne lors de la suppression de ce vêtement")
+
+
+@router.post("/process-picture")
+async def process_picture(
+    request: Request,
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user)
+):
+    try:
+        input_bytes = await file.read()
+        output_bytes = rembg_remove(input_bytes, session=request.app.state.rembg_session)
+
+        img = Image.open(io.BytesIO(output_bytes))
+        img_arr = np.array(img)
+        alpha_arr = img_arr[:, :, 3]
+
+        # Garder uniquement la plus grande région non-transparente
+        binary = alpha_arr > 10
+        labeled, num_features = ndimage.label(binary)
+        if num_features > 1:
+            sizes = ndimage.sum(binary, labeled, range(1, num_features + 1))
+            largest = int(np.argmax(sizes)) + 1
+            img_arr[:, :, 3] = np.where(labeled == largest, alpha_arr, 0)
+            img = Image.fromarray(img_arr)
+
+        _, _, _, alpha = img.split()
+        bbox = alpha.getbbox()
+        if bbox:
+            img = img.crop(bbox)
+            pad = max(img.width, img.height) // 10
+            size = max(img.width, img.height) + 2 * pad
+            square = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+            offset_x = (size - img.width) // 2
+            offset_y = (size - img.height) // 2
+            square.paste(img, (offset_x, offset_y))
+            square = square.resize((800, 800), Image.LANCZOS)
+            buf = io.BytesIO()
+            square.save(buf, format="PNG")
+            output_bytes = buf.getvalue()
+
+        return Response(content=output_bytes, media_type="image/png")
+
+    except Exception as e:
+        logging.error(f"Erreur lors du détourage de l'image : {e}")
+        raise HTTPException(status_code=500, detail="Erreur lors du traitement de l'image")
 
 
 @router.get("/enums", response_model=dict)

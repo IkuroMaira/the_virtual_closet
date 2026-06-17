@@ -22,7 +22,7 @@ import { z } from "zod"
 import { useForm, Controller } from "react-hook-form"
 import { useEnums } from "../hooks/useEnums"
 import { useSignedUrl } from "../hooks/useSignedUrl"
-import { uploadClothingPicture } from "@/shared/services/clothes_api"
+import { uploadClothingPicture, processClothingPicture } from "@/shared/services/clothes_api"
 import { supabase } from "@/shared/services/supabaseClient"
 
 const schema = z.object({
@@ -79,10 +79,11 @@ export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
       setIsUploading(true)
       try {
         const { data: { user } } = await supabase.auth.getUser()
-        const pictureUrl = await uploadClothingPicture(selectedFile, user.id)
+        const processedBlob = await processClothingPicture(selectedFile)
+        const pictureUrl = await uploadClothingPicture(processedBlob, user.id, "png")
         cleaned.picture = pictureUrl
       } catch (err) {
-        setUploadError("Impossible d'uploader la photo. Réessayez.")
+        setUploadError("Impossible de traiter ou d'uploader la photo. Réessayez.")
         setIsUploading(false)
         return
       }
@@ -337,7 +338,7 @@ export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
 
           <Field orientation="horizontal" className="flex gap-2 w-full max-w-100">
             <Button type="submit" disabled={isUploading} className="flex-1">
-              {isUploading ? "Upload en cours..." : "Enregistrer"}
+              {isUploading ? "Détourage en cours..." : "Enregistrer"}
             </Button>
             {onCancel && (
               <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
