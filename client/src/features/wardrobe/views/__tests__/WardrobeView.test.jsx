@@ -51,7 +51,7 @@ describe("WardrobeView", () => {
 
         render(<WardrobeView />, { wrapper: createWrapper() });
 
-        expect(screen.getByText("Loading...")).toBeInTheDocument();
+        expect(screen.getByText("Chargement de votre garde-robe...")).toBeInTheDocument();
     });
 
     test("affiche un message d'erreur si l'API échoue", async () => {

@@ -4,6 +4,7 @@ from fastapi.testclient import TestClient
 from unittest.mock import MagicMock, patch
 from main import app
 from app.db.database import get_session
+from app.dependencies.auth import get_current_user
 import pytest
 
 client = TestClient(app)
@@ -12,6 +13,7 @@ client = TestClient(app)
 def override_session():
     mock_session = MagicMock()
     app.dependency_overrides[get_session] = lambda: mock_session
+    app.dependency_overrides[get_current_user] = lambda: {"sub": "00000000-0000-0000-0000-000000000001"}
     yield mock_session
     app.dependency_overrides.clear()
 

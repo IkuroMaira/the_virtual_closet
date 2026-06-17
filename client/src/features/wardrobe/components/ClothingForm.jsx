@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Field,
@@ -20,6 +21,9 @@ import { z } from "zod"
 
 import { useForm, Controller } from "react-hook-form"
 import { useEnums } from "../hooks/useEnums"
+import { useSignedUrl } from "../hooks/useSignedUrl"
+import { uploadClothingPicture, processClothingPicture } from "@/shared/services/clothes_api"
+import { supabase } from "@/shared/services/supabaseClient"
 
 const schema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères.").max(50, "Le nom ne peut pas dépasser 50 caractères."),
@@ -44,18 +48,48 @@ const toFormValues = (data) => {
   )
 }
 
-export default function ClothingForm({ onSubmit, clothingData }) {
+export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
   const { register, handleSubmit, control, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: toFormValues(clothingData),
   })
 
   const { data: enums } = useEnums()
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [localPreviewUrl, setLocalPreviewUrl] = useState(null)
+  const existingSignedUrl = useSignedUrl(selectedFile ? null : clothingData?.picture)
+  const previewUrl = localPreviewUrl ?? existingSignedUrl
+  const [uploadError, setUploadError] = useState(null)
+  const [isUploading, setIsUploading] = useState(false)
 
-  const handleFormSubmit = (data) => {
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setSelectedFile(file)
+    setLocalPreviewUrl(URL.createObjectURL(file))
+    setUploadError(null)
+  }
+
+  const handleFormSubmit = async (data) => {
     const cleaned = Object.fromEntries(
       Object.entries(data).filter(([, v]) => v !== '')
     )
+
+    if (selectedFile) {
+      setIsUploading(true)
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        const processedBlob = await processClothingPicture(selectedFile)
+        const pictureUrl = await uploadClothingPicture(processedBlob, user.id, "png")
+        cleaned.picture = pictureUrl
+      } catch {
+        setUploadError("Impossible de traiter ou d'uploader la photo. Réessayez.")
+        setIsUploading(false)
+        return
+      }
+      setIsUploading(false)
+    }
+
     onSubmit(cleaned)
   }
 
@@ -75,7 +109,20 @@ export default function ClothingForm({ onSubmit, clothingData }) {
 
           <Field className="w-full max-w-100">
             <FieldLabel htmlFor="picture">Photo</FieldLabel>
-            <Input id="picture" type="file" />
+            <Input
+              id="picture"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+            {previewUrl && (
+              <img
+                src={previewUrl}
+                alt="Aperçu"
+                className="mt-2 w-full max-h-80 rounded-md object-contain"
+              />
+            )}
+            {uploadError && <p className="text-destructive text-xs mt-1">{uploadError}</p>}
           </Field>
 
           <Field>
@@ -84,13 +131,13 @@ export default function ClothingForm({ onSubmit, clothingData }) {
               control={control}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
-                  <FieldLabel>Catégories<span className="text-destructive">*</span></FieldLabel>
+                  <FieldLabel>Catégorie<span className="text-destructive">*</span></FieldLabel>
                   <SelectTrigger className="w-full max-w-100">
                     <SelectValue placeholder="Choisissez la catégorie" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>Catégories</SelectLabel>
+                      <SelectLabel>Catégorie</SelectLabel>
                       {
                         enums?.CategoryEnum?.map(item =>
                           <SelectItem value={item} key={item}   >{item}</SelectItem>
@@ -111,13 +158,13 @@ export default function ClothingForm({ onSubmit, clothingData }) {
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <FieldLabel>Couleurs<span className="text-destructive">*</span></FieldLabel>
+                    <FieldLabel>Couleur<span className="text-destructive">*</span></FieldLabel>
                     <SelectTrigger className="w-full max-w-100">
                       <SelectValue placeholder="Choisissez la couleur" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectLabel>Couleurs</SelectLabel>
+                        <SelectLabel>Couleur</SelectLabel>
                         {
                           enums?.ColorEnum?.map(item =>
                             <SelectItem value={item} key={item}>{item}</SelectItem>
@@ -209,47 +256,30 @@ export default function ClothingForm({ onSubmit, clothingData }) {
             </Field>
           </FieldGroup>
 
-          <FieldGroup className="grid max-w-100 grid-cols-2">
-            <Field>
-              <Controller
-                name="season"
-                control={control}
-                render={({ field }) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FieldLabel>Saison</FieldLabel>
-                    <SelectTrigger className="w-full max-w-100">
-                      <SelectValue placeholder="Choisissez la saison" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Saison</SelectLabel>
-                        {
-                          enums?.SeasonEnum?.map(item =>
-                            <SelectItem value={item} key={item}>{item}</SelectItem>
-                          )
-                        }
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </Field>
-
-            <Field>
-              <Select>
-                <FieldLabel>Marque</FieldLabel>
-                <SelectTrigger className="w-full max-w-100">
-                  <SelectValue placeholder="Choisissez la marque" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Marque</SelectLabel>
-                    <SelectItem value="apple">Apple</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-          </FieldGroup>
+          <Field className="w-full max-w-100">
+            <Controller
+              name="season"
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FieldLabel>Saison</FieldLabel>
+                  <SelectTrigger className="w-full max-w-100">
+                    <SelectValue placeholder="Choisissez la saison" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Saison</SelectLabel>
+                      {
+                        enums?.SeasonEnum?.map(item =>
+                          <SelectItem value={item} key={item}>{item}</SelectItem>
+                        )
+                      }
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </Field>
 
           <Field>
             <Controller
@@ -301,10 +331,20 @@ export default function ClothingForm({ onSubmit, clothingData }) {
             />
           </Field>
 
-          <Textarea placeholder="Ajouter un commentaire..." className="w-full max-w-100" {...register("comment")} />
+          <Field className="w-full max-w-100">
+            <FieldLabel htmlFor="comment">Commentaire</FieldLabel>
+            <Textarea id="comment" placeholder="Ajouter un commentaire..." className="w-full" {...register("comment")} />
+          </Field>
 
-          <Field orientation="horizontal">
-            <Button type="submit">Enregistrer</Button>
+          <Field orientation="horizontal" className="flex gap-2 w-full max-w-100">
+            <Button type="submit" disabled={isUploading} className="flex-1">
+              {isUploading ? "Détourage en cours..." : "Enregistrer"}
+            </Button>
+            {onCancel && (
+              <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
+                Annuler
+              </Button>
+            )}
           </Field>
         </FieldGroup>
       </form>

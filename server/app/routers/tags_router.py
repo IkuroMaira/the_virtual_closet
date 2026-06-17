@@ -1,9 +1,11 @@
+import uuid
 import logging
 from fastapi import APIRouter, Depends, HTTPException
 from app.db.database import get_session
 from app.repository import tags_repository
 from app.models.tags import TagCreate, TagPublic, TagUpdate
 from app.models.clothes import ClothePublic
+from app.dependencies.auth import get_current_user
 from sqlmodel import Session
 
 router = APIRouter(
@@ -13,16 +15,13 @@ router = APIRouter(
 
 
 @router.post("/new_tag", response_model=TagPublic)
-def add_tag(tag: TagCreate, session: Session = Depends(get_session)):
-    """
-    Add a new tag
-    """
+def add_tag(tag: TagCreate, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     try:
-        new_tag = tags_repository.add_tag(tag, session)
+        user_id = uuid.UUID(current_user["sub"])
+        new_tag = tags_repository.add_tag(tag, user_id, session)
         return new_tag
 
     except ValueError as e:
-        # Nom déjà existant
         raise HTTPException(status_code=409, detail=str(e))
 
     except Exception:
@@ -31,12 +30,10 @@ def add_tag(tag: TagCreate, session: Session = Depends(get_session)):
 
 
 @router.get("/", response_model=list[TagPublic])
-def get_all_tags(session: Session = Depends(get_session)):
-    """
-    Get all tags
-    """
+def get_all_tags(session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     try:
-        tags = tags_repository.get_all_tags(session)
+        user_id = uuid.UUID(current_user["sub"])
+        tags = tags_repository.get_all_tags(user_id, session)
         return tags
 
     except Exception:
@@ -45,16 +42,12 @@ def get_all_tags(session: Session = Depends(get_session)):
 
 
 @router.get("/tag/{tag_id}", response_model=TagPublic)
-def get_tag(tag_id: int, session: Session = Depends(get_session)):
-    """
-    Get a tag
-    """
+def get_tag(tag_id: int, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     try:
         tag = tags_repository.get_tag(tag_id, session)
         return tag
 
     except ValueError as e:
-        # Tag inexistant
         raise HTTPException(status_code=404, detail=str(e))
 
     except Exception:
@@ -63,10 +56,7 @@ def get_tag(tag_id: int, session: Session = Depends(get_session)):
 
 
 @router.get("/tag/{tag_id}/clothes", response_model=list[ClothePublic])
-def get_all_items_from_tag(tag_id: int, session: Session = Depends(get_session)):
-    """
-    Get all items associated to a specific tag
-    """
+def get_all_items_from_tag(tag_id: int, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     try:
         tag_items = tags_repository.get_all_items_from_tag(tag_id, session)
         return tag_items
@@ -84,21 +74,16 @@ def get_all_items_from_tag(tag_id: int, session: Session = Depends(get_session))
 
 
 @router.patch("/tag/{tag_id}/update", response_model=TagPublic)
-def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session = Depends(get_session)):
-    """
-    Update a tag
-    """
+def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     try:
         updated_tag = tags_repository.update_tag(tag_id, tag_updated, session)
         return updated_tag
 
     except ValueError as e:
         error_msg = str(e)
-        # Tag inexistant
         if "n'existe pas" in error_msg:
             raise HTTPException(status_code=404, detail=str(e))
         elif "existe déjà" in error_msg:
-            # Nom déjà existant
             raise HTTPException(status_code=409, detail=str(e))
         else:
             raise HTTPException(status_code=400, detail=str(e))
@@ -109,16 +94,12 @@ def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session = Depends(g
 
 
 @router.delete("/tag/{tag_id}/delete", response_model=TagPublic)
-def delete_tag(tag_id: int, session: Session = Depends(get_session)):
-    """
-    Delete a piece of clothe
-    """
+def delete_tag(tag_id: int, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     try:
         deleted_tag = tags_repository.delete_tag(tag_id, session)
         return deleted_tag
 
     except ValueError as e:
-        # Tag inexistant
         raise HTTPException(status_code=404, detail=str(e))
 
     except Exception:
