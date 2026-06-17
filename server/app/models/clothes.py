@@ -1,3 +1,6 @@
+import uuid
+from sqlalchemy import Column, UniqueConstraint
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlmodel import SQLModel, Field
 from datetime import datetime
 from app.enums import (
@@ -16,10 +19,12 @@ from app.enums import (
 
 
 class Clothes(SQLModel, table=True):
+    __table_args__ = (UniqueConstraint("name", "user_id"),)
+
     id: int | None = Field(default=None, primary_key=True)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
-    name: str = Field(max_length=50, unique=True, nullable=False)
+    name: str = Field(max_length=50, nullable=False)
     category: CategoryEnum = Field(nullable=False)
     color: ColorEnum = Field(nullable=False)
     size: SizeEnum | None = Field(default=None)
@@ -31,7 +36,7 @@ class Clothes(SQLModel, table=True):
     comment: str | None = Field(default=None)
     picture: str | None = Field(default=None)
     brand_id: int | None = Field(default=None, foreign_key="brands.id")
-    user_id: int | None = Field(default=None, foreign_key="users.id")
+    user_id: uuid.UUID | None = Field(default=None, sa_column=Column(PG_UUID(as_uuid=True), nullable=True))
 
 
 class ClotheCreate(SQLModel):
@@ -65,7 +70,7 @@ class ClothePublic(SQLModel):
     comment: str | None
     picture: str | None
     brand_id: int | None
-    user_id: int | None
+    user_id: uuid.UUID | None
 
 
 class ClotheUpdate(SQLModel):

@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./api.jsx";
+import { API_BASE_URL, getAuthHeaders } from "./api.jsx";
 const API_CLOTHES_URL = `${API_BASE_URL}/clothes`;
 
 /**
@@ -6,7 +6,9 @@ const API_CLOTHES_URL = `${API_BASE_URL}/clothes`;
  * @returns {Promise} - Returns the backend datas
  */
 export async function getAllClothes() {
-  const response = await fetch(`${API_CLOTHES_URL}/`);
+  const response = await fetch(`${API_CLOTHES_URL}/`, {
+    headers: await getAuthHeaders(),
+  });
 
   if (!response.ok) {
     throw new Error(`Erreur HTTP! Status: ${response.status}`);
@@ -22,7 +24,9 @@ export async function getAllClothes() {
  * @returns {Promise} - Returns the backend datas
  */
 export async function getItem(item_id) {
-  const response = await fetch(`${API_CLOTHES_URL}/item/${item_id}`);
+  const response = await fetch(`${API_CLOTHES_URL}/item/${item_id}`, {
+    headers: await getAuthHeaders(),
+  });
 
   if (!response.ok) {
     throw new Error(`Erreur HTTP! Status: ${response.status}`);
@@ -35,12 +39,11 @@ export async function getItem(item_id) {
 
 /**
  * Function to create one item in the backend
- *
  */
 export async function createClothing(clothing) {
   const response = await fetch(`${API_CLOTHES_URL}/new_clothing`, {
-    method: "POST", // On indique au fetch d'utiliser la méthode POST - c'est ce que la route FastAPI attend (@router.post)
-    headers: { "Content-Type": "application/json" },
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...await getAuthHeaders() },
     body: JSON.stringify(clothing),
   });
 
@@ -64,7 +67,7 @@ export async function getAllEnums() {
 export async function deleteClothing(item_id) {
   const response = await fetch(`${API_CLOTHES_URL}/item/${item_id}/delete`, {
     method: "DELETE",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...await getAuthHeaders() },
   });
 
   if (!response.ok) {
@@ -82,7 +85,7 @@ export async function deleteClothing(item_id) {
 export async function updateClothing(clothing) {
   const response = await fetch(`${API_CLOTHES_URL}/item/${clothing.id}/update`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...await getAuthHeaders() },
     body: JSON.stringify(clothing),
   });
 
