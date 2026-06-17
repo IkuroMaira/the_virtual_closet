@@ -13,7 +13,7 @@ client = TestClient(app)
 def override_session():
     mock_session = MagicMock()
     app.dependency_overrides[get_session] = lambda: mock_session
-    app.dependency_overrides[get_current_user] = lambda: {"sub": "test-user-id"}
+    app.dependency_overrides[get_current_user] = lambda: {"sub": "00000000-0000-0000-0000-000000000001"}
     yield mock_session
     app.dependency_overrides.clear()
 

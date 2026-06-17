@@ -37,6 +37,6 @@ def session():
 @pytest.fixture()
 def client(session):
     app.dependency_overrides[get_session] = lambda: session
-    app.dependency_overrides[get_current_user] = lambda: {"sub": "test-user-id"}
+    app.dependency_overrides[get_current_user] = lambda: {"sub": "00000000-0000-0000-0000-000000000001"}
     yield TestClient(app)
     app.dependency_overrides.clear()
