@@ -2,13 +2,19 @@ import { useClothes } from "../hooks/useClothes.js";
 import ClothingCard from "../components/ClothingCard.jsx"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
+import { IconShirt } from "@tabler/icons-react"
 import { Link } from "@tanstack/react-router";
 
 export default function WardrobeView() {
     const { isPending, isError, data, error } = useClothes();
 
     const renderContent = () => {
-        if (isPending) return <span>Loading...</span>
+        if (isPending) return (
+            <div className="col-span-full flex flex-col items-center justify-center py-24 gap-3 text-muted-foreground">
+                <IconShirt className="w-12 h-12 animate-bounce" />
+                <p className="text-sm">Chargement de votre garde-robe...</p>
+            </div>
+        )
         if (isError) return <span>Error: {error.message}</span>
         if (data.length === 0) return <p>Aucun vêtement dans votre garde-robe pour le moment.</p>
         return data.map(item => <ClothingCard key={item.id} clothing={item} />)

@@ -13,5 +13,5 @@ export default function AddClothingView() {
     onError: () => toast.error('Une erreur est survenue, veuillez réessayer.'),
   })
 
-  return <ClothingForm onSubmit={(data) => mutate(data)} />
+  return <ClothingForm onSubmit={(data) => mutate(data)} onCancel={() => navigate({ to: '/' })} />
 }

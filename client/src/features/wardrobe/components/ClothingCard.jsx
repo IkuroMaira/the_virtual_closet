@@ -9,15 +9,18 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import {Link} from "@tanstack/react-router";
+import { useSignedUrl } from "../hooks/useSignedUrl"
 
 export default function ClothingCard({ clothing }) {
+  const signedUrl = useSignedUrl(clothing.picture)
+
   return (
     <Card className="relative mx-auto w-full max-w-sm pt-0 overflow-hidden">
-      {clothing.image_url && (
+      {signedUrl && (
         <img
-          src={clothing.image_url}
-          alt="Clothing"
-          className="relative aspect-4/5 w-full object-cover"
+          src={signedUrl}
+          alt={clothing.name}
+          className="relative aspect-square w-full object-contain bg-muted/40 p-4"
         />
       )}
       <CardHeader>
