@@ -18,3 +18,7 @@ pydantic==2.13.4
 
 # Environment variables
 python-dotenv>=1.2.2,<2.0
+
+# JWT verification (Supabase Auth)
+PyJWT>=2.8.0,<3.0
+cryptography>=42.0.0,<44.0

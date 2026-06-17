@@ -1,3 +1,4 @@
+import uuid
 from app.models.tags import Tags, TagCreate, TagPublic, TagUpdate
 from app.models.clothes import Clothes
 from app.models.tags_clothes import Tags_Clothes
@@ -11,16 +12,17 @@ logger = logging.getLogger(__name__)
 # ============================================
 
 
-def add_tag(tag: TagCreate, session: Session) -> TagPublic:
+def add_tag(tag: TagCreate, user_id: uuid.UUID, session: Session) -> TagPublic:
     """
     Add a new tag
 
     Args:
-        tag (TagCreate):  Tag data to insert
+        tag (TagCreate): Tag data to insert
+        user_id (uuid.UUID): Supabase Auth user UUID from JWT
         session (Session): SQLModel session connected to the database
 
     Returns:
-        dict: Created tag item data
+        TagPublic: Created tag data
 
     Raises:
         ValueError: If tag name already exist
@@ -34,6 +36,7 @@ def add_tag(tag: TagCreate, session: Session) -> TagPublic:
         raise ValueError(f"Un tag nommé '{tag.name}' existe déjà")
 
     tag_db = Tags.model_validate(tag.model_dump())
+    tag_db.user_id = user_id
     session.add(tag_db)
     session.commit()
     session.refresh(tag_db)
@@ -41,40 +44,24 @@ def add_tag(tag: TagCreate, session: Session) -> TagPublic:
     return TagPublic.model_validate(tag_db)
 
 
-def get_all_tags(session: Session) -> list[TagPublic]:
+def get_all_tags(user_id: uuid.UUID, session: Session) -> list[TagPublic]:
     """
-    Get all tags from the database
+    Get all tags from the database for a specific user
 
     Args:
+        user_id (uuid.UUID): Supabase Auth user UUID from JWT
         session (Session): SQLModel session connected to the database
 
     Returns:
-        list: All tags (empty list if none)
+        list: All tags belonging to the user (empty list if none)
     """
-    statement = select(Tags)
+    statement = select(Tags).where(Tags.user_id == user_id)
     tags = session.exec(statement).all()
-    """
-    Pourquoi .all() ?
-    Parce que session.exec() renvoie un Result qui doit être converti en liste.
-    """
 
     return [TagPublic.model_validate(tag) for tag in tags]
 
 
 def get_tag(tag_id: int, session: Session) -> TagPublic:
-    """
-    Retrieve a tag by its ID
-
-    Args:
-        tag_id (int): ID of the tag
-        session (Session): SQLModel session connected to the database
-
-    Returns:
-        dict: Tag data
-
-    Raises:
-        ValueError: If tag doesn't exist
-    """
     statement = select(Tags).where(Tags.id == tag_id)
     tag = session.exec(statement).first()
 
@@ -85,19 +72,6 @@ def get_tag(tag_id: int, session: Session) -> TagPublic:
 
 
 def get_all_items_from_tag(tag_id: int, session: Session) -> list[Clothes]:
-    """
-     Get all items associated to a specific tag
-
-    Args:
-        tag_id (int): ID of the tag
-        session (Session): SQLModel session connected to the database
-
-    Returns:
-        List: Clothes object assigned to a piece of clothing (empty list if no tags)
-
-    Raises:
-        ValueError: If tag doesn't exist
-    """
     tag = session.get(Tags, tag_id)
     if not tag:
         raise ValueError(f"Le tag avec l'ID {tag_id} n'existe pas")
@@ -110,20 +84,6 @@ def get_all_items_from_tag(tag_id: int, session: Session) -> list[Clothes]:
 
 
 def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session) -> TagPublic:
-    """
-    Updating a tag
-
-    Args:
-        tag_id (int): ID of tag
-        tag_updated (TagUpdate) : Tag data to update
-        session (Session): SQLModel session connected to the database
-
-    Returns:
-        TagPublic object: Updated tag data
-
-    Raises:
-        ValueError: If tag doesn't exist or name already exists
-    """
     tag = session.get(Tags, tag_id)
 
     if not tag:
@@ -147,19 +107,6 @@ def update_tag(tag_id: int, tag_updated: TagUpdate, session: Session) -> TagPubl
 
 
 def delete_tag(tag_id: int, session: Session) -> TagPublic:
-    """
-    Deleting a tag
-
-    Args:
-        session (Session): SQLModel session connected to the database
-        tag_id (int): ID of the tag
-
-    Returns:
-       TagPublic object: The deleted tag data
-
-    Raises:
-         ValueError: If tag doesn't exist
-    """
     statement = select(Tags).where(Tags.id == tag_id)
     tag = session.exec(statement).first()
 

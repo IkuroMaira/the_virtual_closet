@@ -1,3 +1,6 @@
+import uuid
+from sqlalchemy import Column
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlmodel import SQLModel, Field
 from datetime import datetime
 from app.enums import (
@@ -31,7 +34,7 @@ class Clothes(SQLModel, table=True):
     comment: str | None = Field(default=None)
     picture: str | None = Field(default=None)
     brand_id: int | None = Field(default=None, foreign_key="brands.id")
-    user_id: int | None = Field(default=None, foreign_key="users.id")
+    user_id: uuid.UUID | None = Field(default=None, sa_column=Column(PG_UUID(as_uuid=True), nullable=True))
 
 
 class ClotheCreate(SQLModel):
@@ -65,7 +68,7 @@ class ClothePublic(SQLModel):
     comment: str | None
     picture: str | None
     brand_id: int | None
-    user_id: int | None
+    user_id: uuid.UUID | None
 
 
 class ClotheUpdate(SQLModel):
