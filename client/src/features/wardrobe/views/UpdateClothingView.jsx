@@ -26,5 +26,5 @@ export default function UpdateClothingView() {
   if (isPending) return <span>Loading...</span>
   if (isError) return <span>Une erreur est survenue.</span>
 
-  return <ClothingForm onSubmit={handleSubmit} clothingData={data} />
+  return <ClothingForm onSubmit={handleSubmit} onCancel={() => navigate({ to: `/clothes/${id}` })} clothingData={data} />
 }
