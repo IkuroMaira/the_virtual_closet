@@ -30,6 +30,7 @@ def add_item(item: ClotheCreate, user_id: uuid.UUID, session: Session) -> Clothe
     existing = session.exec(
         select(Clothes)
         .where(Clothes.name == item.name)
+        .where(Clothes.user_id == user_id)
     ).first()
 
     if existing:
@@ -81,6 +82,7 @@ def update_item(item_id: int, item_updated: ClotheUpdate, session: Session) -> C
         existing = session.exec(
             select(Clothes)
             .where(Clothes.name == item_updated.name)
+            .where(Clothes.user_id == item.user_id)
         ).first()
         if existing:
             raise ValueError(f"Un vêtement nommé '{item_updated.name}' existe déjà")

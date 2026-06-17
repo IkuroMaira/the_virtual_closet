@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column
+from sqlalchemy import Column, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlmodel import SQLModel, Field
 from datetime import datetime
@@ -19,10 +19,12 @@ from app.enums import (
 
 
 class Clothes(SQLModel, table=True):
+    __table_args__ = (UniqueConstraint("name", "user_id"),)
+
     id: int | None = Field(default=None, primary_key=True)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
-    name: str = Field(max_length=50, unique=True, nullable=False)
+    name: str = Field(max_length=50, nullable=False)
     category: CategoryEnum = Field(nullable=False)
     color: ColorEnum = Field(nullable=False)
     size: SizeEnum | None = Field(default=None)
