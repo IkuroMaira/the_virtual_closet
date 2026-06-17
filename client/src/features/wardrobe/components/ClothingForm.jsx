@@ -21,6 +21,7 @@ import { z } from "zod"
 
 import { useForm, Controller } from "react-hook-form"
 import { useEnums } from "../hooks/useEnums"
+import { useSignedUrl } from "../hooks/useSignedUrl"
 import { uploadClothingPicture } from "@/shared/services/clothes_api"
 import { supabase } from "@/shared/services/supabaseClient"
 
@@ -55,7 +56,9 @@ export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
 
   const { data: enums } = useEnums()
   const [selectedFile, setSelectedFile] = useState(null)
-  const [previewUrl, setPreviewUrl] = useState(clothingData?.picture ?? null)
+  const [localPreviewUrl, setLocalPreviewUrl] = useState(null)
+  const existingSignedUrl = useSignedUrl(selectedFile ? null : clothingData?.picture)
+  const previewUrl = localPreviewUrl ?? existingSignedUrl
   const [uploadError, setUploadError] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
 
@@ -63,7 +66,7 @@ export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
     const file = e.target.files?.[0]
     if (!file) return
     setSelectedFile(file)
-    setPreviewUrl(URL.createObjectURL(file))
+    setLocalPreviewUrl(URL.createObjectURL(file))
     setUploadError(null)
   }
 
@@ -115,7 +118,7 @@ export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
               <img
                 src={previewUrl}
                 alt="Aperçu"
-                className="mt-2 h-32 w-32 rounded-md object-cover"
+                className="mt-2 w-full max-h-80 rounded-md object-contain"
               />
             )}
             {uploadError && <p className="text-destructive text-xs mt-1">{uploadError}</p>}
