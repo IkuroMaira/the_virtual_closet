@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Field,
@@ -20,6 +21,8 @@ import { z } from "zod"
 
 import { useForm, Controller } from "react-hook-form"
 import { useEnums } from "../hooks/useEnums"
+import { uploadClothingPicture } from "@/shared/services/clothes_api"
+import { supabase } from "@/shared/services/supabaseClient"
 
 const schema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères.").max(50, "Le nom ne peut pas dépasser 50 caractères."),
@@ -51,11 +54,38 @@ export default function ClothingForm({ onSubmit, clothingData }) {
   })
 
   const { data: enums } = useEnums()
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [previewUrl, setPreviewUrl] = useState(clothingData?.picture ?? null)
+  const [uploadError, setUploadError] = useState(null)
+  const [isUploading, setIsUploading] = useState(false)
 
-  const handleFormSubmit = (data) => {
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setSelectedFile(file)
+    setPreviewUrl(URL.createObjectURL(file))
+    setUploadError(null)
+  }
+
+  const handleFormSubmit = async (data) => {
     const cleaned = Object.fromEntries(
       Object.entries(data).filter(([, v]) => v !== '')
     )
+
+    if (selectedFile) {
+      setIsUploading(true)
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        const pictureUrl = await uploadClothingPicture(selectedFile, user.id)
+        cleaned.picture = pictureUrl
+      } catch (err) {
+        setUploadError("Impossible d'uploader la photo. Réessayez.")
+        setIsUploading(false)
+        return
+      }
+      setIsUploading(false)
+    }
+
     onSubmit(cleaned)
   }
 
@@ -75,7 +105,20 @@ export default function ClothingForm({ onSubmit, clothingData }) {
 
           <Field className="w-full max-w-100">
             <FieldLabel htmlFor="picture">Photo</FieldLabel>
-            <Input id="picture" type="file" />
+            <Input
+              id="picture"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+            {previewUrl && (
+              <img
+                src={previewUrl}
+                alt="Aperçu"
+                className="mt-2 h-32 w-32 rounded-md object-cover"
+              />
+            )}
+            {uploadError && <p className="text-destructive text-xs mt-1">{uploadError}</p>}
           </Field>
 
           <Field>
@@ -304,7 +347,9 @@ export default function ClothingForm({ onSubmit, clothingData }) {
           <Textarea placeholder="Ajouter un commentaire..." className="w-full max-w-100" {...register("comment")} />
 
           <Field orientation="horizontal">
-            <Button type="submit">Enregistrer</Button>
+            <Button type="submit" disabled={isUploading}>
+              {isUploading ? "Upload en cours..." : "Enregistrer"}
+            </Button>
           </Field>
         </FieldGroup>
       </form>

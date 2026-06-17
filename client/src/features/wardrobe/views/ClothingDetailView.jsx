@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from "@tanstack/react-router";
 import { useClothing } from "../hooks/useClothing"
 import { useDeleteClothing } from "../hooks/useDeleteClothing"
+import { useSignedUrl } from "../hooks/useSignedUrl"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
@@ -8,10 +9,11 @@ import { toast } from "sonner"
 const display = (value) => value ?? "-"
 
 export default function ClothingDetailView() {
-  const { id } = useParams({ from: '/clothes/$id/' })
+  const { id } = useParams({ from: '/_authenticated/clothes/$id/' })
   const navigate = useNavigate()
   const { isPending, isError, data, error } = useClothing(id)
   const { mutate: deleteClothing } = useDeleteClothing()
+  const signedUrl = useSignedUrl(data?.picture)
 
   const handleDelete = () => {
     toast('Voulez-vous vraiment supprimer ce vêtement ?', {
@@ -44,6 +46,13 @@ export default function ClothingDetailView() {
 
   return <>
     <div className="flex w-full max-w-sm flex-col gap-2 text-sm">
+      {signedUrl && (
+        <img
+          src={signedUrl}
+          alt={data.name}
+          className="w-full rounded-md object-cover aspect-4/5 mb-2"
+        />
+      )}
       <dl className="flex items-center justify-between">
         <dt>Nom:</dt>
         <dd className="text-muted-foreground">{display(data.name)}</dd>

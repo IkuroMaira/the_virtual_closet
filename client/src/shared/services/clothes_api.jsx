@@ -1,5 +1,27 @@
 import { API_BASE_URL, getAuthHeaders } from "./api.jsx";
+import { supabase } from "./supabaseClient.js";
 const API_CLOTHES_URL = `${API_BASE_URL}/clothes`;
+
+const STORAGE_BUCKET = "clothes-pictures";
+
+/**
+ * Upload a picture to Supabase Storage and return its public URL.
+ * @param {File} file
+ * @param {string} userId - used to namespace files per user
+ * @returns {Promise<string>} public URL
+ */
+export async function uploadClothingPicture(file, userId) {
+  const extension = file.name.split(".").pop();
+  const fileName = `${userId}/${Date.now()}.${extension}`;
+
+  const { error } = await supabase.storage
+    .from(STORAGE_BUCKET)
+    .upload(fileName, file, { upsert: false });
+
+  if (error) throw new Error(`Erreur upload : ${error.message}`);
+
+  return fileName;
+}
 
 /**
  * Function to get all clothes with the backend
