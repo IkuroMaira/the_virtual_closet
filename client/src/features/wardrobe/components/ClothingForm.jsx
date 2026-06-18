@@ -139,7 +139,7 @@ export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
                     <SelectGroup>
                       <SelectLabel>Catégorie</SelectLabel>
                       {
-                        enums?.CategoryEnum?.map(item =>
+                        enums?.CategoryEnum?.slice().sort((a, b) => a.localeCompare(b, 'fr')).map(item =>
                           <SelectItem value={item} key={item}   >{item}</SelectItem>
                         )
                       }
@@ -166,7 +166,7 @@ export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
                       <SelectGroup>
                         <SelectLabel>Couleur</SelectLabel>
                         {
-                          enums?.ColorEnum?.map(item =>
+                          enums?.ColorEnum?.slice().sort((a, b) => a.localeCompare(b, 'fr')).map(item =>
                             <SelectItem value={item} key={item}>{item}</SelectItem>
                           )
                         }
@@ -219,7 +219,7 @@ export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
                       <SelectGroup>
                         <SelectLabel>Statut</SelectLabel>
                         {
-                          enums?.StatusEnum?.map(item =>
+                          enums?.StatusEnum?.slice().sort((a, b) => a.localeCompare(b, 'fr')).map(item =>
                             <SelectItem value={item} key={item}>{item}</SelectItem>
                           )
                         }
@@ -244,7 +244,7 @@ export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
                       <SelectGroup>
                         <SelectLabel>Style</SelectLabel>
                         {
-                          enums?.StyleEnum?.map(item =>
+                          enums?.StyleEnum?.slice().sort((a, b) => a.localeCompare(b, 'fr')).map(item =>
                             <SelectItem value={item} key={item}>{item}</SelectItem>
                           )
                         }
@@ -270,7 +270,7 @@ export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
                     <SelectGroup>
                       <SelectLabel>Saison</SelectLabel>
                       {
-                        enums?.SeasonEnum?.map(item =>
+                        enums?.SeasonEnum?.slice().sort((a, b) => a.localeCompare(b, 'fr')).map(item =>
                           <SelectItem value={item} key={item}>{item}</SelectItem>
                         )
                       }
@@ -295,7 +295,7 @@ export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
                     <SelectGroup>
                       <SelectLabel>Composition</SelectLabel>
                       {
-                        enums?.MaterialsEnum?.map(item =>
+                        enums?.MaterialsEnum?.slice().sort((a, b) => a.localeCompare(b, 'fr')).map(item =>
                           <SelectItem value={item} key={item}>{item}</SelectItem>
                         )
                       }
