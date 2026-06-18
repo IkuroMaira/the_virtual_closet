@@ -77,7 +77,7 @@ jobs:
 
       - name: Test
         env:
-          DATABASE_TEST: postgresql://postgres:postgres@localhost:5432/test_db # pragma: allowlist secret
+          DATABASE_TEST: ${{ secrets.DATABASE_TEST }}
         run: python -m pytest tests/
 
   deploy-server:
