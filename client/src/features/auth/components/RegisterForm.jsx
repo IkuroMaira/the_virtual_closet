@@ -7,9 +7,20 @@ import { supabase } from '@/shared/services/supabaseClient'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
+const PASSWORD_RULES = [
+    { label: '8 caractères minimum', test: (v) => v.length >= 8 },
+    { label: 'Au moins 1 majuscule', test: (v) => /[A-Z]/.test(v) },
+    { label: 'Au moins 1 chiffre', test: (v) => /[0-9]/.test(v) },
+    { label: 'Au moins 1 caractère spécial', test: (v) => /[^A-Za-z0-9]/.test(v) },
+]
+
 const registerSchema = z.object({
     email: z.string().email('Email invalide'),
-    password: z.string().min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
+    password: z.string().superRefine((val, ctx) => {
+        PASSWORD_RULES.forEach(({ label, test }) => {
+            if (!test(val)) ctx.addIssue({ code: z.ZodIssueCode.custom, message: label })
+        })
+    }),
     confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
     message: 'Les mots de passe ne correspondent pas',
@@ -18,12 +29,19 @@ const registerSchema = z.object({
 
 export default function RegisterForm() {
     const navigate = useNavigate()
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+    const { register, handleSubmit, watch, formState: { errors, isSubmitting } } = useForm({
         resolver: zodResolver(registerSchema),
+        mode: 'onChange',
     })
 
+    const passwordValue = watch('password', '')
+
     async function onSubmit({ email, password }) {
-        const { error } = await supabase.auth.signUp({ email, password })
+        const { error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: { emailRedirectTo: import.meta.env.VITE_APP_URL },
+        })
 
         if (error) {
             toast.error(error.message)
@@ -45,7 +63,15 @@ export default function RegisterForm() {
             <div>
                 <label className="text-sm font-medium">Mot de passe</label>
                 <Input type="password" placeholder="8 caractères minimum" {...register('password')} />
-                {errors.password && <p className="text-destructive text-xs mt-1">{errors.password.message}</p>}
+                {passwordValue && (
+                    <ul className="mt-1 space-y-0.5">
+                        {PASSWORD_RULES.map(({ label, test }) => (
+                            <li key={label} className={`text-xs ${test(passwordValue) ? 'text-green-600' : 'text-destructive'}`}>
+                                {test(passwordValue) ? '✓' : '✗'} {label}
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
 
             <div>
