@@ -130,10 +130,10 @@ async def process_picture(
             square.paste(img, (offset_x, offset_y))
             square = square.resize((800, 800), Image.Resampling.LANCZOS)
             buf = io.BytesIO()
-            square.save(buf, format="PNG")
+            square.save(buf, format="WEBP", quality=80)
             output_bytes = buf.getvalue()
 
-        return Response(content=output_bytes, media_type="image/png")
+        return Response(content=output_bytes, media_type="image/webp")
 
     except Exception as e:
         logging.error(f"Erreur lors du détourage de l'image : {e}")

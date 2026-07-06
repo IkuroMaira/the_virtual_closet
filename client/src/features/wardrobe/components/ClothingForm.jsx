@@ -80,7 +80,7 @@ export default function ClothingForm({ onSubmit, onCancel, clothingData }) {
       try {
         const { data: { user } } = await supabase.auth.getUser()
         const processedBlob = await processClothingPicture(selectedFile)
-        const pictureUrl = await uploadClothingPicture(processedBlob, user.id, "png")
+        const pictureUrl = await uploadClothingPicture(processedBlob, user.id, "webp")
         cleaned.picture = pictureUrl
       } catch {
         setUploadError("Impossible de traiter ou d'uploader la photo. Réessayez.")
