@@ -62,8 +62,12 @@ def get_all_items(user_id: uuid.UUID, session: Session) -> list[ClothePublic]:
     return [ClothePublic.model_validate(item) for item in items]
 
 
-def get_item(item_id: int, session: Session) -> ClothePublic:
-    statement = select(Clothes).where(Clothes.id == item_id)
+def get_item(item_id: int, user_id: uuid.UUID, session: Session) -> ClothePublic:
+    statement = (
+        select(Clothes)
+        .where(Clothes.id == item_id)
+        .where(Clothes.user_id == user_id)
+    )
     item = session.exec(statement).first()
 
     if not item:
@@ -72,8 +76,13 @@ def get_item(item_id: int, session: Session) -> ClothePublic:
     return ClothePublic.model_validate(item)
 
 
-def update_item(item_id: int, item_updated: ClotheUpdate, session: Session) -> ClothePublic:
-    item = session.get(Clothes, item_id)
+def update_item(item_id: int, item_updated: ClotheUpdate, user_id: uuid.UUID, session: Session) -> ClothePublic:
+    statement = (
+        select(Clothes)
+        .where(Clothes.id == item_id)
+        .where(Clothes.user_id == user_id)
+    )
+    item = session.exec(statement).first()
 
     if not item:
         raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
@@ -97,8 +106,12 @@ def update_item(item_id: int, item_updated: ClotheUpdate, session: Session) -> C
     return ClothePublic.model_validate(item)
 
 
-def delete_item(item_id: int, session: Session) -> ClothePublic:
-    statement = select(Clothes).where(Clothes.id == item_id)
+def delete_item(item_id: int, user_id: uuid.UUID, session: Session) -> ClothePublic:
+    statement = (
+        select(Clothes)
+        .where(Clothes.id == item_id)
+        .where(Clothes.user_id == user_id)
+    )
     item = session.exec(statement).first()
 
     if not item:

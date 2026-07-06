@@ -50,7 +50,8 @@ def get_all_items(session: Session = Depends(get_session), current_user: dict = 
 @router.get("/item/{item_id}", response_model=ClothePublic)
 def get_item(item_id: int, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     try:
-        item = clothes_repository.get_item(item_id, session)
+        user_id = uuid.UUID(current_user["sub"])
+        item = clothes_repository.get_item(item_id, user_id, session)
         return item
 
     except ValueError as e:
@@ -64,7 +65,8 @@ def get_item(item_id: int, session: Session = Depends(get_session), current_user
 @router.patch("/item/{item_id}/update", response_model=ClothePublic)
 def update_item(item_id: int, item_updated: ClotheUpdate, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     try:
-        updated_item = clothes_repository.update_item(item_id, item_updated, session)
+        user_id = uuid.UUID(current_user["sub"])
+        updated_item = clothes_repository.update_item(item_id, item_updated, user_id, session)
         return updated_item
 
     except ValueError as e:
@@ -84,7 +86,8 @@ def update_item(item_id: int, item_updated: ClotheUpdate, session: Session = Dep
 @router.delete("/item/{item_id}/delete", response_model=ClothePublic)
 def delete_item(item_id: int, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     try:
-        deleted_item = clothes_repository.delete_item(item_id, session)
+        user_id = uuid.UUID(current_user["sub"])
+        deleted_item = clothes_repository.delete_item(item_id, user_id, session)
         return deleted_item
 
     except ValueError as e:

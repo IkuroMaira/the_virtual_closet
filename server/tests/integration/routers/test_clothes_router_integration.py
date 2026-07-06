@@ -1,4 +1,8 @@
 # tests/integration/routers/test_clothes_router_integration.py
+from main import app
+from app.dependencies.auth import get_current_user
+
+OTHER_USER_ID = "00000000-0000-0000-0000-000000000002"
 
 
 def test_create_clothing_returns_201(client):
@@ -134,3 +138,38 @@ def test_update_clothing_duplicate_name_returns_409(client):
     response = client.patch(f"/clothes/item/{item_id}/update", json={"name": "t-shirt existant"})
 
     assert response.status_code == 409
+
+
+# IDOR - un utilisateur ne doit jamais accéder au vêtement d'un autre
+def test_get_clothing_by_id_belonging_to_another_user_returns_404(client):
+    created = client.post("/clothes/new_clothing", json={"name": "t-shirt", "category": "Tops", "color": "Bleu"})
+    item_id = created.json()["id"]
+
+    app.dependency_overrides[get_current_user] = lambda: {"sub": OTHER_USER_ID}
+    response = client.get(f"/clothes/item/{item_id}")
+
+    assert response.status_code == 404
+
+
+def test_update_clothing_belonging_to_another_user_returns_404(client):
+    created = client.post("/clothes/new_clothing", json={"name": "t-shirt", "category": "Tops", "color": "Bleu"})
+    item_id = created.json()["id"]
+
+    app.dependency_overrides[get_current_user] = lambda: {"sub": OTHER_USER_ID}
+    response = client.patch(f"/clothes/item/{item_id}/update", json={"name": "vole"})
+
+    assert response.status_code == 404
+
+
+def test_delete_clothing_belonging_to_another_user_returns_404(client):
+    created = client.post("/clothes/new_clothing", json={"name": "t-shirt", "category": "Tops", "color": "Bleu"})
+    item_id = created.json()["id"]
+
+    app.dependency_overrides[get_current_user] = lambda: {"sub": OTHER_USER_ID}
+    response = client.delete(f"/clothes/item/{item_id}/delete")
+
+    assert response.status_code == 404
+
+    app.dependency_overrides[get_current_user] = lambda: {"sub": "00000000-0000-0000-0000-000000000001"}
+    still_there = client.get(f"/clothes/item/{item_id}")
+    assert still_there.status_code == 200
