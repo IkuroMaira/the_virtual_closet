@@ -48,14 +48,39 @@ def test_get_all_clothes_returns_list(client):
     response = client.get("/clothes/")
 
     assert response.status_code == 200
-    assert len(response.json()) == 2
+    body = response.json()
+    assert len(body["items"]) == 2
+    assert body["total"] == 2
+    assert body["page"] == 1
+    assert body["page_size"] == 20
+    assert body["total_pages"] == 1
 
 
 def test_get_all_clothes_returns_empty_list(client):
     response = client.get("/clothes/")
 
     assert response.status_code == 200
-    assert response.json() == []
+    body = response.json()
+    assert body["items"] == []
+    assert body["total"] == 0
+    assert body["total_pages"] == 0
+
+
+def test_get_all_clothes_paginates_by_20(client):
+    for i in range(25):
+        client.post("/clothes/new_clothing", json={"name": f"t-shirt {i}", "category": "Tops", "color": "Bleu"})
+
+    first_page = client.get("/clothes/")
+    second_page = client.get("/clothes/?page=2")
+
+    assert first_page.status_code == 200
+    assert len(first_page.json()["items"]) == 20
+    assert first_page.json()["total"] == 25
+    assert first_page.json()["total_pages"] == 2
+
+    assert second_page.status_code == 200
+    assert len(second_page.json()["items"]) == 5
+    assert second_page.json()["page"] == 2
 
 
 # GET /item/{id}

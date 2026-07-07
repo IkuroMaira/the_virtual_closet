@@ -36,11 +36,12 @@ export async function uploadClothingPicture(file, userId, extension = null) {
 }
 
 /**
- * Function to get all clothes with the backend
- * @returns {Promise} - Returns the backend datas
+ * Function to get a paginated page of clothes from the backend
+ * @param {number} page - 1-indexed page number (20 items per page, cf. RG1.3)
+ * @returns {Promise<{items: object[], total: number, page: number, page_size: number, total_pages: number}>}
  */
-export async function getAllClothes() {
-  const response = await fetch(`${API_CLOTHES_URL}/`, {
+export async function getAllClothes(page = 1) {
+  const response = await fetch(`${API_CLOTHES_URL}/?page=${page}`, {
     headers: await getAuthHeaders(),
   });
 

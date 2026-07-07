@@ -1,9 +1,10 @@
+import math
 import uuid
 import logging
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, Request
 from fastapi.responses import Response
 from app.repository import clothes_repository
-from app.models.clothes import ClotheCreate, ClothePublic, ClotheUpdate
+from app.models.clothes import ClotheCreate, ClothePublic, ClothesPage, ClotheUpdate
 from app.db.database import get_session
 from app.dependencies.auth import get_current_user
 from sqlmodel import Session
@@ -18,6 +19,10 @@ router = APIRouter(
     prefix="/clothes",
     tags=["Clothes"]
 )
+
+ALLOWED_PICTURE_CONTENT_TYPES = {"image/png", "image/jpeg", "image/webp"}
+MAX_PICTURE_SIZE = 10 * 1024 * 1024  # 10 Mo
+PAGE_SIZE = 20  # RG1.3 : 20 vêtements par page
 
 
 @router.post("/new_clothing", response_model=ClothePublic, status_code=201)
@@ -35,12 +40,17 @@ def add_item(item: ClotheCreate, session: Session = Depends(get_session), curren
         raise HTTPException(status_code=500, detail="Erreur interne lors de l'insertion de ce vêtement")
 
 
-@router.get("/", response_model=list[ClothePublic])
-def get_all_items(session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
+@router.get("/", response_model=ClothesPage)
+def get_all_items(
+    page: int = Query(default=1, ge=1),
+    session: Session = Depends(get_session),
+    current_user: dict = Depends(get_current_user)
+):
     try:
         user_id = uuid.UUID(current_user["sub"])
-        items = clothes_repository.get_all_items(user_id, session)
-        return items
+        items, total = clothes_repository.get_all_items(user_id, session, page=page, page_size=PAGE_SIZE)
+        total_pages = math.ceil(total / PAGE_SIZE) if total else 0
+        return ClothesPage(items=items, total=total, page=page, page_size=PAGE_SIZE, total_pages=total_pages)
 
     except Exception as e:
         logging.error(f"Erreur technique lors de la récupération des vêtements du catalogue: {e}")
@@ -104,8 +114,26 @@ async def process_picture(
     file: UploadFile = File(...),
     current_user: dict = Depends(get_current_user)
 ):
+    if file.content_type not in ALLOWED_PICTURE_CONTENT_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail="Format d'image non supporté (formats acceptés : PNG, JPEG, WEBP)"
+        )
+
+    input_bytes = await file.read()
+
+    if len(input_bytes) > MAX_PICTURE_SIZE:
+        raise HTTPException(
+            status_code=413,
+            detail="L'image dépasse la taille maximale autorisée (10 Mo)"
+        )
+
     try:
-        input_bytes = await file.read()
+        Image.open(io.BytesIO(input_bytes)).verify()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Fichier image invalide ou corrompu")
+
+    try:
         output_bytes = rembg_remove(input_bytes, session=request.app.state.rembg_session)
 
         img: Image.Image = Image.open(io.BytesIO(output_bytes))
