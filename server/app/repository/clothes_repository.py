@@ -1,7 +1,7 @@
 import uuid
 from app.models.clothes import ClotheCreate, Clothes, ClothePublic, ClotheUpdate
 import logging
-from sqlmodel import Session, select
+from sqlmodel import Session, select, func
 from datetime import datetime
 
 
@@ -45,25 +45,43 @@ def add_item(item: ClotheCreate, user_id: uuid.UUID, session: Session) -> Clothe
     return ClothePublic.model_validate(item_db)
 
 
-def get_all_items(user_id: uuid.UUID, session: Session) -> list[ClothePublic]:
+def get_all_items(user_id: uuid.UUID, session: Session, page: int = 1, page_size: int = 20) -> tuple[list[ClothePublic], int]:
     """
-    Get all items from the wardrobe for a specific user
+    Get a paginated page of items from the wardrobe for a specific user
 
     Args:
         user_id (uuid.UUID): Supabase Auth user UUID from JWT
         session (Session): SQLModel session connected to the database
+        page (int): 1-indexed page number
+        page_size (int): number of items per page
 
     Returns:
-        list: All the items belonging to the user (empty list if none)
+        tuple: (items for the requested page, total number of items belonging to the user)
     """
-    statement = select(Clothes).where(Clothes.user_id == user_id)
+    total = session.exec(
+        select(func.count())
+        .select_from(Clothes)
+        .where(Clothes.user_id == user_id)
+    ).one()
+
+    statement = (
+        select(Clothes)
+        .where(Clothes.user_id == user_id)
+        .order_by(Clothes.id)  # type: ignore[arg-type]
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
     items = session.exec(statement).all()
 
-    return [ClothePublic.model_validate(item) for item in items]
+    return [ClothePublic.model_validate(item) for item in items], total
 
 
-def get_item(item_id: int, session: Session) -> ClothePublic:
-    statement = select(Clothes).where(Clothes.id == item_id)
+def get_item(item_id: int, user_id: uuid.UUID, session: Session) -> ClothePublic:
+    statement = (
+        select(Clothes)
+        .where(Clothes.id == item_id)
+        .where(Clothes.user_id == user_id)
+    )
     item = session.exec(statement).first()
 
     if not item:
@@ -72,8 +90,13 @@ def get_item(item_id: int, session: Session) -> ClothePublic:
     return ClothePublic.model_validate(item)
 
 
-def update_item(item_id: int, item_updated: ClotheUpdate, session: Session) -> ClothePublic:
-    item = session.get(Clothes, item_id)
+def update_item(item_id: int, item_updated: ClotheUpdate, user_id: uuid.UUID, session: Session) -> ClothePublic:
+    statement = (
+        select(Clothes)
+        .where(Clothes.id == item_id)
+        .where(Clothes.user_id == user_id)
+    )
+    item = session.exec(statement).first()
 
     if not item:
         raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
@@ -97,8 +120,12 @@ def update_item(item_id: int, item_updated: ClotheUpdate, session: Session) -> C
     return ClothePublic.model_validate(item)
 
 
-def delete_item(item_id: int, session: Session) -> ClothePublic:
-    statement = select(Clothes).where(Clothes.id == item_id)
+def delete_item(item_id: int, user_id: uuid.UUID, session: Session) -> ClothePublic:
+    statement = (
+        select(Clothes)
+        .where(Clothes.id == item_id)
+        .where(Clothes.user_id == user_id)
+    )
     item = session.exec(statement).first()
 
     if not item:

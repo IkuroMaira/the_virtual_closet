@@ -16,4 +16,8 @@ ENV/
 .env
 .env.local
 .env.*.local
+
+# Coverage
+.coverage
+htmlcov/
 EOF

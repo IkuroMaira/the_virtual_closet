@@ -5,6 +5,8 @@ from unittest.mock import MagicMock, patch
 from main import app
 from app.db.database import get_session
 from app.dependencies.auth import get_current_user
+from PIL import Image
+import io
 import pytest
 
 client = TestClient(app)
@@ -40,12 +42,36 @@ def fake_clothing():
     }
 
 
-def test_get_all_clothes_returns_list(fake_clothing):
-    with patch("app.routers.clothes_router.clothes_repository.get_all_items", return_value=[fake_clothing]):
+def test_get_all_clothes_returns_paginated_page(fake_clothing):
+    with patch("app.routers.clothes_router.clothes_repository.get_all_items", return_value=([fake_clothing], 1)):
         response = client.get("/clothes/")
 
         assert response.status_code == 200
-        assert isinstance(response.json(), list)
+        body = response.json()
+        assert isinstance(body["items"], list)
+        assert body["total"] == 1
+        assert body["page"] == 1
+        assert body["page_size"] == 20
+        assert body["total_pages"] == 1
+
+
+def test_get_all_clothes_forwards_page_query_param(fake_clothing):
+    with patch("app.routers.clothes_router.clothes_repository.get_all_items", return_value=([fake_clothing], 25)) as mock_get_all:
+        response = client.get("/clothes/?page=2")
+
+        assert response.status_code == 200
+        assert response.json()["page"] == 2
+        assert response.json()["total_pages"] == 2
+        mock_get_all.assert_called_once()
+        _, kwargs = mock_get_all.call_args
+        assert kwargs["page"] == 2
+        assert kwargs["page_size"] == 20
+
+
+def test_get_all_clothes_invalid_page_returns_422():
+    response = client.get("/clothes/?page=0")
+
+    assert response.status_code == 422
 
 
 def test_get_clothing_by_id_returns_200(fake_clothing):
@@ -152,3 +178,117 @@ def test_delete_clothing_not_found_returns_404():
         response = client.delete("/clothes/item/99999/delete")
 
         assert response.status_code == 404
+
+
+# AUTHENTIFICATION - routes protégées
+def test_get_all_clothes_without_token_returns_401():
+    app.dependency_overrides.pop(get_current_user, None)
+
+    response = client.get("/clothes/")
+
+    assert response.status_code == 401
+
+
+def test_get_all_clothes_with_invalid_token_returns_401():
+    app.dependency_overrides.pop(get_current_user, None)
+
+    response = client.get("/clothes/", headers={"Authorization": "Bearer invalid.token.here"})
+
+    assert response.status_code == 401
+
+
+def test_get_item_without_token_returns_401():
+    app.dependency_overrides.pop(get_current_user, None)
+
+    response = client.get("/clothes/item/1")
+
+    assert response.status_code == 401
+
+
+# POST /process-picture
+def _fake_rembg_output():
+    """Image RGBA 10x10 avec un carré opaque au centre, simule la sortie de rembg."""
+    img = Image.new("RGBA", (10, 10), (0, 0, 0, 0))
+    for x in range(2, 8):
+        for y in range(2, 8):
+            img.putpixel((x, y), (255, 0, 0, 255))
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return buf.getvalue()
+
+
+def _fake_upload_image():
+    """Petite image PNG valide utilisée comme fichier envoyé par le client."""
+    img = Image.new("RGB", (10, 10), (0, 0, 0))
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return buf.getvalue()
+
+
+def test_process_picture_without_token_returns_401():
+    app.dependency_overrides.pop(get_current_user, None)
+
+    response = client.post(
+        "/clothes/process-picture",
+        files={"file": ("shirt.png", b"fake-bytes", "image/png")},
+    )
+
+    assert response.status_code == 401
+
+
+def test_process_picture_returns_200_with_processed_image():
+    app.state.rembg_session = MagicMock()
+
+    with patch("app.routers.clothes_router.rembg_remove", return_value=_fake_rembg_output()):
+        response = client.post(
+            "/clothes/process-picture",
+            files={"file": ("shirt.png", _fake_upload_image(), "image/png")},
+        )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/webp"
+
+
+def test_process_picture_rembg_failure_returns_500():
+    app.state.rembg_session = MagicMock()
+
+    with patch("app.routers.clothes_router.rembg_remove", side_effect=Exception("modèle indisponible")):
+        response = client.post(
+            "/clothes/process-picture",
+            files={"file": ("shirt.png", _fake_upload_image(), "image/png")},
+        )
+
+    assert response.status_code == 500
+    assert response.json()["detail"] == "Erreur lors du traitement de l'image"
+
+
+def test_process_picture_invalid_content_type_returns_400():
+    response = client.post(
+        "/clothes/process-picture",
+        files={"file": ("shirt.gif", _fake_upload_image(), "image/gif")},
+    )
+
+    assert response.status_code == 400
+    assert "supporté" in response.json()["detail"]
+
+
+def test_process_picture_too_large_returns_413():
+    oversized = b"0" * (10 * 1024 * 1024 + 1)
+
+    response = client.post(
+        "/clothes/process-picture",
+        files={"file": ("shirt.png", oversized, "image/png")},
+    )
+
+    assert response.status_code == 413
+    assert "taille maximale" in response.json()["detail"]
+
+
+def test_process_picture_corrupted_file_returns_400():
+    response = client.post(
+        "/clothes/process-picture",
+        files={"file": ("shirt.png", b"not-a-real-image", "image/png")},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Fichier image invalide ou corrompu"
