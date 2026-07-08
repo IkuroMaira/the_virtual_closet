@@ -73,6 +73,14 @@ class ClothePublic(SQLModel):
     user_id: uuid.UUID | None
 
 
+class ClothesPage(SQLModel):
+    items: list[ClothePublic]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+
+
 class ClotheUpdate(SQLModel):
     name: str | None = Field(default=None, min_length=2, max_length=50)
     category: CategoryEnum | None = None
