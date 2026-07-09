@@ -1,5 +1,6 @@
 import uuid
 from app.models.clothes import ClotheCreate, Clothes, ClothePublic, ClotheUpdate
+from app.models.tags_clothes import Tags_Clothes
 import logging
 from sqlmodel import Session, select, func
 from datetime import datetime
@@ -132,6 +133,14 @@ def delete_item(item_id: int, user_id: uuid.UUID, session: Session) -> ClothePub
         raise ValueError(f"Le vêtement avec l'ID {item_id} n'existe pas")
 
     public_item = ClothePublic.model_validate(item)
+
+    tag_links = session.exec(
+        select(Tags_Clothes).where(Tags_Clothes.clothe_id == item_id)
+    ).all()
+    for tag_link in tag_links:
+        session.delete(tag_link)
+    session.flush()
+
     session.delete(item)
     session.commit()
 
