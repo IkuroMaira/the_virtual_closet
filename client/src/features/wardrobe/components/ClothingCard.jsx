@@ -16,18 +16,16 @@ export default function ClothingCard({ clothing }) {
 
   return (
     <Card className="relative mx-auto w-full max-w-sm pt-0 overflow-hidden">
-      <img
-          src="" // Récupérer l'image en de base données
+      {clothing.image_url && (
+        <img
+          src={clothing.image_url}
           alt="Clothing"
           className="relative aspect-4/5 w-full object-cover"
-      />
+        />
+      )}
       <CardHeader>
         <CardAction>
-          <div className="flex flex-wrap gap-2">
-            {(getData || []).map(tag => (
-              <Badge style={{ backgroundColor: tag.color }}>{ tag.name }</Badge>
-          ))}
-          </div>
+          <Badge variant="secondary">Tag</Badge>
         </CardAction>
         <CardTitle>
           {clothing.name}

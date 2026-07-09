@@ -16,7 +16,18 @@ from app.models import *
 # access to the values within the .ini file in use.
 config = context.config
 load_dotenv()
-config.set_main_option("sqlalchemy.url", os.getenv('DATABASE_LOCAL'))
+
+ENV = os.getenv('ENV')
+if ENV == 'prod':
+    db_url = os.getenv('DATABASE_URL_PROD')
+    if not db_url:
+        raise RuntimeError("DATABASE_URL_PROD is not defined in the .env")
+else:
+    db_url = os.getenv('DATABASE_LOCAL')
+    if not db_url:
+        raise RuntimeError("DATABASE_LOCAL is not defined in the .env")
+
+config.set_main_option("sqlalchemy.url", db_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

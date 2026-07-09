@@ -10,14 +10,12 @@ import { toast } from "sonner"
 
 const display = (value) => value ?? "-"
 
-
 export default function ClothingDetailView() {
   const { id } = useParams({ from: '/clothes/$id/' })
   const navigate = useNavigate()
   const { isPending, isError, data, error } = useClothing(id)
   const { mutate: deleteClothing } = useDeleteClothing()
   const { isPending: getIsPending, isError: getIsError, data: getData, error: getError } = useItemTags(id)
-
 
   const handleDelete = () => {
     toast('Voulez-vous vraiment supprimer ce vêtement ?', {
