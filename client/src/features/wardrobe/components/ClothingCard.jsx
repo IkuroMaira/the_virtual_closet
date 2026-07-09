@@ -9,7 +9,6 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import {Link} from "@tanstack/react-router";
-import { useItemTags } from "../../tags/hooks/useItemTags";
 import { useSignedUrl } from "../hooks/useSignedUrl"
 
 export default function ClothingCard({ clothing }) {
