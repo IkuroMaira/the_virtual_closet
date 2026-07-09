@@ -1,8 +1,11 @@
 import { useParams, Link, useNavigate } from "@tanstack/react-router";
 import { useClothing } from "../hooks/useClothing"
 import { useDeleteClothing } from "../hooks/useDeleteClothing"
+import { useItemTags } from "../../tags/hooks/useItemTags";
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { getContrastColor } from '../../../shared/utils/color'
 import { toast } from "sonner"
 
 const display = (value) => value ?? "-"
@@ -12,6 +15,7 @@ export default function ClothingDetailView() {
   const navigate = useNavigate()
   const { isPending, isError, data, error } = useClothing(id)
   const { mutate: deleteClothing } = useDeleteClothing()
+  const { isPending: getIsPending, isError: getIsError, data: getData, error: getError } = useItemTags(id)
 
   const handleDelete = () => {
     toast('Voulez-vous vraiment supprimer ce vêtement ?', {
@@ -34,6 +38,10 @@ export default function ClothingDetailView() {
   if (isPending) {
     return <span>Loading...</span>
   }
+
+  if (getIsPending) {
+    return <span>Loading...</span>
+  }
   
   if (isError) {
     if (error.message === 'Erreur HTTP! Status: 404') {
@@ -41,6 +49,12 @@ export default function ClothingDetailView() {
     }
     return <span>Error: { error.message }</span>
   }
+
+  if (getIsError) {
+    return <span>Error: { getError.message }</span>
+  }
+
+  const tags = [...getData].sort((a, b) => a.name.localeCompare(b.name))
 
   return <>
     <div className="flex w-full max-w-sm flex-col gap-2 text-sm">
@@ -92,6 +106,14 @@ export default function ClothingDetailView() {
       <dl className="flex items-center justify-between">
         <dt>ID de la marque:</dt>
         <dd className="text-muted-foreground">{display(data.brand_id)}</dd>
+      </dl>
+      <Separator />
+      <dl className="flex items-center justify-between">
+        <dt>Tags:</dt>
+          { tags.map((tag) => (
+              <dd key={tag.id} className="text-muted-foreground"><Badge style={{ backgroundColor: tag.color, color: getContrastColor(tag.color) }}>{ tag.name }</Badge></dd>
+            ))
+          }
       </dl>
       <Separator />
       <div className="flex gap-2">

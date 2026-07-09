@@ -9,8 +9,11 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import {Link} from "@tanstack/react-router";
+import { useItemTags } from "../../tags/hooks/useItemTags";
 
 export default function ClothingCard({ clothing }) {
+  const { data: getData } = useItemTags(clothing.id)
+
   return (
     <Card className="relative mx-auto w-full max-w-sm pt-0 overflow-hidden">
       {clothing.image_url && (

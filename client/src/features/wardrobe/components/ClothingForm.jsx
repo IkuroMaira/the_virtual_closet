@@ -20,6 +20,13 @@ import { z } from "zod"
 
 import { useForm, Controller } from "react-hook-form"
 import { useEnums } from "../hooks/useEnums"
+import { useItemTags } from "../../tags/hooks/useItemTags";
+import { useRemoveTagFromItem } from "../../tags/hooks/useRemoveTagFromItem";
+import { useTags } from "../../tags/hooks/useTags";
+import { useAddTagToItem } from "../../tags/hooks/useAddTagToItem";
+import { Badge } from "@/components/ui/badge"
+import { X } from "lucide-react"
+import { getContrastColor } from "../../../shared/utils/color"
 
 const schema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères.").max(50, "Le nom ne peut pas dépasser 50 caractères."),
@@ -58,6 +65,13 @@ export default function ClothingForm({ onSubmit, clothingData }) {
     )
     onSubmit(cleaned)
   }
+
+  const { data: getData } = useItemTags(clothingData?.id)
+  const { mutate: removeMutate } = useRemoveTagFromItem()
+  const { data : allTags} = useTags()
+  const { mutate :  addMutate } = useAddTagToItem()
+
+  const availableTags = (allTags || []).filter(tag => !(getData || []).some(t => t.id === tag.id))  
 
   return (
     <>
@@ -301,6 +315,37 @@ export default function ClothingForm({ onSubmit, clothingData }) {
             />
           </Field>
 
+          {clothingData && (
+              <Field>
+                <FieldLabel>Tags</FieldLabel>
+                <div className="flex flex-wrap gap-2">
+                  {[...(getData || [])].sort((a, b) => a.name.localeCompare(b.name)).map(tag => (
+                    <Badge key={tag.id} style={{ backgroundColor: tag.color, color: getContrastColor(tag.color) }}>
+                      {tag.name}
+                      <Button variant="ghost" aria-label={`Retirer le tag ${tag.name}`} onClick={() => removeMutate({ itemId: clothingData.id, tagId: tag.id })}>
+                        <X size={12} aria-hidden="true" />
+                      </Button>
+                    </Badge>
+                  ))}
+                </div>
+                {(getData || []).length >= 10 && (
+                  <p className="text-red-500">Maximum 10 tags par vêtement</p>
+                )}
+                {(getData || []).length < 10 && (
+                  <>
+                    <FieldLabel>Ajouter un tag</FieldLabel>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {availableTags.sort((a, b) => a.name.localeCompare(b.name)).map(tag => (
+                        <Badge key={tag.id} style={{ backgroundColor: tag.color, color: getContrastColor(tag.color) }} className="cursor-pointer" onClick={() => addMutate({ itemId: clothingData.id, tagId: tag.id })}>
+                          {tag.name} +
+                        </Badge>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </Field>
+            )}  
+                
           <Textarea placeholder="Ajouter un commentaire..." className="w-full max-w-100" {...register("comment")} />
 
           <Field orientation="horizontal">
