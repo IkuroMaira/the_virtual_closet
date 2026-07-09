@@ -2,9 +2,12 @@ import { useParams, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useClothing } from "../hooks/useClothing"
 import { useDeleteClothing } from "../hooks/useDeleteClothing"
+import { useItemTags } from "../../tags/hooks/useItemTags";
 import { useSignedUrl } from "../hooks/useSignedUrl"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { getContrastColor } from '../../../shared/utils/color'
 import { toast } from "sonner"
 
 const display = (value) => value ?? "-"
@@ -14,6 +17,7 @@ export default function ClothingDetailView() {
   const navigate = useNavigate()
   const { isPending, isError, data, error } = useClothing(id)
   const { mutate: deleteClothing } = useDeleteClothing()
+  const { isPending: getIsPending, isError: getIsError, data: getData, error: getError } = useItemTags(id)
   const signedUrl = useSignedUrl(data?.picture)
 
   const handleDelete = () => {
@@ -37,6 +41,10 @@ export default function ClothingDetailView() {
   if (isPending) {
     return <span>Loading...</span>
   }
+
+  if (getIsPending) {
+    return <span>Loading...</span>
+  }
   
   if (isError) {
     if (error.message === 'Erreur HTTP! Status: 404') {
@@ -45,6 +53,11 @@ export default function ClothingDetailView() {
     return <span>Error: { error.message }</span>
   }
 
+  if (getIsError) {
+    return <span>Error: { getError.message }</span>
+  }
+
+  const tags = [...getData].sort((a, b) => a.name.localeCompare(b.name))
   return (
     <div className="flex flex-col gap-4 w-full max-w-4xl">
       <Link
@@ -65,7 +78,7 @@ export default function ClothingDetailView() {
         ) : (
           <div className="w-full aspect-4/5 rounded-md bg-muted flex items-center justify-center text-muted-foreground text-sm">
             Aucune photo
-          </div>
+          </div> 
         )}
       </div>
 
@@ -116,6 +129,15 @@ export default function ClothingDetailView() {
           <dd className="text-muted-foreground">{display(data.brand_id)}</dd>
         </dl>
         <Separator />*/}
+        <dl className="flex items-center justify-between flex-wrap gap-1">
+          <dt>Tags:</dt>
+          { tags.map((tag) => (
+          <dd key={tag.id} className="text-muted-foreground">
+              <Badge style={{ backgroundColor: tag.color, color: getContrastColor(tag.color) }}>{ tag.name }</Badge>
+          </dd>
+          )) }
+        </dl>
+        <Separator />
         <div className="flex gap-2 mt-4">
           <Button asChild className="flex-1">
             <Link to="/clothes/$id/update" params={{ id }}>Modifier</Link>
