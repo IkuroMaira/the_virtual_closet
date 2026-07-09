@@ -54,32 +54,14 @@ export default function WardrobeView() {
                 </div>
             )}
 
-            <Button asChild className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 shadow-lg" variant="defaultBis">
+            <Button asChild className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 shadow-lg" variant="defaultBis" aria-label="Ajouter un vêtement">
                 <Link to="/clothes/new_clothing">
-                    <Plus />
+                    <Plus aria-hidden="true" />
                     <span className="hidden md:inline">
                         Ajouter un vêtement
                     </span>
-                    <Button
-                        variant="outline"
-                        size="icon-sm"
-                        disabled={page >= totalPages}
-                        onClick={() => setPage(p => p + 1)}
-                        aria-label="Page suivante"
-                    >
-                        <ChevronRight />
-                    </Button>
-                </div>
-            )}
-
-      <Button asChild className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 shadow-lg" variant="defaultBis" aria-label="Ajouter un vêtement">
-        <Link to="clothes/new_clothing">
-          <Plus aria-hidden="true" />
-          <span className="hidden md:inline">
-            Ajouter un vêtement
-          </span>
-        </Link>
-      </Button>
-    </>
-);
+                </Link>
+            </Button>
+        </>
+    );
 }
