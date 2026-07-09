@@ -1,0 +1,23 @@
+import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { addTagToItem } from '../../../shared/services/tags_clothes_api';
+
+
+export const useAddTagToItem = () => {
+    const queryClient = useQueryClient();
+
+    const { mutate, isPending, isError, error } = useMutation({
+        mutationFn: ({ itemId, tagId }) => addTagToItem(itemId, tagId),
+        onSuccess: () => queryClient.invalidateQueries(
+            {
+                queryKey: ['itemTags']
+            }
+        )   
+    })
+
+    return {
+        mutate,
+        isPending,
+        isError,
+        error
+    }
+}
