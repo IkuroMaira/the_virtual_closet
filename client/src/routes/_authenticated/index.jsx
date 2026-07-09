@@ -1,13 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
-import WardrobeView from '../features/wardrobe/views/WardrobeView.jsx'
+import WardrobeView from '@/features/wardrobe/views/WardrobeView.jsx'
 
-// index.jsx correspond à la route "/" (page d'accueil)
-export const Route = createFileRoute('/') ({
+export const Route = createFileRoute('/_authenticated/')({
     component: HomePage,
 })
 
 function HomePage() {
-
     return (
         <>
             <WardrobeView />

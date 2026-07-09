@@ -12,7 +12,7 @@
 
 ## 📖 Présentation
 
-The Virtual Closet est une application web fullstack permettant de gérer ses vêtements dans sa garde-robe digitale. L'utilisateur pourra visualiser son catalogue personnel de vêtements et le gérer. Le projet répond à un besoin concret : avoir une vue d'ensemble de sa garde-robe, en optimiser l'utilisation et la créativité, éviter les doublons d'achats, vérifier la disponibilité de ses pièces,  trier les pièces selon certains critères, composer des tenues rapidement et plus encore.
+The Virtual Closet est une application web fullstack permettant de gérer ses vêtements dans sa garde-robe digitale. L'utilisateur peut visualiser son catalogue personnel de vêtements et le gérer. Le projet répond à un besoin concret : avoir une vue d'ensemble de sa garde-robe, en optimiser l'utilisation et la créativité, éviter les doublons d'achats, vérifier la disponibilité de ses pièces, trier les pièces selon certains critères, composer des tenues rapidement et plus encore.
 
 Projet réalisé en binôme dans le cadre du titre **RNCP 6 — Concepteur Développeur d'Applications** à Ada Tech School.
 
@@ -20,28 +20,32 @@ Projet réalisé en binôme dans le cadre du titre **RNCP 6 — Concepteur Déve
 
 | Fonctionnalité | Statut |
 |---|---|
-| 👗 Gestion du catalogue : visualisation, ajout, modification, suppression des pièces et système de tags et de catégorisation avancé. | ✅ En cours d'implémentation |
-| 🔐 Gestion d'un compte utilisateur : création d'un compte, connexion, gestion du profil ... | 🔜 À venir | 
-| 📸 Prise de photos : capturer des photos de qualité des pièces. | 🔜 À venir |
-| 🔍 Recherche et filtrage avancés : recherche efficace grâce à des filtres avancés et un système de recherche par mots-clés et tags. | 🔜 À venir |
-| 📊 Gestion des états et des statuts : vue d'ensemble sur la disponibilité des pièces (propre / sale / prêté ...).| 🔜 À venir | 
+| 👗 Gestion du catalogue : visualisation, ajout, modification, suppression des pièces et système de tags et de catégorisation avancé. | ✅ Implémenté |
+| 🔐 Authentification : création de compte, connexion, routes protégées via Supabase. | ✅ Implémenté |
+| 📸 Traitement d'image : suppression d'arrière-plan via IA (rembg). | ✅ Implémenté |
+| 🔍 Recherche et filtrage avancés : filtres par catégorie, statut, couleur et tags. | 🔜 À venir |
+| 📊 Gestion des états et des statuts : vue d'ensemble sur la disponibilité des pièces (propre / sale / prêté ...). | 🔜 À venir |
 
 
 ## 🏗️ Architecture
 
 ```
 the_virtual_closet/
-├── client/               # React 19 · Vite · TailwindCSS · TanStack
+├── client/               # React 19 · Vite · TailwindCSS · TanStack · Supabase
 │   └── src/
-│       ├── components/   # Composants UI réutilisables
-│       ├── features/     # Fonctionnalités (tags, wardrobe)
-│       └── routes/       # Pages et routing
+│       ├── components/   # Composants UI réutilisables (shadcn/ui)
+│       ├── features/     # Fonctionnalités (auth, tags, wardrobe)
+│       ├── layouts/      # Layouts partagés
+│       ├── routes/       # Pages et routing (TanStack Router)
+│       └── shared/       # Utilitaires, hooks, lib partagés
 │
-└── server/               # FastAPI · SQLModel · Alembic
+└── server/               # FastAPI · SQLModel · Alembic · rembg
     └── app/
         ├── routers/      # Endpoints REST
         ├── models/       # Schémas SQLModel / Pydantic
         ├── repository/   # Accès aux données
+        ├── dependencies/ # Dépendances FastAPI (auth, db)
+        ├── enums/        # Enums partagés
         └── db/           # Connexion base de données
 ```
 
@@ -49,11 +53,20 @@ the_virtual_closet/
 
 ### Prérequis
 
-- Python 3.11+
+- Python 3.12+
 - Node.js 18+
-- PostgreSQL 15+
+- PostgreSQL 15 ou 16
 
-### Backend
+### Installation rapide (recommandé)
+
+```bash
+make install   # installe les dépendances front et back
+make dev       # lance le front et le back en parallèle
+```
+
+Voir `make help` pour toutes les commandes disponibles.
+
+### Backend (détail)
 
 ```bash
 cd server
@@ -78,26 +91,7 @@ alembic upgrade head
 fastapi dev main.py
 ```
 
-🔌 Endpoints API
-
-| Méthode | Route | Description |
-|---|---|---|
-| `GET` | `/clothes/` | Liste tous les vêtements |
-| `POST` | `/clothes/new_clothe` | Ajouter un vêtement |
-| `GET` | `/clothes/{id}` | Détail d'un vêtement |
-| `PATCH` | `/clothes/{id}/update` | Modifier un vêtement |
-| `DELETE` | `/clothes/{id}/delete` | Supprimer un vêtement |
-| `GET` | `/tags/` | Liste tous les tags |
-| `POST` | `/tags/new_tag` | Créer un tag |
-| `PATCH` | `/tags/{id}/update` | Modifier un tag |
-| `DELETE` | `/tags/{id}/delete` | Supprimer un tag |
-| `POST` | `/tags_clothes/new_relation` | Associer un tag à un vêtement |
-| `DELETE` | `/tags_clothes/{id}/delete` | Retirer un tag d'un vêtement |
-
-API disponible sur `http://localhost:8000`<br>
-Documentation interactive (Swagger UI): `http://localhost:8000/docs`
-
-### Frontend
+### Frontend (détail)
 
 ```bash
 cd client
@@ -106,6 +100,30 @@ npm run dev
 ```
 
 Application disponible sur `http://localhost:5173`
+
+## 🔌 Endpoints API
+
+| Méthode | Route | Description |
+|---|---|---|
+| `GET` | `/clothes/` | Liste tous les vêtements |
+| `POST` | `/clothes/new_clothing` | Ajouter un vêtement |
+| `GET` | `/clothes/item/{id}` | Détail d'un vêtement |
+| `PATCH` | `/clothes/item/{id}/update` | Modifier un vêtement |
+| `DELETE` | `/clothes/item/{id}/delete` | Supprimer un vêtement |
+| `POST` | `/clothes/process-picture` | Supprimer le fond d'une image (IA) |
+| `GET` | `/clothes/enums` | Lister les valeurs d'énumérations |
+| `GET` | `/tags/` | Liste tous les tags |
+| `POST` | `/tags/new_tag` | Créer un tag |
+| `GET` | `/tags/tag/{id}` | Détail d'un tag |
+| `GET` | `/tags/tag/{id}/clothes` | Vêtements associés à un tag |
+| `PATCH` | `/tags/tag/{id}/update` | Modifier un tag |
+| `DELETE` | `/tags/tag/{id}/delete` | Supprimer un tag |
+| `GET` | `/clothes/{id}/tags` | Tags d'un vêtement |
+| `POST` | `/clothes/{id}/tags/{tag_id}` | Associer un tag à un vêtement |
+| `DELETE` | `/clothes/{id}/tags/{tag_id}` | Retirer un tag d'un vêtement |
+
+API disponible sur `http://localhost:8000`<br>
+Documentation interactive (Swagger UI) : `http://localhost:8000/docs`
 
 ## 👩‍💻 Développé par
 

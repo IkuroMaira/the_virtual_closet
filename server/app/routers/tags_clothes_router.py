@@ -1,9 +1,11 @@
+import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 from app.db.database import get_session
 from app.models.tags import TagPublic
 from app.models.tags_clothes import Tags_Clothes
 from app.repository import tags_clothes_repository
+from app.dependencies.auth import get_current_user
 import logging
 
 router = APIRouter(
@@ -13,10 +15,7 @@ router = APIRouter(
 
 
 @router.get("/{item_id}/tags", response_model=list[TagPublic])
-def get_all_tags_from_item(item_id: int, session: Session = Depends(get_session)):
-    """
-    Get all tags assigned to a specific piece of clothing
-    """
+def get_all_tags_from_item(item_id: int, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     try:
         item_tags = tags_clothes_repository.get_all_tags_from_item(item_id, session)
         return item_tags
@@ -34,11 +33,9 @@ def get_all_tags_from_item(item_id: int, session: Session = Depends(get_session)
 
 
 @router.post("/{item_id}/tags/{tag_id}", response_model=Tags_Clothes)
-def add_tag_to_item(item_id: int, tag_id: int, user_id: int = 2, session: Session = Depends(get_session)):
-    """
-    Create a tag association with a piece of clothing
-    """
+def add_tag_to_item(item_id: int, tag_id: int, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     try:
+        user_id = uuid.UUID(current_user["sub"])
         tag_association = tags_clothes_repository.add_tag_to_item(item_id, tag_id, user_id, session)
         return tag_association
 
@@ -59,10 +56,7 @@ def add_tag_to_item(item_id: int, tag_id: int, user_id: int = 2, session: Sessio
 
 
 @router.delete("/{item_id}/tags/{tag_id}", response_model=Tags_Clothes)
-def remove_tag_from_item(item_id: int, tag_id: int, session: Session = Depends(get_session)):
-    """
-    Delete a tag association with a piece of clothing
-    """
+def remove_tag_from_item(item_id: int, tag_id: int, session: Session = Depends(get_session), current_user: dict = Depends(get_current_user)):
     try:
         deleted_tag_item = tags_clothes_repository.remove_tag_from_item(item_id, tag_id, session)
         return deleted_tag_item

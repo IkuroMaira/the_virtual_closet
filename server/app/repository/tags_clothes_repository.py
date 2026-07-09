@@ -1,3 +1,4 @@
+import uuid
 from sqlmodel import Session, select
 from app.models.tags import Tags
 from app.models.tags_clothes import Tags_Clothes
@@ -33,7 +34,7 @@ def get_all_tags_from_item(item_id: int, session: Session) -> list[Tags]:
     return list(tags)
 
 
-def add_tag_to_item(item_id: int, tag_id: int, user_id: int, session: Session) -> Tags_Clothes:
+def add_tag_to_item(item_id: int, tag_id: int, user_id: uuid.UUID, session: Session) -> Tags_Clothes:
     """
     Assign a tag to an item
 

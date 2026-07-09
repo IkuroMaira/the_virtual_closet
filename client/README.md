@@ -1,29 +1,59 @@
-# React + Vite
+# 🖥️ The Virtual Closet — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Stack : **React 19** · **Vite** · **TailwindCSS** · **TanStack Router** · **TanStack Query** · **Supabase** · **shadcn/ui**
 
-Currently, two official plugins are available:
+## Prérequis
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| Composant | Version recommandée | Vérification       |
+|-----------|---------------------|--------------------|
+| Node.js   | 18+                 | `node --version`   |
+| npm       |                     | `npm --version`    |
 
-## React Compiler
+## Installation et lancement
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-
-# French version
-
-## Lancer l'application frontent
-
-```shell
+```bash
 cd client
-
 npm install
 npm run dev
 ```
 
+Application disponible sur `http://localhost:5173`
 
+## Scripts disponibles
+
+| Commande | Description |
+|---|---|
+| `npm run dev` | Lancer le serveur de développement |
+| `npm run build` | Construire pour la production |
+| `npm run preview` | Prévisualiser le build de production |
+| `npm run test` | Lancer les tests (Vitest) |
+| `npm run lint` | Lancer ESLint |
+
+## Structure
+
+```
+src/
+├── components/   # Composants UI génériques (shadcn/ui)
+├── features/     # Fonctionnalités métier
+│   ├── auth/     # Authentification (Supabase)
+│   ├── tags/     # Gestion des tags
+│   └── wardrobe/ # Gestion des vêtements
+├── layouts/      # Layouts partagés (Header...)
+├── lib/          # Configuration (queryClient, supabase...)
+├── routes/       # Pages et routing (TanStack Router)
+│   ├── _authenticated/   # Routes protégées
+│   ├── login.jsx
+│   └── register.jsx
+├── shared/       # Utilitaires et hooks partagés
+└── tests/        # Tests
+```
+
+## Variables d'environnement
+
+Créer un fichier `.env` à la racine de `client/` :
+
+```env
+VITE_SUPABASE_URL=votre_url_supabase
+VITE_SUPABASE_ANON_KEY=votre_clé_anon_supabase
+VITE_API_URL=http://localhost:8000
+```

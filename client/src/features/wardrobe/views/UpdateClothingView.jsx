@@ -5,8 +5,7 @@ import { useUpdateClothing } from "../hooks/useUpdateClothing"
 import ClothingForm from "../components/ClothingForm"
 
 export default function UpdateClothingView() {
-  const { id } = useParams({ from: '/clothes/$id/update' 
-  })
+  const { id } = useParams({ from: '/_authenticated/clothes/$id/update' })
   const { data, isPending, isError } = useClothing(id)
   const navigate = useNavigate()
   const { mutate } = useUpdateClothing()
@@ -27,5 +26,5 @@ export default function UpdateClothingView() {
   if (isPending) return <span>Loading...</span>
   if (isError) return <span>Une erreur est survenue.</span>
 
-  return <ClothingForm onSubmit={handleSubmit} clothingData={data} />
+  return <ClothingForm onSubmit={handleSubmit} onCancel={() => navigate({ to: `/clothes/${id}` })} clothingData={data} />
 }
