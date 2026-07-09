@@ -1,0 +1,23 @@
+import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { deleteTagFromItem } from '../../../shared/services/tags_clothes_api';
+
+
+export const useRemoveTagFromItem = () => {
+    const queryClient = useQueryClient();
+
+    const { mutate, isPending, isError, error } = useMutation({
+        mutationFn: ({ itemId, tagId }) => deleteTagFromItem(itemId, tagId),
+        onSuccess: () => queryClient.invalidateQueries(
+            {
+                queryKey: ['itemTags']
+            }
+        )   
+    })
+
+    return {
+        mutate,
+        isPending,
+        isError,
+        error
+    }
+}
