@@ -2,10 +2,10 @@ import { useParams, Link, useNavigate } from "@tanstack/react-router";
 import { useClothing } from "../hooks/useClothing"
 import { useDeleteClothing } from "../hooks/useDeleteClothing"
 import { useItemTags } from "../../tags/hooks/useItemTags";
-import { useRemoveTagFromItem } from "../../tags/hooks/useRemoveTagFromItem";
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { getContrastColor } from '../../../shared/utils/color'
 import { toast } from "sonner"
 
 const display = (value) => value ?? "-"
@@ -16,6 +16,8 @@ export default function ClothingDetailView() {
   const navigate = useNavigate()
   const { isPending, isError, data, error } = useClothing(id)
   const { mutate: deleteClothing } = useDeleteClothing()
+  const { isPending: getIsPending, isError: getIsError, data: getData, error: getError } = useItemTags(id)
+
 
   const handleDelete = () => {
     toast('Voulez-vous vraiment supprimer ce vêtement ?', {
@@ -34,8 +36,6 @@ export default function ClothingDetailView() {
       },
     })
   }
-  const { isPending: getIsPending, isError: getIsError, data: getData, error: getError } = useItemTags(id)
-  const { mutate: removeMutate, isPending: removeIsPending, isError: removeIsError, error: removeError } = useRemoveTagFromItem(id)
   
   if (isPending) {
     return <span>Loading...</span>
@@ -111,15 +111,12 @@ export default function ClothingDetailView() {
       </dl>
       <Separator />
       <dl className="flex items-center justify-between">
-        <dt>ID de la marque: {data.brand_id}</dt>
-      </dl>
-      <Separator />
-      <dl className="flex items-center justify-between"></dl>
         <dt>Tags:</dt>
           { tags.map((tag) => (
-              <dd key={tag.id} className="text-muted-foreground"><Badge style={{ backgroundColor: tag.color }}>{ tag.name }</Badge></dd>
+              <dd key={tag.id} className="text-muted-foreground"><Badge style={{ backgroundColor: tag.color, color: getContrastColor(tag.color) }}>{ tag.name }</Badge></dd>
             ))
           }
+      </dl>
       <Separator />
       <div className="flex gap-2">
         <Button asChild className="flex-1">
